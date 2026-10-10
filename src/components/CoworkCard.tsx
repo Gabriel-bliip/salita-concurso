@@ -4,7 +4,8 @@ import type { Cowork } from '../types/index.ts'
 import AmenityBadge from './AmenityBadge.tsx'
 import CoworkImage from './CoworkImage.tsx'
 
-const MAX_VISIBLE_AMENITIES = 5
+// Keeps the icons on a single row in the 3-column grid.
+const MAX_VISIBLE_AMENITIES = 4
 
 interface CoworkCardProps {
   cowork: Cowork

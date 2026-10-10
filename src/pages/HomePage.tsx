@@ -33,7 +33,7 @@ function HomePage() {
   return (
     <>
       <section className="bg-linear-to-b from-brand-50 to-white">
-        <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-28">
+        <div className="mx-auto max-w-6xl px-4 pt-16 pb-12 sm:px-6 sm:pt-24 sm:pb-16">
           <p className="text-sm font-semibold text-brand-700">Coworks en Santiago</p>
           <h1 className="mt-3 max-w-3xl text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl">
             Trabaja desde cualquier cowork de Santiago con un solo plan
