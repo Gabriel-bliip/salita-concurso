@@ -8,7 +8,7 @@ React 19 + TypeScript + Vite, npm. Frontend lives in `src/`. A Node.js TypeScrip
 
 ## Commands
 
-- `npm run dev` — Vite dev server (port 5173)
+- `npm run dev` — Vite dev server (port 3000, set in `vite.config.ts`)
 - `npm run lint` — ESLint (flat config, `eslint.config.js`)
 - `npm run build` — `tsc -b && vite build`; type errors fail the build
 - No test framework yet. Verify changes with `npm run lint` and `npm run build`.
