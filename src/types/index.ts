@@ -38,7 +38,9 @@ export interface Cowork {
   slug: string
   name: string
   comuna: Comuna
+  // Dirección visible en la ficha y el mapa. Mantenerla alineada con location.
   address: string
+  // UBICACIÓN DEL MARCADOR: grados decimales WGS84, latitud y luego longitud.
   location: { latitude: number; longitude: number }
   description: string
   amenityIds: AmenityId[]

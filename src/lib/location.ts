@@ -1,6 +1,7 @@
 import type { Cowork } from '../types/index.ts'
 
-// Geocoded street address; shared by every entry without a location.
+// UBICACIÓN PREDETERMINADA: editar dirección, comuna y coordenadas juntas.
+// Se aplica a todo registro sin dirección o sin coordenadas válidas.
 export const DEFAULT_LOCATION = {
   address: 'Suecia 810, Providencia, Santiago de Chile',
   comuna: 'Providencia' as const,
@@ -17,6 +18,8 @@ export function withLocation(cowork: CoworkInput): Cowork {
     Math.abs(position.longitude) <= 180
 
   if (!cowork.address?.trim() || !validPosition) {
+    // Sustituye el conjunto completo, incluso si había una dirección escrita:
+    // evita mostrar una dirección en la ficha y otra posición en el mapa.
     return { ...cowork, ...DEFAULT_LOCATION }
   }
   return { ...cowork, address: cowork.address.trim(), location: position }
