@@ -1,7 +1,6 @@
 import { ArrowLeft, Clock, MapPin, Users } from 'lucide-react'
 import { Link, useParams } from 'react-router'
 import AmenityBadge from '../components/AmenityBadge.tsx'
-import Button from '../components/Button.tsx'
 import CoworkCard from '../components/CoworkCard.tsx'
 import CoworkImage from '../components/CoworkImage.tsx'
 import { COWORKS } from '../data/coworks.ts'
@@ -69,11 +68,9 @@ function CoworkDetailPage() {
             </div>
           </div>
           <p className="border-t border-slate-200 pt-5 text-sm text-slate-600">
-            Trabaja aquí usando las horas de cualquier plan Salita.
+            Sin planes ni suscripciones: pagas solo por las horas que reservas. Las reservas en
+            línea estarán disponibles pronto.
           </p>
-          <Button to="/planes" className="w-full">
-            Ver planes
-          </Button>
         </aside>
       </div>
 

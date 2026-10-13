@@ -9,8 +9,8 @@ function Footer() {
           <Link to="/coworks" className="hover:text-slate-900">
             Coworks
           </Link>
-          <Link to="/planes" className="hover:text-slate-900">
-            Planes
+          <Link to="/#como-funciona" className="hover:text-slate-900">
+            Cómo funciona
           </Link>
         </div>
       </div>

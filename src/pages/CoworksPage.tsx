@@ -49,7 +49,7 @@ function CoworksPage() {
         Coworks en Santiago
       </h1>
       <p className="mt-2 text-slate-600">
-        Usa tus horas en cualquiera de estos espacios. Filtra por comuna y servicios.
+        Reserva por hora, sin planes ni suscripciones. Filtra por comuna y servicios.
       </p>
 
       <div className="mt-10 grid gap-8 lg:grid-cols-[18rem_1fr]">

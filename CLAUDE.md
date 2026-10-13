@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 React 19 + TypeScript + Vite, npm. Frontend lives in `src/`. A Node.js TypeScript backend is planned but the framework is not decided — don't pick one or scaffold a backend without asking.
 
+Business model: pay per hour only — no plans, subscriptions or hour balances. Price logic lives in `src/lib/pricing.ts`; cancellation policy and platform commission are not decided, so don't invent them.
+
 ## Commands
 
 - `npm run dev` — Vite dev server (port 3000, set in `vite.config.ts`)

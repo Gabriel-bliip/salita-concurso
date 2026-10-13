@@ -23,16 +23,6 @@ export interface Amenity {
   label: string
 }
 
-export interface Plan {
-  id: string
-  name: string
-  monthlyHours: number
-  priceClp: number
-  description: string
-  features: string[]
-  highlighted?: boolean
-}
-
 export interface Cowork {
   id: string
   slug: string

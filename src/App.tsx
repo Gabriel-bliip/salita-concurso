@@ -4,14 +4,12 @@ import CoworkDetailPage from './pages/CoworkDetailPage.tsx'
 import CoworksPage from './pages/CoworksPage.tsx'
 import HomePage from './pages/HomePage.tsx'
 import NotFoundPage from './pages/NotFoundPage.tsx'
-import PlansPage from './pages/PlansPage.tsx'
 
 const router = createBrowserRouter([
   {
     element: <Layout />,
     children: [
       { path: '/', element: <HomePage /> },
-      { path: '/planes', element: <PlansPage /> },
       { path: '/coworks', element: <CoworksPage /> },
       { path: '/coworks/:slug', element: <CoworkDetailPage /> },
       { path: '*', element: <NotFoundPage /> },
