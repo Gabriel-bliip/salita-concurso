@@ -28,7 +28,7 @@ export type CategoryId = typeof definitions[number]['id']
 export type Category = Omit<CategoryDefinition, 'id'> & { id: CategoryId }
 
 export const CATEGORIES: readonly Category[] = definitions
-export const COWORK_CATEGORY: Category = CATEGORIES[0]
+export const COWORK_CATEGORY: Category = CATEGORIES.find(({ id }) => id === 'cowork')!
 
 export function getCategory(id: string) {
   return CATEGORIES.find((category) => category.id === id)
