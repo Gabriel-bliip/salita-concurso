@@ -3,17 +3,17 @@ import { Link, useSearchParams } from 'react-router'
 import { MapPin, SearchX } from 'lucide-react'
 import CoworkMap from '../components/CoworkMap.tsx'
 import CoworkFilters from '../components/CoworkFilters.tsx'
-import { COWORKS, COMUNAS } from '../data/coworks.ts'
-import { AMENITIES } from '../data/amenities.ts'
-import type { AmenityId, Comuna } from '../types/index.ts'
+import { COWORKS } from '../data/coworks.ts'
+import type { CoworkFilterState } from '../lib/coworkFilters.ts'
+import { EMPTY_FILTERS, filterCoworks, filtersToParams, parseFilters } from '../lib/coworkFilters.ts'
 import { MAP_CONFIG } from '../lib/mapConfig.ts'
 
 function MapPage() {
   const [params, setParams] = useSearchParams()
-  const comuna = COMUNAS.find((value) => value === params.get('comuna')) ?? null
-  const amenitiesParam = params.get('amenities') ?? ''
-  const amenityIds = useMemo(() => AMENITIES.filter((amenity) => amenitiesParam.split(',').includes(amenity.id)).map((amenity) => amenity.id), [amenitiesParam])
-  const coworkers = useMemo(() => COWORKS.filter((cowork) => (!comuna || cowork.comuna === comuna) && amenityIds.every((id) => cowork.amenityIds.includes(id))), [comuna, amenityIds])
+  const filters = parseFilters(params)
+  // Keyed by the normalized filter string so the map only rebuilds markers when filters change.
+  const filterKey = filtersToParams(filters).toString()
+  const coworkers = useMemo(() => filterCoworks(COWORKS, parseFilters(new URLSearchParams(filterKey))).map(({ cowork }) => cowork), [filterKey])
   const selectedSlug = coworkers.find((cowork) => cowork.slug === params.get('cowork'))?.slug ?? null
   const onSelect = useCallback((slug: string) => {
     setParams((previous) => {
@@ -23,14 +23,7 @@ function MapPage() {
     }, { replace: true })
   }, [setParams])
 
-  const updateFilters = (nextComuna: Comuna | null, nextAmenities: AmenityId[]) => {
-    const next = new URLSearchParams()
-    if (nextComuna) next.set('comuna', nextComuna)
-    if (nextAmenities.length) next.set('amenities', nextAmenities.join(','))
-    setParams(next, { replace: true })
-  }
-  const listParams = new URLSearchParams(params)
-  listParams.delete('cowork')
+  const updateFilters = (next: CoworkFilterState) => setParams(filtersToParams(next), { replace: true })
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
@@ -40,14 +33,11 @@ function MapPage() {
           <h1 className="text-3xl font-bold tracking-tight text-ink sm:text-4xl">Encuentra tu cowork en el mapa</h1>
           <p className="mt-3 text-ink-muted">Explora Santiago y toca una burbuja para conocer el espacio.</p>
         </div>
-        <Link to={`/coworks?${listParams}`} className="text-sm font-semibold text-primary hover:underline">Ver listado de coworks →</Link>
+        <Link to={`/coworks?${filterKey}`} className="text-sm font-semibold text-primary hover:underline">Ver listado de coworks →</Link>
       </div>
       <div className="mt-8 grid gap-6 lg:grid-cols-[18rem_1fr]">
         <aside>
-          <CoworkFilters comuna={comuna} amenityIds={amenityIds}
-            onComunaChange={(value) => updateFilters(value, amenityIds)}
-            onAmenityToggle={(id) => updateFilters(comuna, amenityIds.includes(id) ? amenityIds.filter((value) => value !== id) : [...amenityIds, id])}
-            onClear={() => updateFilters(null, [])} />
+          <CoworkFilters filters={filters} onChange={updateFilters} />
         </aside>
         <section className="min-w-0">
           <p className="mb-3 text-sm text-ink-muted" aria-live="polite">{coworkers.length} {coworkers.length === 1 ? 'ubicación encontrada' : 'ubicaciones encontradas'}</p>
@@ -55,7 +45,7 @@ function MapPage() {
             <div className="flex min-h-72 flex-col items-center justify-center rounded-card border border-dashed border-line-strong p-6 text-center">
               <SearchX className="size-10 text-ink-muted" aria-hidden />
               <p className="mt-4 font-semibold">No hay coworks con esos filtros</p>
-              <button onClick={() => updateFilters(null, [])} className="mt-4 text-primary underline">Limpiar filtros</button>
+              <button onClick={() => updateFilters(EMPTY_FILTERS)} className="mt-4 text-primary underline">Limpiar filtros</button>
             </div>
           )}
           <div className="mt-5 grid gap-3 sm:grid-cols-2" aria-label="Lugares del mapa">
