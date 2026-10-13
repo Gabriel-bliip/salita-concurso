@@ -27,7 +27,22 @@ const definitions = [
 export type CategoryId = typeof definitions[number]['id']
 export type Category = Omit<CategoryDefinition, 'id'> & { id: CategoryId }
 
-export const CATEGORIES: readonly Category[] = definitions
+export const CATEGORIES: readonly Category[] = definitions.map((definition): Category => {
+  const category: Category = definition
+  const attributes = category.attributes ?? []
+  return {
+    ...category,
+    filters: {
+      ...category.filters,
+      attributes: [
+        ...(category.filters.attributes ?? []).filter((filter) => !attributes.some(({ id }) => id === filter.id)),
+        ...attributes.flatMap((attribute) =>
+          (attribute.type === 'select' || attribute.type === 'multiselect') && attribute.filter
+            ? [{ id: attribute.id, label: attribute.label, options: attribute.options }] : []),
+      ],
+    },
+  }
+})
 export const COWORK_CATEGORY: Category = CATEGORIES.find(({ id }) => id === 'cowork')!
 
 export function getCategory(id: string) {

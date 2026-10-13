@@ -1,13 +1,10 @@
 import type { Space } from './space.ts'
 import type { CategoryId } from '../data/categories.ts'
 
-export type Comuna =
-  | 'Santiago Centro'
-  | 'Providencia'
-  | 'Las Condes'
-  | 'Ñuñoa'
-  | 'Vitacura'
-  | 'Lo Barnechea'
+export const COMUNA_OPTIONS = [
+  'Santiago Centro', 'Providencia', 'Las Condes', 'Ñuñoa', 'Vitacura', 'Lo Barnechea',
+] as const
+export type Comuna = typeof COMUNA_OPTIONS[number]
 
 export type AmenityId =
   | 'wifi'
@@ -44,6 +41,7 @@ export interface SpaceLocation {
   // UBICACIÓN DEL MARCADOR: grados decimales WGS84, latitud y luego longitud.
   location: { latitude: number; longitude: number }
   description: string
+  contact?: { email?: string; phone?: string; website?: string }
   amenityIds: AmenityId[]
   openingHours: OpeningHours
   rules: string[]
