@@ -15,3 +15,68 @@
 body {
   @apply bg-white text-slate-800 antialiased;
 }
+
+.cowork-map {
+  height: clamp(360px, 65vh, 620px);
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 1rem;
+  isolation: isolate;
+  z-index: 0;
+  background: #e2e8f0;
+  font-family: var(--font-sans);
+}
+
+.cowork-map-bubble {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  border: 4px solid white;
+  border-radius: 50%;
+  background: #ccfbf1;
+  box-shadow: 0 3px 12px #0f172a40;
+}
+
+.cowork-map-bubble::after {
+  content: '';
+  position: absolute;
+  left: 18px;
+  bottom: -14px;
+  border: 10px solid transparent;
+  border-top-color: white;
+  border-bottom: 0;
+}
+
+.cowork-map-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.cowork-map-marker:hover .cowork-map-bubble,
+.cowork-map-marker:focus-visible .cowork-map-bubble,
+.cowork-map-marker.is-selected .cowork-map-bubble {
+  border-color: #0d9488;
+  box-shadow: 0 0 0 4px #99f6e488, 0 3px 12px #0f172a40;
+}
+
+.cowork-map-marker.is-selected .cowork-map-bubble::after { border-top-color: #0d9488; }
+.cowork-map-count {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  min-width: 24px;
+  padding: 2px 5px;
+  border-radius: 20px;
+  background: #0f766e;
+  color: white;
+  text-align: center;
+  font-weight: 700;
+}
+.cowork-map-entry { padding: 8px 0; min-width: 180px; }
+.cowork-map-entry + .cowork-map-entry { border-top: 1px solid #e2e8f0; }
+.cowork-map-entry .cowork-map-cover { width: 48px; height: 48px; margin-bottom: 8px; }
+.cowork-map-entry strong { display: block; font-size: 15px; color: #0f172a; }
+.cowork-map-entry p { margin: 6px 0 10px; color: #475569; }
+.cowork-map-entry a { color: #0f766e; font-weight: 600; }
