@@ -5,13 +5,14 @@ import { COWORKS, LOCATIONS } from '../src/data/coworks.ts'
 import { EMPTY_FILTERS, filterCoworks, filtersToParams, getCategoryComunas, parseFilters } from '../src/lib/coworkFilters.ts'
 import { withLocation } from '../src/lib/location.ts'
 
-test('all migrated locations retain their category and appear in Cowork', () => {
+test('locations retain valid categories and each category exposes only its own records', () => {
   assert.equal(new Set(CATEGORIES.map(({ id }) => id)).size, CATEGORIES.length)
   assert.ok(LOCATIONS.every(({ categoryId }) => getCategory(categoryId)))
   assert.deepEqual(filterCoworks(LOCATIONS, EMPTY_FILTERS).map(({ cowork }) => cowork), COWORKS)
   for (const category of CATEGORIES.filter(({ id }) => id !== 'cowork')) {
-    assert.deepEqual(filterCoworks(LOCATIONS, EMPTY_FILTERS, category), [])
-    assert.deepEqual(getCategoryComunas(category), [])
+    const expected = LOCATIONS.filter(({ categoryId }) => categoryId === category.id)
+    assert.deepEqual(filterCoworks(LOCATIONS, EMPTY_FILTERS, category).map(({ cowork }) => cowork), expected)
+    assert.deepEqual(getCategoryComunas(category), [...new Set(expected.map(({ comuna }) => comuna))])
   }
   assert.equal(getCategory('unknown'), undefined)
 })
@@ -23,6 +24,8 @@ test('legacy inputs without categoryId default to cowork and preserve valid coor
 })
 
 test('Cowork retains combined space, people, comuna and service filters', () => {
+  // Fixed demonstration records keep regression expectations stable as users add locations.
+  const samples = COWORKS.filter(({ id }) => /^cw-[1-9]$/.test(id))
   const cases = [
     ['type=coworking&people=2', []],
     ['type=meeting_room&people=12', ['torre-pocuro', 'distrito-golf']],
@@ -30,7 +33,7 @@ test('Cowork retains combined space, people, comuna and service filters', () => 
     ['type=office_box&people=6', ['nodo-moneda', 'distrito-golf']],
   ]
   for (const [query, expected] of cases) {
-    const results = filterCoworks(LOCATIONS, parseFilters(new URLSearchParams(query)))
+    const results = filterCoworks(samples, parseFilters(new URLSearchParams(query)))
     assert.deepEqual(results.map(({ cowork }) => cowork.slug), expected)
   }
   const results = filterCoworks(LOCATIONS, parseFilters(new URLSearchParams('type=meeting_room&people=12')))
