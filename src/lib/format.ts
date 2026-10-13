@@ -51,9 +51,10 @@ const longDateFormatter = new Intl.DateTimeFormat('es-CL', {
   month: 'long',
 })
 
-// 'miércoles 14 de octubre'
+// 'Miércoles, 14 de octubre' (capitalized: it usually starts a sentence or a label)
 export function formatDateLong(key: DateKey) {
-  return longDateFormatter.format(parseDateKey(key))
+  const text = longDateFormatter.format(parseDateKey(key))
+  return text.charAt(0).toUpperCase() + text.slice(1)
 }
 
 const weekdayFormatter = new Intl.DateTimeFormat('es-CL', { weekday: 'short' })

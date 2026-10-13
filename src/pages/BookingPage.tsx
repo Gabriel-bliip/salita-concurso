@@ -6,6 +6,8 @@ import BookingSteps from '../components/booking/BookingSteps.tsx'
 import BookingSummary from '../components/booking/BookingSummary.tsx'
 import DatePicker from '../components/booking/DatePicker.tsx'
 import FieldError from '../components/booking/FieldError.tsx'
+import PeopleInput from '../components/booking/PeopleInput.tsx'
+import TimeSlotPicker from '../components/booking/TimeSlotPicker.tsx'
 import SpaceCard from '../components/SpaceCard.tsx'
 import { COWORKS } from '../data/coworks.ts'
 import { getTimeSlots } from '../lib/availability.ts'
@@ -16,9 +18,13 @@ import {
   parseBookingParams,
   toBookingParams,
   validateDate,
+  validatePeople,
+  validateTimeRange,
 } from '../lib/booking.ts'
 import { getWeekday } from '../lib/dates.ts'
-import { SPACE_TYPE_PLURAL_LABELS, SPACE_TYPES } from '../lib/spaces.ts'
+import { formatDateLong, formatHours, formatTimeRange } from '../lib/format.ts'
+import { getCapacityRange, SPACE_TYPE_PLURAL_LABELS, SPACE_TYPES } from '../lib/spaces.ts'
+import type { Hour } from '../types/booking.ts'
 import NotFoundPage from './NotFoundPage.tsx'
 
 function StepHeading({ step, title }: { step: BookingStep; title: string }) {
@@ -48,11 +54,25 @@ function BookingPage() {
   const dateError = selection.date ? validateDate(cowork, selection.date, now) : null
   const hasValidDate = selection.date !== null && dateError === null
 
+  const slots = space && hasValidDate && selection.date ? getTimeSlots(cowork, space, selection.date, now) : []
+  const { startHour, endHour } = selection
+  const timeError =
+    space && startHour !== null && endHour !== null
+      ? validateTimeRange(slots, startHour, endHour, space.minHours)
+      : null
+  const hasValidTime = startHour !== null && endHour !== null && timeError === null
+
+  const capacity = space ? getCapacityRange(space) : { min: 1, max: 1 }
+  // Until the user picks a number, suggest the minimum the space allows.
+  const people = selection.people ?? capacity.min
+  const peopleError = space ? validatePeople(space, people) : null
+  const hasValidPeople = selection.people !== null && peopleError === null
+
   const completed: Record<BookingStep, boolean> = {
     space: space !== null,
     date: hasValidDate,
-    time: false,
-    people: false,
+    time: hasValidTime,
+    people: hasValidPeople,
     summary: false,
     payment: false,
   }
@@ -70,6 +90,14 @@ function BookingPage() {
     setSearchParams(toBookingParams({ ...selection, ...changes }, target))
   const update = (changes: Partial<BookingSelection>) =>
     setSearchParams(toBookingParams({ ...selection, ...changes }, step), { replace: true })
+
+  // First tap picks the start block; a later tap extends the range to that block.
+  // Tapping again after a multi-hour range (or an earlier block) starts a new range.
+  const selectHour = (hour: Hour) => {
+    const startsNewRange =
+      startHour === null || endHour === null || endHour - startHour > 1 || hour < startHour
+    update(startsNewRange ? { startHour: hour, endHour: hour + 1 } : { endHour: hour + 1 })
+  }
 
   const dateOptions = getBookableDates(now).map((date) => {
     if (!cowork.openingHours[getWeekday(date)]) return { date, disabledReason: 'Cerrado' }
@@ -151,9 +179,74 @@ function BookingPage() {
             </section>
           )}
 
-          {(step === 'time' || step === 'people' || step === 'summary' || step === 'payment') && (
+          {step === 'time' && space && selection.date && (
+            <section className="flex flex-col gap-4">
+              <StepHeading step="time" title="Elige el horario" />
+              <p className="text-sm text-ink-muted">
+                {formatDateLong(selection.date)}. Toca la
+                hora de inicio y luego la última hora de tu reserva. Este espacio se reserva por
+                mínimo {formatHours(space.minHours)}.
+              </p>
+              {slots.some((slot) => slot.available) ? (
+                <TimeSlotPicker slots={slots} startHour={startHour} endHour={endHour} onSelect={selectHour} />
+              ) : (
+                <FieldError message="No quedan horas disponibles ese día para este espacio. Elige otra fecha." />
+              )}
+              {hasValidTime && startHour !== null && endHour !== null && (
+                <p className="text-sm font-medium text-success" aria-live="polite">
+                  Elegiste {formatTimeRange(startHour, endHour)} ({formatHours(endHour - startHour)}).
+                </p>
+              )}
+              <FieldError message={timeError} />
+              <div className="flex justify-between gap-4">
+                <Button to={urlFor('date')} variant="secondary">
+                  Atrás
+                </Button>
+                <Button onClick={() => goTo('people')} disabled={!hasValidTime}>
+                  Continuar
+                </Button>
+              </div>
+            </section>
+          )}
+
+          {step === 'people' && space && (
+            <section className="flex flex-col gap-4">
+              <StepHeading step="people" title="¿Cuántas personas?" />
+              {space.type === 'coworking' ? (
+                <p className="text-ink">
+                  Los escritorios compartidos son para <strong>1 persona</strong> por reserva. Si
+                  vienen más personas, haz una reserva por cada una.
+                </p>
+              ) : (
+                <>
+                  <label htmlFor="people" id="people-hint" className="text-sm text-ink-muted">
+                    {space.name} admite {capacity.min === capacity.max ? capacity.max : `de ${capacity.min} a ${capacity.max}`}{' '}
+                    personas.
+                  </label>
+                  <PeopleInput
+                    value={people}
+                    min={capacity.min}
+                    max={capacity.max}
+                    onChange={(value) => update({ people: value })}
+                    describedBy="people-hint"
+                  />
+                </>
+              )}
+              <FieldError message={peopleError} />
+              <div className="flex justify-between gap-4">
+                <Button to={urlFor('time')} variant="secondary">
+                  Atrás
+                </Button>
+                <Button onClick={() => goTo('summary', { people })} disabled={peopleError !== null}>
+                  Continuar
+                </Button>
+              </div>
+            </section>
+          )}
+
+          {(step === 'summary' || step === 'payment') && (
             <section className="rounded-card border border-dashed border-line-strong p-6 text-ink-muted">
-              Este paso se agrega en el siguiente commit.
+              El resumen y el pago simulado llegan en la siguiente etapa.
             </section>
           )}
         </div>
@@ -164,8 +257,8 @@ function BookingPage() {
             space={space}
             selection={selection}
             hasValidDate={hasValidDate}
-            hasValidTime={false}
-            hasValidPeople={false}
+            hasValidTime={hasValidTime}
+            hasValidPeople={hasValidPeople}
           />
         </aside>
       </div>

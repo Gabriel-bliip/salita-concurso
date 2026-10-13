@@ -29,7 +29,14 @@ function BookingSummary({
   const price = space && hours ? calculateBookingPrice({ pricePerHour: space.pricePerHour, hours }) : null
 
   const rows = [
-    { label: 'Espacio', value: space ? `${space.name} · ${SPACE_TYPE_LABELS[space.type]}` : null },
+    {
+      label: 'Espacio',
+      value: space
+        ? space.name === SPACE_TYPE_LABELS[space.type]
+          ? space.name
+          : `${space.name} · ${SPACE_TYPE_LABELS[space.type]}`
+        : null,
+    },
     { label: 'Fecha', value: hasValidDate && date ? formatDateLong(date) : null },
     {
       label: 'Horario',
@@ -50,7 +57,7 @@ function BookingSummary({
         {rows.map(({ label, value }) => (
           <div key={label} className="flex justify-between gap-4">
             <dt className="text-ink-muted">{label}</dt>
-            <dd className="text-right font-medium text-ink first-letter:uppercase">{value ?? '—'}</dd>
+            <dd className="text-right font-medium text-ink">{value ?? '—'}</dd>
           </div>
         ))}
       </dl>
