@@ -9,7 +9,7 @@ function Footer() {
           <Link to="/espacios" className="hover:text-primary">
             Espacios
           </Link>
-          <Link to="/mapa" className="hover:text-primary">
+          <Link to="/espacios/cowork/mapa" className="hover:text-primary">
             Mapa
           </Link>
           <Link to="/#como-funciona" className="hover:text-primary">

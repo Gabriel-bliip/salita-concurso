@@ -83,7 +83,7 @@ function HomePage() {
             </h2>
             <p className="mt-2 text-ink-muted">Toca una burbuja para ver el espacio.</p>
           </div>
-          <Link to="/mapa" className="text-sm font-semibold text-primary hover:text-primary-hover">
+          <Link to="/espacios/cowork/mapa" className="text-sm font-semibold text-primary hover:text-primary-hover">
             Abrir mapa con filtros →
           </Link>
         </div>
@@ -115,7 +115,7 @@ function HomePage() {
         <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <h2 className="text-3xl font-bold tracking-tight text-ink">Coworks destacados</h2>
-            <Button to="/coworks" variant="secondary">
+            <Button to="/espacios/cowork" variant="secondary">
               Ver todos
             </Button>
           </div>
@@ -135,7 +135,7 @@ function HomePage() {
           <p className="mx-auto mt-4 max-w-xl text-on-primary-muted">
             Elige un cowork, reserva las horas que necesitas y llega a trabajar.
           </p>
-          <Button to="/coworks" variant="secondary" className="mt-8">
+          <Button to="/espacios/cowork" variant="secondary" className="mt-8">
             Explorar coworks
           </Button>
         </div>
