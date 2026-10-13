@@ -31,9 +31,11 @@ function CoworkMap({ coworkers, selectedSlug, onSelect }: CoworkMapProps) {
   useEffect(() => {
     if (!container.current) return
     const { latitude, longitude } = DEFAULT_LOCATION.location
-    const map = L.map(container.current, { scrollWheelZoom: true }).setView([latitude, longitude], 13)
+    const map = L.map(container.current, { scrollWheelZoom: true, zoomControl: false }).setView([latitude, longitude], 13)
+    L.control.zoom({ position: 'bottomright', zoomInTitle: 'Acercar', zoomOutTitle: 'Alejar' }).addTo(map)
     mapRef.current = map
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      className: 'cowork-map-basemap',
       maxZoom: 19,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     }).on('tileerror', () => setTileError(true)).on('tileload', () => setTileError(false)).addTo(map)
@@ -85,7 +87,7 @@ function CoworkMap({ coworkers, selectedSlug, onSelect }: CoworkMapProps) {
         popup.append(entry)
       }
       const marker = L.marker([cowork.location.latitude, cowork.location.longitude], {
-        icon: L.divIcon({ html: bubble, className: 'cowork-map-marker', iconSize: [64, 76], iconAnchor: [32, 76], popupAnchor: [0, -70] }),
+        icon: L.divIcon({ html: bubble, className: 'cowork-map-marker', iconSize: [48, 56], iconAnchor: [24, 56], popupAnchor: [0, -50] }),
         title: group.map((place) => place.name).join(', '),
         riseOnHover: true,
         alt: `Ver ${group.map((place) => place.name).join(', ')}`,

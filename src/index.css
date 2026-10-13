@@ -19,32 +19,40 @@ body {
 .cowork-map {
   height: clamp(360px, 65vh, 620px);
   width: 100%;
-  border: 1px solid #cbd5e1;
-  border-radius: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 1.25rem;
   isolation: isolate;
   z-index: 0;
-  background: #e2e8f0;
+  background: #f1f5f4;
   font-family: var(--font-sans);
+}
+
+/* El tratamiento neutro afecta solo al fondo: portadas y controles conservan la marca. */
+.cowork-map-basemap {
+  filter: grayscale(1) contrast(.78) brightness(1.13);
 }
 
 .cowork-map-bubble {
   position: relative;
-  width: 64px;
-  height: 64px;
-  border: 4px solid white;
+  width: 48px;
+  height: 48px;
+  border: 3px solid white;
   border-radius: 50%;
-  background: #ccfbf1;
-  box-shadow: 0 3px 12px #0f172a40;
+  background: var(--color-brand-50);
+  box-shadow: 0 1px 5px #134e4a26;
+  transition: border-color 150ms, box-shadow 150ms;
 }
 
 .cowork-map-bubble::after {
   content: '';
   position: absolute;
-  left: 18px;
-  bottom: -14px;
-  border: 10px solid transparent;
-  border-top-color: white;
-  border-bottom: 0;
+  left: 17px;
+  bottom: -11px;
+  width: 8px;
+  height: 8px;
+  border: 2px solid white;
+  border-radius: 50%;
+  background: var(--color-brand-700);
 }
 
 .cowork-map-cover {
@@ -57,26 +65,66 @@ body {
 .cowork-map-marker:hover .cowork-map-bubble,
 .cowork-map-marker:focus-visible .cowork-map-bubble,
 .cowork-map-marker.is-selected .cowork-map-bubble {
-  border-color: #0d9488;
-  box-shadow: 0 0 0 4px #99f6e488, 0 3px 12px #0f172a40;
+  border-color: var(--color-brand-600);
+  box-shadow: 0 0 0 3px #ccfbf180, 0 2px 8px #134e4a26;
 }
 
-.cowork-map-marker.is-selected .cowork-map-bubble::after { border-top-color: #0d9488; }
 .cowork-map-count {
   position: absolute;
-  top: -8px;
-  right: -8px;
-  min-width: 24px;
-  padding: 2px 5px;
+  top: -6px;
+  right: -6px;
+  min-width: 20px;
+  padding: 1px 5px;
   border-radius: 20px;
-  background: #0f766e;
+  background: var(--color-brand-700);
   color: white;
   text-align: center;
   font-weight: 700;
 }
-.cowork-map-entry { padding: 8px 0; min-width: 180px; }
+.cowork-map .leaflet-bar {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px #134e4a0d;
+  overflow: hidden;
+}
+.cowork-map .leaflet-control-zoom { margin: 0 16px 16px 0; }
+.cowork-map .leaflet-bar a {
+  width: 38px;
+  height: 38px;
+  line-height: 38px;
+  border-color: #f1f5f9;
+  background: white;
+  color: var(--color-brand-900);
+  font-family: var(--font-sans);
+  font-size: 22px;
+  font-weight: 400;
+}
+.cowork-map .leaflet-bar a:hover,
+.cowork-map .leaflet-bar a:focus-visible { background: var(--color-brand-50); }
+.cowork-map .leaflet-bar a.leaflet-disabled { color: #94a3b8; }
+.cowork-map .leaflet-popup-content-wrapper {
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px #134e4a14;
+}
+.cowork-map .leaflet-popup-tip { box-shadow: 0 3px 8px #134e4a0d; }
+.cowork-map .leaflet-popup-content { margin: 18px; }
+.cowork-map .leaflet-popup-close-button { top: 5px; right: 5px; color: #64748b; }
+.cowork-map .leaflet-control-attribution { background: #ffffffeb; color: #475569; font-size: 10px; }
+.cowork-map .leaflet-control-attribution a { color: var(--color-brand-700); }
+.cowork-map-entry {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  column-gap: 12px;
+  padding: 8px 0;
+  min-width: 190px;
+}
 .cowork-map-entry + .cowork-map-entry { border-top: 1px solid #e2e8f0; }
-.cowork-map-entry .cowork-map-cover { width: 48px; height: 48px; margin-bottom: 8px; }
+.cowork-map-entry .cowork-map-cover { width: 40px; height: 40px; grid-row: 1 / 4; }
 .cowork-map-entry strong { display: block; font-size: 15px; color: #0f172a; }
-.cowork-map-entry p { margin: 6px 0 10px; color: #475569; }
-.cowork-map-entry a { color: #0f766e; font-weight: 600; }
+.cowork-map-entry p { grid-column: 2; margin: 4px 0 10px; color: #64748b; line-height: 1.5; }
+.cowork-map-entry a { grid-column: 2; color: var(--color-brand-700); font-weight: 600; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cowork-map-bubble { transition: none; }
+}
