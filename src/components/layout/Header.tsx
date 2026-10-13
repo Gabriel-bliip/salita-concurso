@@ -17,6 +17,9 @@ function Header() {
           <NavLink to="/coworks" className={navLinkClass}>
             Coworks
           </NavLink>
+          <NavLink to="/mapa" className={navLinkClass}>
+            Mapa
+          </NavLink>
           <Link to="/#como-funciona" className={navLinkClass({ isActive: false })}>
             Cómo funciona
           </Link>

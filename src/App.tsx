@@ -11,6 +11,7 @@ const router = createBrowserRouter([
     children: [
       { path: '/', element: <HomePage /> },
       { path: '/coworks', element: <CoworksPage /> },
+      { path: '/mapa', lazy: async () => ({ Component: (await import('./pages/MapPage.tsx')).default }) },
       { path: '/coworks/:slug', element: <CoworkDetailPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],

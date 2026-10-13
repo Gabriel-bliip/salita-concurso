@@ -51,6 +51,9 @@ function CoworksPage() {
       <p className="mt-2 text-slate-600">
         Reserva por hora, sin planes ni suscripciones. Filtra por comuna y servicios.
       </p>
+      <Button to={`/mapa?${searchParams.toString()}`} variant="secondary" className="mt-5">
+        Ver ubicaciones en el mapa
+      </Button>
 
       <div className="mt-10 grid gap-8 lg:grid-cols-[18rem_1fr]">
         <aside className="lg:sticky lg:top-24 lg:self-start">

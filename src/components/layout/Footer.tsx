@@ -12,6 +12,9 @@ function Footer() {
           <Link to="/#como-funciona" className="hover:text-slate-900">
             Cómo funciona
           </Link>
+          <Link to="/mapa" className="hover:text-slate-900">
+            Mapa
+          </Link>
         </div>
       </div>
     </footer>
