@@ -59,13 +59,19 @@ function SpaceDetails({ space }: { space: Space }) {
 interface SpaceCardProps {
   space: Space
   bookingUrl: string
+  actionLabel?: string
+  selected?: boolean
 }
 
-function SpaceCard({ space, bookingUrl }: SpaceCardProps) {
+function SpaceCard({ space, bookingUrl, actionLabel = 'Reservar', selected = false }: SpaceCardProps) {
   const Icon = SPACE_TYPE_ICONS[space.type]
 
   return (
-    <article className="flex flex-col gap-4 rounded-card border border-line bg-surface p-5 sm:flex-row sm:items-start">
+    <article
+      className={`flex flex-col gap-4 rounded-card border bg-surface p-5 sm:flex-row sm:items-start ${
+        selected ? 'border-primary ring-2 ring-primary-soft' : 'border-line'
+      }`}
+    >
       <span className="flex size-11 shrink-0 items-center justify-center rounded-control bg-primary-soft text-primary">
         <Icon className="size-5" aria-hidden />
       </span>
@@ -80,8 +86,8 @@ function SpaceCard({ space, bookingUrl }: SpaceCardProps) {
           <span className="text-sm text-ink-muted">por hora</span>
         </p>
         <p className="text-xs text-ink-muted">Mínimo {formatHours(space.minHours)}</p>
-        <Button to={bookingUrl} className="mt-1">
-          Reservar
+        <Button to={bookingUrl} variant={selected ? 'secondary' : 'primary'} className="mt-1">
+          {selected ? 'Seleccionado · Continuar' : actionLabel}
         </Button>
       </div>
     </article>

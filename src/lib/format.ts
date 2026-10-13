@@ -1,4 +1,6 @@
+import type { DateKey } from '../types/booking.ts'
 import type { OpeningHours, Weekday } from '../types/index.ts'
+import { parseDateKey } from './dates.ts'
 
 const clpFormatter = new Intl.NumberFormat('es-CL', {
   style: 'currency',
@@ -41,4 +43,32 @@ export function formatOpeningHours(openingHours: OpeningHours) {
       return `${days} ${formatHour(open)}–${formatHour(close)}`
     })
     .join(' · ')
+}
+
+const longDateFormatter = new Intl.DateTimeFormat('es-CL', {
+  weekday: 'long',
+  day: 'numeric',
+  month: 'long',
+})
+
+// 'miércoles 14 de octubre'
+export function formatDateLong(key: DateKey) {
+  return longDateFormatter.format(parseDateKey(key))
+}
+
+const weekdayFormatter = new Intl.DateTimeFormat('es-CL', { weekday: 'short' })
+const monthFormatter = new Intl.DateTimeFormat('es-CL', { month: 'short' })
+
+// Pieces for a compact date button: { weekday: 'mié', day: 14, month: 'oct' }
+export function formatDateParts(key: DateKey) {
+  const date = parseDateKey(key)
+  return {
+    weekday: weekdayFormatter.format(date).replace('.', ''),
+    day: date.getDate(),
+    month: monthFormatter.format(date).replace('.', ''),
+  }
+}
+
+export function formatTimeRange(startHour: number, endHour: number) {
+  return `${formatHour(startHour)}–${formatHour(endHour)}`
 }

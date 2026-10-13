@@ -14,6 +14,16 @@ export function parseDateKey(key: DateKey) {
   return new Date(year, month - 1, day)
 }
 
+export function addDays(key: DateKey, days: number) {
+  const date = parseDateKey(key)
+  date.setDate(date.getDate() + days)
+  return toDateKey(date)
+}
+
+export function isDateKey(value: string) {
+  return /^\d{4}-\d{2}-\d{2}$/.test(value) && toDateKey(parseDateKey(value)) === value
+}
+
 export function getWeekday(key: DateKey) {
   return parseDateKey(key).getDay() as Weekday
 }

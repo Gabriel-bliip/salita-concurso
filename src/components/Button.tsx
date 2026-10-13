@@ -14,10 +14,18 @@ interface ButtonProps {
   onClick?: () => void
   variant?: Variant
   className?: string
+  disabled?: boolean
 }
 
-function Button({ children, to, onClick, variant = 'primary', className = '' }: ButtonProps) {
-  const classes = `inline-flex items-center justify-center gap-2 rounded-control px-5 py-2.5 text-sm font-semibold transition-colors ${variantClasses[variant]} ${className}`
+function Button({
+  children,
+  to,
+  onClick,
+  variant = 'primary',
+  className = '',
+  disabled = false,
+}: ButtonProps) {
+  const classes = `inline-flex items-center justify-center gap-2 rounded-control px-5 py-2.5 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:bg-sunken disabled:text-ink-muted disabled:ring-0 ${variantClasses[variant]} ${className}`
 
   if (to) {
     return (
@@ -28,7 +36,7 @@ function Button({ children, to, onClick, variant = 'primary', className = '' }: 
   }
 
   return (
-    <button type="button" onClick={onClick} className={classes}>
+    <button type="button" onClick={onClick} disabled={disabled} className={classes}>
       {children}
     </button>
   )
