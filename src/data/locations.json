@@ -875,5 +875,1259 @@
         "capacity": 4
       }
     ]
+  },
+  {
+    "id": "demo-cowork-01",
+    "categoryId": "cowork",
+    "location": {
+      "latitude": -33.4223,
+      "longitude": -70.6088
+    },
+    "slug": "demo-cowork-aurora-leones",
+    "name": "Cowork Aurora Leones",
+    "comuna": "Providencia",
+    "address": "Sector Metro Los Leones, Av. Providencia, Providencia",
+    "description": "Puestos luminosos, zonas silenciosas y una sala pequeña para equipos que necesitan reunirse cerca del metro. Espacio ficticio de demostración, no disponible para reservas reales.",
+    "amenityIds": [
+      "wifi",
+      "coffee",
+      "phone-booth",
+      "printer",
+      "lockers"
+    ],
+    "openingHours": {
+      "0": null,
+      "1": {
+        "open": 8,
+        "close": 20
+      },
+      "2": {
+        "open": 8,
+        "close": 20
+      },
+      "3": {
+        "open": 8,
+        "close": 20
+      },
+      "4": {
+        "open": 8,
+        "close": 20
+      },
+      "5": {
+        "open": 8,
+        "close": 20
+      },
+      "6": {
+        "open": 10,
+        "close": 15
+      }
+    },
+    "rules": [
+      "Mantén las llamadas en zonas habilitadas y respeta el silencio de trabajo.",
+      "Respeta el horario de término de tu reserva.",
+      "Ficha ficticia para pruebas de la plataforma; no representa una oferta real."
+    ],
+    "images": [],
+    "photoCaptions": [],
+    "spaces": [
+      {
+        "id": "demo-cowork-01-unit-1",
+        "type": "coworking",
+        "name": "Escritorio flexible",
+        "description": "Puesto individual con conexión eléctrica.",
+        "pricePerHour": 4900,
+        "minHours": 1,
+        "capacity": 1,
+        "deskCount": 22
+      },
+      {
+        "id": "demo-cowork-01-unit-2",
+        "type": "meeting_room",
+        "name": "Sala Aurora",
+        "description": "Mesa para seis personas, pantalla y pizarra.",
+        "pricePerHour": 17500,
+        "minHours": 1,
+        "capacity": {
+          "min": 2,
+          "max": 6
+        },
+        "equipment": [
+          "screen",
+          "whiteboard"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "demo-cowork-02",
+    "categoryId": "cowork",
+    "location": {
+      "latitude": -33.4402,
+      "longitude": -70.6654
+    },
+    "slug": "demo-hub-plaza-brasil",
+    "name": "Hub Plaza Brasil",
+    "comuna": "Santiago Centro",
+    "address": "Sector Plaza Brasil, calle Brasil, Santiago",
+    "description": "Casa de trabajo colaborativo inspirada en los inmuebles tradicionales del barrio, con escritorios y oficinas privadas. Espacio ficticio de demostración, no disponible para reservas reales.",
+    "amenityIds": [
+      "wifi",
+      "coffee",
+      "bike-parking",
+      "terrace"
+    ],
+    "openingHours": {
+      "0": null,
+      "1": {
+        "open": 8,
+        "close": 20
+      },
+      "2": {
+        "open": 8,
+        "close": 20
+      },
+      "3": {
+        "open": 8,
+        "close": 20
+      },
+      "4": {
+        "open": 8,
+        "close": 20
+      },
+      "5": {
+        "open": 8,
+        "close": 20
+      },
+      "6": {
+        "open": 10,
+        "close": 15
+      }
+    },
+    "rules": [
+      "Mantén las llamadas en zonas habilitadas y respeta el silencio de trabajo.",
+      "Respeta el horario de término de tu reserva.",
+      "Ficha ficticia para pruebas de la plataforma; no representa una oferta real."
+    ],
+    "images": [],
+    "photoCaptions": [],
+    "spaces": [
+      {
+        "id": "demo-cowork-02-unit-1",
+        "type": "coworking",
+        "name": "Mesa compartida",
+        "description": "Espacio flexible para tareas individuales.",
+        "pricePerHour": 3800,
+        "minHours": 1,
+        "capacity": 1,
+        "deskCount": 16
+      },
+      {
+        "id": "demo-cowork-02-unit-2",
+        "type": "office_box",
+        "name": "Oficina Brasil",
+        "description": "Oficina reservable para pequeños equipos.",
+        "pricePerHour": 13500,
+        "minHours": 2,
+        "capacity": 4
+      }
+    ]
+  },
+  {
+    "id": "demo-taller-musica-01",
+    "categoryId": "taller-musica",
+    "location": {
+      "latitude": -33.4564,
+      "longitude": -70.59315
+    },
+    "slug": "demo-clave-sur-nunoa",
+    "name": "Clave Sur Ñuñoa",
+    "comuna": "Ñuñoa",
+    "address": "Sector Plaza Ñuñoa, Av. Irarrázaval, Ñuñoa",
+    "description": "Aula acústicamente acondicionada para talleres de instrumentos y clases colectivas. Espacio ficticio de demostración, no disponible para reservas reales.",
+    "amenityIds": [
+      "wifi",
+      "bike-parking"
+    ],
+    "openingHours": {
+      "0": {
+        "open": 12,
+        "close": 19
+      },
+      "1": {
+        "open": 10,
+        "close": 22
+      },
+      "2": {
+        "open": 10,
+        "close": 22
+      },
+      "3": {
+        "open": 10,
+        "close": 22
+      },
+      "4": {
+        "open": 10,
+        "close": 22
+      },
+      "5": {
+        "open": 10,
+        "close": 22
+      },
+      "6": {
+        "open": 10,
+        "close": 22
+      }
+    },
+    "rules": [
+      "Utiliza los instrumentos y equipos con cuidado; respeta el nivel sonoro autorizado.",
+      "Respeta el horario de término de tu reserva.",
+      "Ficha ficticia para pruebas de la plataforma; no representa una oferta real."
+    ],
+    "images": [],
+    "photoCaptions": [],
+    "spaces": [
+      {
+        "id": "demo-taller-musica-01-unit-1",
+        "type": "meeting_room",
+        "name": "Aula musical Clave Sur",
+        "description": "Sala con atriles, sillas y espacio para práctica guiada.",
+        "pricePerHour": 12000,
+        "minHours": 2,
+        "capacity": {
+          "min": 2,
+          "max": 10
+        },
+        "equipment": []
+      }
+    ]
+  },
+  {
+    "id": "demo-taller-musica-02",
+    "categoryId": "taller-musica",
+    "location": {
+      "latitude": -33.4468,
+      "longitude": -70.6244
+    },
+    "slug": "demo-resonancia-italia",
+    "name": "Resonancia Italia",
+    "comuna": "Providencia",
+    "address": "Sector Barrio Italia, Av. Italia, Providencia",
+    "description": "Taller de exploración musical para pequeños grupos, con espacio para instrumentos de uso compartido. Espacio ficticio de demostración, no disponible para reservas reales.",
+    "amenityIds": [
+      "wifi",
+      "coffee",
+      "terrace"
+    ],
+    "openingHours": {
+      "0": {
+        "open": 12,
+        "close": 19
+      },
+      "1": {
+        "open": 10,
+        "close": 22
+      },
+      "2": {
+        "open": 10,
+        "close": 22
+      },
+      "3": {
+        "open": 10,
+        "close": 22
+      },
+      "4": {
+        "open": 10,
+        "close": 22
+      },
+      "5": {
+        "open": 10,
+        "close": 22
+      },
+      "6": {
+        "open": 10,
+        "close": 22
+      }
+    },
+    "rules": [
+      "Utiliza los instrumentos y equipos con cuidado; respeta el nivel sonoro autorizado.",
+      "Respeta el horario de término de tu reserva.",
+      "Ficha ficticia para pruebas de la plataforma; no representa una oferta real."
+    ],
+    "images": [],
+    "photoCaptions": [],
+    "spaces": [
+      {
+        "id": "demo-taller-musica-02-unit-1",
+        "type": "meeting_room",
+        "name": "Sala Resonancia",
+        "description": "Sala para clases de instrumentos y armonía.",
+        "pricePerHour": 10500,
+        "minHours": 2,
+        "capacity": {
+          "min": 2,
+          "max": 8
+        },
+        "equipment": []
+      }
+    ]
+  },
+  {
+    "id": "demo-taller-arte-01",
+    "categoryId": "taller-arte",
+    "location": {
+      "latitude": -33.4384,
+      "longitude": -70.6413
+    },
+    "slug": "demo-pigmento-lastarria",
+    "name": "Pigmento Lastarria",
+    "comuna": "Santiago Centro",
+    "address": "Sector Barrio Lastarria, calle Merced, Santiago",
+    "description": "Taller con luz natural, mesones amplios y lavaderos para pintura, dibujo y actividades creativas. Espacio ficticio de demostración, no disponible para reservas reales.",
+    "amenityIds": [
+      "wifi",
+      "coffee"
+    ],
+    "openingHours": {
+      "0": {
+        "open": 11,
+        "close": 17
+      },
+      "1": {
+        "open": 10,
+        "close": 20
+      },
+      "2": {
+        "open": 10,
+        "close": 20
+      },
+      "3": {
+        "open": 10,
+        "close": 20
+      },
+      "4": {
+        "open": 10,
+        "close": 20
+      },
+      "5": {
+        "open": 10,
+        "close": 20
+      },
+      "6": {
+        "open": 10,
+        "close": 20
+      }
+    },
+    "rules": [
+      "Protege las superficies y deja limpios los materiales y mesones al terminar.",
+      "Respeta el horario de término de tu reserva.",
+      "Ficha ficticia para pruebas de la plataforma; no representa una oferta real."
+    ],
+    "images": [],
+    "photoCaptions": [],
+    "spaces": [
+      {
+        "id": "demo-taller-arte-01-unit-1",
+        "type": "meeting_room",
+        "name": "Taller Pigmento",
+        "description": "Área de creación equipada con mesas lavables.",
+        "pricePerHour": 9000,
+        "minHours": 2,
+        "capacity": {
+          "min": 2,
+          "max": 12
+        },
+        "equipment": []
+      }
+    ]
+  },
+  {
+    "id": "demo-taller-arte-02",
+    "categoryId": "taller-arte",
+    "location": {
+      "latitude": -33.4553,
+      "longitude": -70.5942
+    },
+    "slug": "demo-lienzo-nunoa",
+    "name": "Lienzo Ñuñoa",
+    "comuna": "Ñuñoa",
+    "address": "Sector Plaza Ñuñoa, calle Dublé Almeyda, Ñuñoa",
+    "description": "Espacio creativo para cerámica básica, grabado y sesiones guiadas en grupos reducidos. Espacio ficticio de demostración, no disponible para reservas reales.",
+    "amenityIds": [
+      "wifi",
+      "bike-parking",
+      "terrace"
+    ],
+    "openingHours": {
+      "0": {
+        "open": 11,
+        "close": 17
+      },
+      "1": {
+        "open": 10,
+        "close": 20
+      },
+      "2": {
+        "open": 10,
+        "close": 20
+      },
+      "3": {
+        "open": 10,
+        "close": 20
+      },
+      "4": {
+        "open": 10,
+        "close": 20
+      },
+      "5": {
+        "open": 10,
+        "close": 20
+      },
+      "6": {
+        "open": 10,
+        "close": 20
+      }
+    },
+    "rules": [
+      "Protege las superficies y deja limpios los materiales y mesones al terminar.",
+      "Respeta el horario de término de tu reserva.",
+      "Ficha ficticia para pruebas de la plataforma; no representa una oferta real."
+    ],
+    "images": [],
+    "photoCaptions": [],
+    "spaces": [
+      {
+        "id": "demo-taller-arte-02-unit-1",
+        "type": "meeting_room",
+        "name": "Sala Taller Lienzo",
+        "description": "Mesones para actividades artísticas y almacenamiento temporal.",
+        "pricePerHour": 11000,
+        "minHours": 2,
+        "capacity": {
+          "min": 2,
+          "max": 10
+        },
+        "equipment": []
+      }
+    ]
+  },
+  {
+    "id": "demo-sala-terapia-01",
+    "categoryId": "sala-terapia",
+    "location": {
+      "latitude": -33.43995,
+      "longitude": -70.61165
+    },
+    "slug": "demo-casa-calma-ines",
+    "name": "Casa Calma Inés",
+    "comuna": "Providencia",
+    "address": "Sector Parque Inés de Suárez, Av. Francisco Bilbao, Providencia",
+    "description": "Consulta privada con ambiente tranquilo, asientos cómodos y aislación de ruido para sesiones individuales. Espacio ficticio de demostración, no disponible para reservas reales.",
+    "amenityIds": [
+      "wifi",
+      "coffee"
+    ],
+    "openingHours": {
+      "0": null,
+      "1": {
+        "open": 9,
+        "close": 20
+      },
+      "2": {
+        "open": 9,
+        "close": 20
+      },
+      "3": {
+        "open": 9,
+        "close": 20
+      },
+      "4": {
+        "open": 9,
+        "close": 20
+      },
+      "5": {
+        "open": 9,
+        "close": 20
+      },
+      "6": {
+        "open": 9,
+        "close": 15
+      }
+    },
+    "rules": [
+      "Respeta la privacidad y los horarios de entrada y salida de cada sesión.",
+      "Respeta el horario de término de tu reserva.",
+      "Ficha ficticia para pruebas de la plataforma; no representa una oferta real."
+    ],
+    "images": [],
+    "photoCaptions": [],
+    "spaces": [
+      {
+        "id": "demo-sala-terapia-01-unit-1",
+        "type": "office_box",
+        "name": "Consulta Calma",
+        "description": "Box privado para atención individual o de pareja.",
+        "pricePerHour": 13000,
+        "minHours": 1,
+        "capacity": 2
+      }
+    ]
+  },
+  {
+    "id": "demo-sala-terapia-02",
+    "categoryId": "sala-terapia",
+    "location": {
+      "latitude": -33.4377,
+      "longitude": -70.65015
+    },
+    "slug": "demo-encuentro-monjitas",
+    "name": "Encuentro Monjitas",
+    "comuna": "Santiago Centro",
+    "address": "Sector Plaza de Armas, calle Monjitas, Santiago",
+    "description": "Sala acogedora para acompañamiento y orientación profesional, con acceso céntrico. Espacio ficticio de demostración, no disponible para reservas reales.",
+    "amenityIds": [
+      "wifi"
+    ],
+    "openingHours": {
+      "0": null,
+      "1": {
+        "open": 9,
+        "close": 20
+      },
+      "2": {
+        "open": 9,
+        "close": 20
+      },
+      "3": {
+        "open": 9,
+        "close": 20
+      },
+      "4": {
+        "open": 9,
+        "close": 20
+      },
+      "5": {
+        "open": 9,
+        "close": 20
+      },
+      "6": {
+        "open": 9,
+        "close": 15
+      }
+    },
+    "rules": [
+      "Respeta la privacidad y los horarios de entrada y salida de cada sesión.",
+      "Respeta el horario de término de tu reserva.",
+      "Ficha ficticia para pruebas de la plataforma; no representa una oferta real."
+    ],
+    "images": [],
+    "photoCaptions": [],
+    "spaces": [
+      {
+        "id": "demo-sala-terapia-02-unit-1",
+        "type": "office_box",
+        "name": "Consulta Encuentro",
+        "description": "Sala privada con zona de conversación.",
+        "pricePerHour": 14000,
+        "minHours": 1,
+        "capacity": 3
+      }
+    ]
+  },
+  {
+    "id": "demo-salon-eventos-01",
+    "categoryId": "salon-eventos",
+    "location": {
+      "latitude": -33.44095,
+      "longitude": -70.6657
+    },
+    "slug": "demo-patio-encuentro-brasil",
+    "name": "Patio Encuentro Brasil",
+    "comuna": "Santiago Centro",
+    "address": "Sector Plaza Brasil, calle Maturana, Santiago",
+    "description": "Patio techado y salón multiuso para encuentros culturales, charlas y celebraciones de tamaño mediano. Espacio ficticio de demostración, no disponible para reservas reales.",
+    "amenityIds": [
+      "wifi",
+      "terrace",
+      "coffee"
+    ],
+    "openingHours": {
+      "0": {
+        "open": 11,
+        "close": 21
+      },
+      "1": {
+        "open": 11,
+        "close": 22
+      },
+      "2": {
+        "open": 11,
+        "close": 22
+      },
+      "3": {
+        "open": 11,
+        "close": 22
+      },
+      "4": {
+        "open": 11,
+        "close": 22
+      },
+      "5": {
+        "open": 11,
+        "close": 24
+      },
+      "6": {
+        "open": 10,
+        "close": 24
+      }
+    },
+    "rules": [
+      "Coordina el montaje y desmontaje dentro del horario contratado.",
+      "Respeta el horario de término de tu reserva.",
+      "Ficha ficticia para pruebas de la plataforma; no representa una oferta real."
+    ],
+    "images": [],
+    "photoCaptions": [],
+    "spaces": [
+      {
+        "id": "demo-salon-eventos-01-unit-1",
+        "type": "meeting_room",
+        "name": "Salón Patio Brasil",
+        "description": "Área adaptable para eventos de hasta setenta asistentes.",
+        "pricePerHour": 45000,
+        "minHours": 3,
+        "capacity": {
+          "min": 20,
+          "max": 70
+        },
+        "equipment": []
+      }
+    ]
+  },
+  {
+    "id": "demo-salon-eventos-02",
+    "categoryId": "salon-eventos",
+    "location": {
+      "latitude": -33.4481,
+      "longitude": -70.6249
+    },
+    "slug": "demo-galeria-eventos-italia",
+    "name": "Galería Eventos Italia",
+    "comuna": "Providencia",
+    "address": "Sector Barrio Italia, Av. Italia, Providencia",
+    "description": "Salón de estilo industrial para lanzamientos, exposiciones y jornadas de networking. Espacio ficticio de demostración, no disponible para reservas reales.",
+    "amenityIds": [
+      "wifi",
+      "terrace",
+      "bike-parking"
+    ],
+    "openingHours": {
+      "0": {
+        "open": 11,
+        "close": 21
+      },
+      "1": {
+        "open": 11,
+        "close": 22
+      },
+      "2": {
+        "open": 11,
+        "close": 22
+      },
+      "3": {
+        "open": 11,
+        "close": 22
+      },
+      "4": {
+        "open": 11,
+        "close": 22
+      },
+      "5": {
+        "open": 11,
+        "close": 24
+      },
+      "6": {
+        "open": 10,
+        "close": 24
+      }
+    },
+    "rules": [
+      "Coordina el montaje y desmontaje dentro del horario contratado.",
+      "Respeta el horario de término de tu reserva.",
+      "Ficha ficticia para pruebas de la plataforma; no representa una oferta real."
+    ],
+    "images": [],
+    "photoCaptions": [],
+    "spaces": [
+      {
+        "id": "demo-salon-eventos-02-unit-1",
+        "type": "meeting_room",
+        "name": "Salón Galería",
+        "description": "Salón flexible para presentaciones y encuentros.",
+        "pricePerHour": 65000,
+        "minHours": 4,
+        "capacity": {
+          "min": 20,
+          "max": 90
+        },
+        "equipment": [
+          "screen"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "demo-sala-reuniones-01",
+    "categoryId": "sala-reuniones",
+    "location": {
+      "latitude": -33.42165,
+      "longitude": -70.60825
+    },
+    "slug": "demo-punto-leones",
+    "name": "Punto Leones",
+    "comuna": "Providencia",
+    "address": "Sector Metro Los Leones, calle Nueva Providencia, Providencia",
+    "description": "Sala ejecutiva reservable por horas con buena conectividad y equipamiento para reuniones híbridas. Espacio ficticio de demostración, no disponible para reservas reales.",
+    "amenityIds": [
+      "wifi",
+      "coffee",
+      "printer"
+    ],
+    "openingHours": {
+      "0": null,
+      "1": {
+        "open": 8,
+        "close": 20
+      },
+      "2": {
+        "open": 8,
+        "close": 20
+      },
+      "3": {
+        "open": 8,
+        "close": 20
+      },
+      "4": {
+        "open": 8,
+        "close": 20
+      },
+      "5": {
+        "open": 8,
+        "close": 20
+      },
+      "6": {
+        "open": 9,
+        "close": 15
+      }
+    },
+    "rules": [
+      "Apaga los equipos y deja ordenada la sala al finalizar.",
+      "Respeta el horario de término de tu reserva.",
+      "Ficha ficticia para pruebas de la plataforma; no representa una oferta real."
+    ],
+    "images": [],
+    "photoCaptions": [],
+    "spaces": [
+      {
+        "id": "demo-sala-reuniones-01-unit-1",
+        "type": "meeting_room",
+        "name": "Sala Punto Leones",
+        "description": "Mesa para ocho, pantalla y sistema de videollamada.",
+        "pricePerHour": 19000,
+        "minHours": 1,
+        "capacity": {
+          "min": 2,
+          "max": 8
+        },
+        "equipment": [
+          "screen",
+          "video_call",
+          "whiteboard"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "demo-sala-reuniones-02",
+    "categoryId": "sala-reuniones",
+    "location": {
+      "latitude": -33.43755,
+      "longitude": -70.65
+    },
+    "slug": "demo-mesa-centro",
+    "name": "Mesa Centro",
+    "comuna": "Santiago Centro",
+    "address": "Sector Plaza de Armas, calle Catedral, Santiago",
+    "description": "Sala compacta para entrevistas, reuniones de coordinación y sesiones de trabajo en equipo. Espacio ficticio de demostración, no disponible para reservas reales.",
+    "amenityIds": [
+      "wifi",
+      "coffee"
+    ],
+    "openingHours": {
+      "0": null,
+      "1": {
+        "open": 8,
+        "close": 20
+      },
+      "2": {
+        "open": 8,
+        "close": 20
+      },
+      "3": {
+        "open": 8,
+        "close": 20
+      },
+      "4": {
+        "open": 8,
+        "close": 20
+      },
+      "5": {
+        "open": 8,
+        "close": 20
+      },
+      "6": {
+        "open": 9,
+        "close": 15
+      }
+    },
+    "rules": [
+      "Apaga los equipos y deja ordenada la sala al finalizar.",
+      "Respeta el horario de término de tu reserva.",
+      "Ficha ficticia para pruebas de la plataforma; no representa una oferta real."
+    ],
+    "images": [],
+    "photoCaptions": [],
+    "spaces": [
+      {
+        "id": "demo-sala-reuniones-02-unit-1",
+        "type": "meeting_room",
+        "name": "Sala Mesa Centro",
+        "description": "Espacio con mesa redonda y pantalla.",
+        "pricePerHour": 14000,
+        "minHours": 1,
+        "capacity": {
+          "min": 2,
+          "max": 6
+        },
+        "equipment": [
+          "screen",
+          "whiteboard"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "demo-estudio-fotografico-01",
+    "categoryId": "estudio-fotografico",
+    "location": {
+      "latitude": -33.4381,
+      "longitude": -70.64035
+    },
+    "slug": "demo-luz-lastarria",
+    "name": "Luz Lastarria",
+    "comuna": "Santiago Centro",
+    "address": "Sector Barrio Lastarria, calle José Ramón Gutiérrez, Santiago",
+    "description": "Estudio con fondos neutros y zona adaptable para retratos, catálogos y fotografías de producto. Espacio ficticio de demostración, no disponible para reservas reales.",
+    "amenityIds": [
+      "wifi",
+      "coffee"
+    ],
+    "openingHours": {
+      "0": {
+        "open": 10,
+        "close": 16
+      },
+      "1": {
+        "open": 9,
+        "close": 20
+      },
+      "2": {
+        "open": 9,
+        "close": 20
+      },
+      "3": {
+        "open": 9,
+        "close": 20
+      },
+      "4": {
+        "open": 9,
+        "close": 20
+      },
+      "5": {
+        "open": 9,
+        "close": 20
+      },
+      "6": {
+        "open": 9,
+        "close": 20
+      }
+    },
+    "rules": [
+      "No muevas iluminación ni fondos sin autorización del responsable del recinto.",
+      "Respeta el horario de término de tu reserva.",
+      "Ficha ficticia para pruebas de la plataforma; no representa una oferta real."
+    ],
+    "images": [],
+    "photoCaptions": [],
+    "spaces": [
+      {
+        "id": "demo-estudio-fotografico-01-unit-1",
+        "type": "meeting_room",
+        "name": "Estudio Luz",
+        "description": "Área de sesiones con fondos móviles y espacio de preparación.",
+        "pricePerHour": 16000,
+        "minHours": 2,
+        "capacity": {
+          "min": 1,
+          "max": 6
+        },
+        "equipment": []
+      }
+    ]
+  },
+  {
+    "id": "demo-estudio-fotografico-02",
+    "categoryId": "estudio-fotografico",
+    "location": {
+      "latitude": -33.4478,
+      "longitude": -70.62375
+    },
+    "slug": "demo-contraluz-italia",
+    "name": "Contraluz Italia",
+    "comuna": "Providencia",
+    "address": "Sector Barrio Italia, Av. Italia, Providencia",
+    "description": "Estudio creativo amplio, con iluminación controlada y espacio para proyectos de contenido audiovisual. Espacio ficticio de demostración, no disponible para reservas reales.",
+    "amenityIds": [
+      "wifi",
+      "bike-parking"
+    ],
+    "openingHours": {
+      "0": {
+        "open": 10,
+        "close": 16
+      },
+      "1": {
+        "open": 9,
+        "close": 20
+      },
+      "2": {
+        "open": 9,
+        "close": 20
+      },
+      "3": {
+        "open": 9,
+        "close": 20
+      },
+      "4": {
+        "open": 9,
+        "close": 20
+      },
+      "5": {
+        "open": 9,
+        "close": 20
+      },
+      "6": {
+        "open": 9,
+        "close": 20
+      }
+    },
+    "rules": [
+      "No muevas iluminación ni fondos sin autorización del responsable del recinto.",
+      "Respeta el horario de término de tu reserva.",
+      "Ficha ficticia para pruebas de la plataforma; no representa una oferta real."
+    ],
+    "images": [],
+    "photoCaptions": [],
+    "spaces": [
+      {
+        "id": "demo-estudio-fotografico-02-unit-1",
+        "type": "meeting_room",
+        "name": "Set Contraluz",
+        "description": "Set diáfano para fotografía editorial y comercial.",
+        "pricePerHour": 22000,
+        "minHours": 2,
+        "capacity": {
+          "min": 1,
+          "max": 10
+        },
+        "equipment": []
+      }
+    ]
+  },
+  {
+    "id": "demo-sala-ensayo-01",
+    "categoryId": "sala-ensayo",
+    "location": {
+      "latitude": -33.45595,
+      "longitude": -70.59455
+    },
+    "slug": "demo-pulso-nunoa",
+    "name": "Pulso Ñuñoa",
+    "comuna": "Ñuñoa",
+    "address": "Sector Plaza Ñuñoa, Av. Irarrázaval, Ñuñoa",
+    "description": "Sala de práctica musical para bandas pequeñas, con tratamiento acústico y espacio para instrumentos. Espacio ficticio de demostración, no disponible para reservas reales.",
+    "amenityIds": [
+      "wifi",
+      "bike-parking"
+    ],
+    "openingHours": {
+      "0": {
+        "open": 12,
+        "close": 19
+      },
+      "1": {
+        "open": 10,
+        "close": 22
+      },
+      "2": {
+        "open": 10,
+        "close": 22
+      },
+      "3": {
+        "open": 10,
+        "close": 22
+      },
+      "4": {
+        "open": 10,
+        "close": 22
+      },
+      "5": {
+        "open": 10,
+        "close": 22
+      },
+      "6": {
+        "open": 10,
+        "close": 22
+      }
+    },
+    "rules": [
+      "Respeta los horarios y cuida el equipamiento acústico y musical.",
+      "Respeta el horario de término de tu reserva.",
+      "Ficha ficticia para pruebas de la plataforma; no representa una oferta real."
+    ],
+    "images": [],
+    "photoCaptions": [],
+    "spaces": [
+      {
+        "id": "demo-sala-ensayo-01-unit-1",
+        "type": "meeting_room",
+        "name": "Sala Pulso",
+        "description": "Recinto aislado para ensayo grupal.",
+        "pricePerHour": 15000,
+        "minHours": 2,
+        "capacity": {
+          "min": 2,
+          "max": 6
+        },
+        "equipment": []
+      }
+    ]
+  },
+  {
+    "id": "demo-sala-ensayo-02",
+    "categoryId": "sala-ensayo",
+    "location": {
+      "latitude": -33.4399,
+      "longitude": -70.6664
+    },
+    "slug": "demo-bunker-brasil",
+    "name": "Búnker Brasil",
+    "comuna": "Santiago Centro",
+    "address": "Sector Plaza Brasil, calle Compañía, Santiago",
+    "description": "Sala acondicionada para ensayos de música amplificada, con horarios extendidos y acceso céntrico. Espacio ficticio de demostración, no disponible para reservas reales.",
+    "amenityIds": [
+      "wifi",
+      "coffee"
+    ],
+    "openingHours": {
+      "0": {
+        "open": 12,
+        "close": 19
+      },
+      "1": {
+        "open": 10,
+        "close": 22
+      },
+      "2": {
+        "open": 10,
+        "close": 22
+      },
+      "3": {
+        "open": 10,
+        "close": 22
+      },
+      "4": {
+        "open": 10,
+        "close": 22
+      },
+      "5": {
+        "open": 10,
+        "close": 22
+      },
+      "6": {
+        "open": 10,
+        "close": 22
+      }
+    },
+    "rules": [
+      "Respeta los horarios y cuida el equipamiento acústico y musical.",
+      "Respeta el horario de término de tu reserva.",
+      "Ficha ficticia para pruebas de la plataforma; no representa una oferta real."
+    ],
+    "images": [],
+    "photoCaptions": [],
+    "spaces": [
+      {
+        "id": "demo-sala-ensayo-02-unit-1",
+        "type": "meeting_room",
+        "name": "Sala Búnker",
+        "description": "Recinto de ensayo con espacio para hasta cinco músicos.",
+        "pricePerHour": 13500,
+        "minHours": 2,
+        "capacity": {
+          "min": 2,
+          "max": 5
+        },
+        "equipment": []
+      }
+    ]
+  },
+  {
+    "id": "demo-aula-formacion-01",
+    "categoryId": "aula-formacion",
+    "location": {
+      "latitude": -33.44065,
+      "longitude": -70.61105
+    },
+    "slug": "demo-aula-parque-ines",
+    "name": "Aula Parque Inés",
+    "comuna": "Providencia",
+    "address": "Sector Parque Inés de Suárez, Av. Antonio Varas, Providencia",
+    "description": "Aula adaptable para capacitaciones presenciales, cursos breves y talleres de desarrollo profesional. Espacio ficticio de demostración, no disponible para reservas reales.",
+    "amenityIds": [
+      "wifi",
+      "coffee",
+      "printer"
+    ],
+    "openingHours": {
+      "0": null,
+      "1": {
+        "open": 9,
+        "close": 20
+      },
+      "2": {
+        "open": 9,
+        "close": 20
+      },
+      "3": {
+        "open": 9,
+        "close": 20
+      },
+      "4": {
+        "open": 9,
+        "close": 20
+      },
+      "5": {
+        "open": 9,
+        "close": 20
+      },
+      "6": {
+        "open": 9,
+        "close": 17
+      }
+    },
+    "rules": [
+      "Deja ordenadas las mesas y comprueba que los equipos audiovisuales queden apagados.",
+      "Respeta el horario de término de tu reserva.",
+      "Ficha ficticia para pruebas de la plataforma; no representa una oferta real."
+    ],
+    "images": [],
+    "photoCaptions": [],
+    "spaces": [
+      {
+        "id": "demo-aula-formacion-01-unit-1",
+        "type": "meeting_room",
+        "name": "Aula Parque",
+        "description": "Sala con disposición flexible de mesas y proyector.",
+        "pricePerHour": 25000,
+        "minHours": 2,
+        "capacity": {
+          "min": 6,
+          "max": 25
+        },
+        "equipment": [
+          "screen",
+          "whiteboard"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "demo-aula-formacion-02",
+    "categoryId": "aula-formacion",
+    "location": {
+      "latitude": -33.43865,
+      "longitude": -70.64055
+    },
+    "slug": "demo-academia-lastarria",
+    "name": "Academia Lastarria",
+    "comuna": "Santiago Centro",
+    "address": "Sector Barrio Lastarria, calle Rosal, Santiago",
+    "description": "Sala formativa para grupos pequeños con buena accesibilidad y apoyo audiovisual. Espacio ficticio de demostración, no disponible para reservas reales.",
+    "amenityIds": [
+      "wifi",
+      "coffee"
+    ],
+    "openingHours": {
+      "0": null,
+      "1": {
+        "open": 9,
+        "close": 20
+      },
+      "2": {
+        "open": 9,
+        "close": 20
+      },
+      "3": {
+        "open": 9,
+        "close": 20
+      },
+      "4": {
+        "open": 9,
+        "close": 20
+      },
+      "5": {
+        "open": 9,
+        "close": 20
+      },
+      "6": {
+        "open": 9,
+        "close": 17
+      }
+    },
+    "rules": [
+      "Deja ordenadas las mesas y comprueba que los equipos audiovisuales queden apagados.",
+      "Respeta el horario de término de tu reserva.",
+      "Ficha ficticia para pruebas de la plataforma; no representa una oferta real."
+    ],
+    "images": [],
+    "photoCaptions": [],
+    "spaces": [
+      {
+        "id": "demo-aula-formacion-02-unit-1",
+        "type": "meeting_room",
+        "name": "Aula Academia",
+        "description": "Espacio para cursos, prácticas y presentaciones.",
+        "pricePerHour": 19000,
+        "minHours": 2,
+        "capacity": {
+          "min": 4,
+          "max": 18
+        },
+        "equipment": [
+          "screen",
+          "whiteboard"
+        ]
+      }
+    ]
   }
 ]
