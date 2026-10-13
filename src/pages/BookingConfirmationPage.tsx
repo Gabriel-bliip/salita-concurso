@@ -3,7 +3,7 @@ import { Link, useParams, useSearchParams } from 'react-router'
 import Button from '../components/Button.tsx'
 import BookingDetails from '../components/booking/BookingDetails.tsx'
 import PriceBreakdown from '../components/booking/PriceBreakdown.tsx'
-import { COWORKS } from '../data/coworks.ts'
+import { LOCATIONS } from '../data/coworks.ts'
 import { buildBooking, parseBookingParams } from '../lib/booking.ts'
 import { calculateBookingPrice } from '../lib/pricing.ts'
 import NotFoundPage from './NotFoundPage.tsx'
@@ -12,7 +12,7 @@ function BookingConfirmationPage() {
   const { slug } = useParams()
   const [searchParams] = useSearchParams()
 
-  const cowork = COWORKS.find((item) => item.slug === slug)
+  const cowork = LOCATIONS.find((item) => item.slug === slug)
   if (!cowork) {
     return <NotFoundPage message="Este cowork no existe o ya no forma parte de la red." />
   }
@@ -83,7 +83,7 @@ function BookingConfirmationPage() {
           ))}
         </ul>
         <Link
-          to={`/mapa?cowork=${cowork.slug}`}
+          to={`/espacios/${cowork.categoryId}/mapa?cowork=${cowork.slug}`}
           className="mt-4 inline-block text-sm font-semibold text-primary hover:text-primary-hover"
         >
           Ver cómo llegar en el mapa →
@@ -91,7 +91,7 @@ function BookingConfirmationPage() {
       </section>
 
       <div className="mt-8 flex flex-wrap justify-center gap-4">
-        <Button to="/coworks">Explorar otros coworks</Button>
+        <Button to={`/espacios/${cowork.categoryId}`}>Explorar otros espacios</Button>
         <Button to="/" variant="secondary">
           Volver al inicio
         </Button>

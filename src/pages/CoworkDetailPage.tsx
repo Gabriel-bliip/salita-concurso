@@ -5,7 +5,8 @@ import Button from '../components/Button.tsx'
 import CoworkCard from '../components/CoworkCard.tsx'
 import CoworkGallery from '../components/CoworkGallery.tsx'
 import SpaceCard from '../components/SpaceCard.tsx'
-import { COWORKS } from '../data/coworks.ts'
+import { LOCATIONS } from '../data/coworks.ts'
+import { getCategory } from '../data/categories.ts'
 import { formatClp, formatOpeningHours } from '../lib/format.ts'
 import { getLowestPrice, SPACE_TYPE_PLURAL_LABELS, SPACE_TYPES } from '../lib/spaces.ts'
 import NotFoundPage from './NotFoundPage.tsx'
@@ -40,13 +41,14 @@ function BookingPanel({ lowestPrice, openingHours, bookingUrl }: { lowestPrice: 
 
 function CoworkDetailPage() {
   const { slug } = useParams()
-  const cowork = COWORKS.find((item) => item.slug === slug)
+  const cowork = LOCATIONS.find((item) => item.slug === slug)
 
   if (!cowork) {
-    return <NotFoundPage message="Este cowork no existe o ya no forma parte de la red." />
+    return <NotFoundPage message="Esta ubicación no existe o ya no forma parte de la red." />
   }
 
   const bookingUrl = `/reservar/${cowork.slug}`
+  const category = getCategory(cowork.categoryId)
   const lowestPrice = getLowestPrice(cowork.spaces)
   const spaceGroups = SPACE_TYPES.map((type) => ({
     type,
@@ -54,18 +56,18 @@ function CoworkDetailPage() {
   })).filter((group) => group.spaces.length > 0)
 
   // Same comuna first, then the rest of the network.
-  const relatedCoworks = COWORKS.filter((item) => item.id !== cowork.id)
+  const relatedCoworks = LOCATIONS.filter((item) => item.categoryId === cowork.categoryId && item.id !== cowork.id)
     .sort((a, b) => Number(b.comuna === cowork.comuna) - Number(a.comuna === cowork.comuna))
     .slice(0, MAX_RELATED_COWORKS)
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
       <Link
-        to="/coworks"
+        to={`/espacios/${cowork.categoryId}`}
         className="inline-flex items-center gap-1 text-sm font-medium text-ink-muted hover:text-primary"
       >
         <ArrowLeft className="size-4" aria-hidden />
-        Volver a coworks
+        Volver a {category?.name ?? 'espacios'}
       </Link>
 
       <div className="mt-6">
@@ -80,16 +82,16 @@ function CoworkDetailPage() {
             {cowork.address} · {cowork.comuna}
           </p>
           <p className="mt-6 text-lg leading-relaxed text-ink">{cowork.description}</p>
-          <div className="mt-6 flex flex-col gap-4 rounded-card border border-line bg-surface p-5 lg:hidden">
+          {cowork.spaces.length > 0 && <div className="mt-6 flex flex-col gap-4 rounded-card border border-line bg-surface p-5 lg:hidden">
             <BookingPanel lowestPrice={lowestPrice} openingHours={formatOpeningHours(cowork.openingHours)} bookingUrl={bookingUrl} />
-          </div>
+          </div>}
 
           <section className="mt-12" aria-labelledby="espacios">
             <h2 id="espacios" className="text-2xl font-bold tracking-tight text-ink">
               Espacios para reservar
             </h2>
             <p className="mt-1 text-sm text-ink-muted">
-              Precio por hora. Pagas solo las horas que reservas.
+              {cowork.spaces.length > 0 ? 'Precio por hora. Pagas solo las horas que reservas.' : 'Esta ubicación aún no tiene espacios disponibles para reservar.'}
             </p>
             {spaceGroups.map(({ type, spaces }) => (
               <div key={type} className="mt-6">
@@ -135,25 +137,25 @@ function CoworkDetailPage() {
               Ubicación
             </h2>
             <p className="mt-1 text-sm text-ink-muted">{cowork.address}</p>
-            <Link to={`/mapa?cowork=${cowork.slug}`} className="mt-3 inline-flex items-center gap-2 font-medium text-primary hover:underline">
+            <Link to={`/espacios/${cowork.categoryId}/mapa?cowork=${cowork.slug}`} className="mt-3 inline-flex items-center gap-2 font-medium text-primary hover:underline">
               <MapPin className="size-4" aria-hidden /> Ver ubicación en el mapa
             </Link>
           </section>
         </div>
 
-        <aside className="hidden flex-col gap-5 self-start rounded-card border border-line bg-surface p-6 lg:sticky lg:top-24 lg:flex">
+        {cowork.spaces.length > 0 && <aside className="hidden flex-col gap-5 self-start rounded-card border border-line bg-surface p-6 lg:sticky lg:top-24 lg:flex">
           <BookingPanel lowestPrice={lowestPrice} openingHours={formatOpeningHours(cowork.openingHours)} bookingUrl={bookingUrl} />
-        </aside>
+        </aside>}
       </div>
 
-      <section className="mt-20">
-        <h2 className="text-2xl font-bold tracking-tight text-ink">Otros coworks</h2>
+      {relatedCoworks.length > 0 && <section className="mt-20">
+        <h2 className="text-2xl font-bold tracking-tight text-ink">Otras ubicaciones de {category?.name ?? 'esta categoría'}</h2>
         <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {relatedCoworks.map((item) => (
             <CoworkCard key={item.id} cowork={item} />
           ))}
         </div>
-      </section>
+      </section>}
     </div>
   )
 }

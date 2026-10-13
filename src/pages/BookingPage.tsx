@@ -11,7 +11,7 @@ import PeopleInput from '../components/booking/PeopleInput.tsx'
 import PriceBreakdown from '../components/booking/PriceBreakdown.tsx'
 import TimeSlotPicker from '../components/booking/TimeSlotPicker.tsx'
 import SpaceCard from '../components/SpaceCard.tsx'
-import { COWORKS } from '../data/coworks.ts'
+import { LOCATIONS } from '../data/coworks.ts'
 import { getTimeSlots } from '../lib/availability.ts'
 import type { BookingSelection, BookingStep } from '../lib/booking.ts'
 import {
@@ -46,7 +46,7 @@ function BookingPage() {
   // Fixed for the whole visit so "past" slots don't shift while the user is choosing.
   const [now] = useState(() => new Date())
 
-  const cowork = COWORKS.find((item) => item.slug === slug)
+  const cowork = LOCATIONS.find((item) => item.slug === slug)
   if (!cowork) {
     return <NotFoundPage message="Este cowork no existe o ya no forma parte de la red." />
   }
@@ -127,7 +127,7 @@ function BookingPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
       <Link
-        to={`/coworks/${cowork.slug}`}
+        to={`/ubicaciones/${cowork.slug}`}
         className="inline-flex items-center gap-1 text-sm font-medium text-ink-muted hover:text-primary"
       >
         <ArrowLeft className="size-4" aria-hidden />

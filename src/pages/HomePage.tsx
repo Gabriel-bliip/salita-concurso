@@ -50,8 +50,8 @@ function HomePage() {
             reunión. Pagas solo las horas que reservas.
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
-            <Button to="/coworks">
-              Explorar coworks
+            <Button to="/espacios">
+              Explorar espacios
               <ArrowRight className="size-4" aria-hidden />
             </Button>
             <Button to="/#como-funciona" variant="secondary">

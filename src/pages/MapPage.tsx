@@ -1,19 +1,17 @@
-import { useCallback, useMemo } from 'react'
-import { Link, useSearchParams } from 'react-router'
-import { MapPin, SearchX } from 'lucide-react'
+import { useCallback } from 'react'
+import { Link } from 'react-router'
+import { MapPin } from 'lucide-react'
+import CategoryBackLink from '../components/CategoryBackLink.tsx'
+import ExplorationEmptyState from '../components/ExplorationEmptyState.tsx'
 import CoworkMap from '../components/CoworkMap.tsx'
 import CoworkFilters from '../components/CoworkFilters.tsx'
-import { COWORKS } from '../data/coworks.ts'
-import type { CoworkFilterState } from '../lib/coworkFilters.ts'
-import { EMPTY_FILTERS, filterCoworks, filtersToParams, parseFilters } from '../lib/coworkFilters.ts'
+import { EMPTY_FILTERS } from '../lib/coworkFilters.ts'
+import { useCategoryExploration } from '../lib/useCategoryExploration.ts'
 import { MAP_CONFIG } from '../lib/mapConfig.ts'
+import NotFoundPage from './NotFoundPage.tsx'
 
 function MapPage() {
-  const [params, setParams] = useSearchParams()
-  const filters = parseFilters(params)
-  // Keyed by the normalized filter string so the map only rebuilds markers when filters change.
-  const filterKey = filtersToParams(filters).toString()
-  const coworkers = useMemo(() => filterCoworks(COWORKS, parseFilters(new URLSearchParams(filterKey))).map(({ cowork }) => cowork), [filterKey])
+  const { category, filters, filterKey, locations: coworkers, hasLocations, updateFilters, params, setParams } = useCategoryExploration()
   const selectedSlug = coworkers.find((cowork) => cowork.slug === params.get('cowork'))?.slug ?? null
   const onSelect = useCallback((slug: string) => {
     setParams((previous) => {
@@ -23,30 +21,27 @@ function MapPage() {
     }, { replace: true })
   }, [setParams])
 
-  const updateFilters = (next: CoworkFilterState) => setParams(filtersToParams(next), { replace: true })
+  if (!category) return <NotFoundPage message="Esta categoría no existe." />
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+      <CategoryBackLink />
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="mb-2 text-sm font-semibold text-primary">Ubicaciones</p>
-          <h1 className="text-3xl font-bold tracking-tight text-ink sm:text-4xl">Encuentra tu cowork en el mapa</h1>
+          <p className="mb-2 text-sm font-semibold text-primary">{category.name}</p>
+          <h1 className="text-3xl font-bold tracking-tight text-ink sm:text-4xl">Encuentra tu espacio en el mapa</h1>
           <p className="mt-3 text-ink-muted">Explora Santiago y toca una burbuja para conocer el espacio.</p>
         </div>
-        <Link to={`/coworks?${filterKey}`} className="text-sm font-semibold text-primary hover:underline">Ver listado de coworks →</Link>
+        <Link to={`/espacios/${category.id}?${filterKey}`} className="text-sm font-semibold text-primary hover:underline">Ver listado de ubicaciones →</Link>
       </div>
       <div className="mt-8 grid gap-6 lg:grid-cols-[18rem_1fr]">
         <aside>
-          <CoworkFilters filters={filters} onChange={updateFilters} />
+          <CoworkFilters category={category} filters={filters} onChange={updateFilters} />
         </aside>
         <section className="min-w-0">
           <p className="mb-3 text-sm text-ink-muted" aria-live="polite">{coworkers.length} {coworkers.length === 1 ? 'ubicación encontrada' : 'ubicaciones encontradas'}</p>
           {coworkers.length > 0 ? <CoworkMap coworkers={coworkers} selectedSlug={selectedSlug} onSelect={onSelect} /> : (
-            <div className="flex min-h-72 flex-col items-center justify-center rounded-card border border-dashed border-line-strong p-6 text-center">
-              <SearchX className="size-10 text-ink-muted" aria-hidden />
-              <p className="mt-4 font-semibold">No hay coworks con esos filtros</p>
-              <button onClick={() => updateFilters(EMPTY_FILTERS)} className="mt-4 text-primary underline">Limpiar filtros</button>
-            </div>
+            <ExplorationEmptyState category={category} hasLocations={hasLocations} onClear={() => updateFilters(EMPTY_FILTERS)} />
           )}
           <div className="mt-5 grid gap-3 sm:grid-cols-2" aria-label="Lugares del mapa">
             {coworkers.map((cowork) => (
@@ -57,7 +52,7 @@ function MapPage() {
                 </button>
                 <div className="mt-3 flex items-center justify-between gap-2 text-xs text-primary">
                   <span className="flex items-center gap-1"><MapPin className="size-3" aria-hidden />{cowork.comuna}</span>
-                  <Link to={`/coworks/${cowork.slug}`} className="font-semibold hover:underline">Ver cowork →</Link>
+                  <Link to={`/ubicaciones/${cowork.slug}`} className="font-semibold hover:underline">Ver espacio →</Link>
                 </div>
               </article>
             ))}

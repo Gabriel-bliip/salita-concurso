@@ -105,8 +105,8 @@ function CoworkMap({ coworkers, selectedSlug, onSelect }: CoworkMapProps) {
       const address = document.createElement('p')
       address.textContent = cowork.address
       const link = document.createElement('a')
-      link.href = `/coworks/${cowork.slug}`
-      link.textContent = 'Ver cowork →'
+      link.href = `/ubicaciones/${cowork.slug}`
+      link.textContent = 'Ver espacio →'
       entry.append(cover(cowork), title, address, link)
       popup.append(entry)
       const marker = L.marker([cowork.location.latitude, cowork.location.longitude], {
@@ -154,7 +154,7 @@ function CoworkMap({ coworkers, selectedSlug, onSelect }: CoworkMapProps) {
 
   return (
     <div>
-      <div ref={container} className="cowork-map" role="region" aria-label="Mapa de ubicaciones de coworks" />
+      <div ref={container} className="cowork-map" role="region" aria-label="Mapa de ubicaciones" />
       {tileError && <p role="status" className="mt-2 text-sm text-danger">No se pudo cargar parte del mapa. Revisa tu conexión; puedes seguir consultando los lugares en la lista.</p>}
     </div>
   )
