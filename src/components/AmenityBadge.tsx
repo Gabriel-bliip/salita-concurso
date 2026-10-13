@@ -8,7 +8,6 @@ import {
   Printer,
   SquareParking,
   Sun,
-  Users,
   Wifi,
 } from 'lucide-react'
 import { AMENITY_LABELS } from '../data/amenities.ts'
@@ -17,7 +16,6 @@ import type { AmenityId } from '../types/index.ts'
 const AMENITY_ICONS: Record<AmenityId, LucideIcon> = {
   wifi: Wifi,
   coffee: Coffee,
-  'meeting-room': Users,
   'phone-booth': Phone,
   parking: SquareParking,
   'bike-parking': Bike,

@@ -11,7 +11,6 @@ export type Comuna =
 export type AmenityId =
   | 'wifi'
   | 'coffee'
-  | 'meeting-room'
   | 'phone-booth'
   | 'parking'
   | 'bike-parking'

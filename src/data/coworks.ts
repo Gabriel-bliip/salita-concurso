@@ -38,7 +38,7 @@ const coworkEntries: Parameters<typeof withLocation>[0][] = [
     address: 'José Victorino Lastarria 120, Santiago',
     description:
       'Una casona restaurada en pleno barrio Lastarria, con techos altos, luz natural y un patio interior para tomar un respiro entre reuniones.',
-    amenityIds: ['wifi', 'coffee', 'meeting-room', 'phone-booth', 'bike-parking', 'terrace'],
+    amenityIds: ['wifi', 'coffee', 'phone-booth', 'bike-parking', 'terrace'],
     openingHours: schedule(8, 20, [10, 14]),
     rules: [...BASE_RULES],
     images: [],
@@ -85,7 +85,7 @@ const coworkEntries: Parameters<typeof withLocation>[0][] = [
     address: 'Agustinas 1050, piso 9, Santiago',
     description:
       'Oficina en altura a pasos de metro La Moneda. Silencioso, con escritorios ergonómicos y vista a la cordillera.',
-    amenityIds: ['wifi', 'coffee', 'meeting-room', 'printer', 'lockers'],
+    amenityIds: ['wifi', 'coffee', 'printer', 'lockers'],
     openingHours: schedule(8, 21),
     rules: [...BASE_RULES, 'Acceso al edificio con tu código de reserva en recepción.'],
     images: [],
@@ -188,7 +188,7 @@ const coworkEntries: Parameters<typeof withLocation>[0][] = [
     address: 'Av. Pocuro 2200, piso 4, Providencia',
     description:
       'Coworking moderno cerca de metro Pedro de Valdivia, con salas de reuniones equipadas y zonas de concentración.',
-    amenityIds: ['wifi', 'coffee', 'meeting-room', 'phone-booth', 'parking', 'printer', 'lockers'],
+    amenityIds: ['wifi', 'coffee', 'phone-booth', 'parking', 'printer', 'lockers'],
     openingHours: schedule(8, 21),
     rules: [...BASE_RULES],
     images: [],
@@ -245,7 +245,7 @@ const coworkEntries: Parameters<typeof withLocation>[0][] = [
     address: 'Isidora Goyenechea 3000, piso 12, Las Condes',
     description:
       'Espacio ejecutivo en el corazón de Sanhattan. Recepción, salas para clientes y estacionamiento para visitas.',
-    amenityIds: ['wifi', 'coffee', 'meeting-room', 'phone-booth', 'parking', 'printer', 'lockers'],
+    amenityIds: ['wifi', 'coffee', 'phone-booth', 'parking', 'printer', 'lockers'],
     openingHours: schedule(8, 20),
     rules: [...BASE_RULES, 'Las visitas se registran en recepción.'],
     images: [],
@@ -301,7 +301,7 @@ const coworkEntries: Parameters<typeof withLocation>[0][] = [
     address: 'Av. Apoquindo 5400, Las Condes',
     description:
       'Planta abierta con mucha luz, a una cuadra de metro Escuela Militar. Ambiente tranquilo y terraza con vista al cerro.',
-    amenityIds: ['wifi', 'coffee', 'meeting-room', 'bike-parking', 'terrace', 'lockers'],
+    amenityIds: ['wifi', 'coffee', 'bike-parking', 'terrace', 'lockers'],
     openingHours: schedule(8, 20, [9, 13]),
     rules: [...BASE_RULES],
     images: [],
@@ -348,7 +348,7 @@ const coworkEntries: Parameters<typeof withLocation>[0][] = [
     address: 'Jorge Washington 300, Ñuñoa',
     description:
       'Un cowork de barrio, a pasos de Plaza Ñuñoa. Comunidad cercana, mascotas bienvenidas y el mejor café de la red.',
-    amenityIds: ['wifi', 'coffee', 'meeting-room', 'phone-booth', 'bike-parking', 'pet-friendly'],
+    amenityIds: ['wifi', 'coffee', 'phone-booth', 'bike-parking', 'pet-friendly'],
     openingHours: schedule(9, 19, [10, 14]),
     rules: [...BASE_RULES, 'Mascotas bienvenidas con correa en áreas comunes.'],
     images: [],
@@ -386,7 +386,7 @@ const coworkEntries: Parameters<typeof withLocation>[0][] = [
     address: 'Alonso de Córdova 2800, Vitacura',
     description:
       'Espacio boutique entre galerías de arte. Diseño cuidado, salas privadas y terraza para reuniones al aire libre.',
-    amenityIds: ['wifi', 'coffee', 'meeting-room', 'phone-booth', 'parking', 'terrace', 'pet-friendly'],
+    amenityIds: ['wifi', 'coffee', 'phone-booth', 'parking', 'terrace', 'pet-friendly'],
     openingHours: schedule(8, 19),
     rules: [...BASE_RULES, 'Mascotas bienvenidas con correa en áreas comunes.', 'No se pueden mover las obras de arte del espacio.'],
     images: [],
@@ -433,7 +433,7 @@ const coworkEntries: Parameters<typeof withLocation>[0][] = [
     address: 'Av. La Dehesa 1200, Lo Barnechea',
     description:
       'Trabaja cerca de casa sin bajar a la ciudad. Amplio estacionamiento, cabinas para videollamadas y lockers personales.',
-    amenityIds: ['wifi', 'coffee', 'meeting-room', 'phone-booth', 'parking', 'lockers'],
+    amenityIds: ['wifi', 'coffee', 'phone-booth', 'parking', 'lockers'],
     openingHours: schedule(8, 20),
     rules: [...BASE_RULES],
     images: [],
