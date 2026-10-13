@@ -6,6 +6,7 @@ import CoworkFilters from '../components/CoworkFilters.tsx'
 import { COWORKS, COMUNAS } from '../data/coworks.ts'
 import { AMENITIES } from '../data/amenities.ts'
 import type { AmenityId, Comuna } from '../types/index.ts'
+import { MAP_CONFIG } from '../lib/mapConfig.ts'
 
 function MapPage() {
   const [params, setParams] = useSearchParams()
@@ -61,7 +62,7 @@ function MapPage() {
             {coworkers.map((cowork) => (
               <article key={cowork.id} className={`rounded-xl border p-4 ${selectedSlug === cowork.slug ? 'border-brand-600 bg-brand-50' : 'border-slate-200'}`}>
                 <button onClick={() => onSelect(cowork.slug)} className="flex w-full items-center gap-3 text-left" aria-pressed={selectedSlug === cowork.slug} aria-label={`Mostrar ${cowork.name} en el mapa`}>
-                  <img src={cowork.images[0] || '/cowork-placeholder.svg'} alt="" className="size-12 shrink-0 rounded-full object-cover" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = '/cowork-placeholder.svg' }} />
+                  <img src={cowork.images[0] || MAP_CONFIG.fallbackCover} alt="" className="size-12 shrink-0 rounded-full object-cover" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = MAP_CONFIG.fallbackCover }} />
                   <span><span className="block font-semibold text-slate-900">{cowork.name}</span><span className="mt-1 block text-xs text-slate-500">{cowork.address}</span></span>
                 </button>
                 <div className="mt-3 flex items-center justify-between gap-2 text-xs text-brand-700">
