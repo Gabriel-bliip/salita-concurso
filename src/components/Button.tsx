@@ -4,8 +4,8 @@ import { Link } from 'react-router'
 type Variant = 'primary' | 'secondary'
 
 const variantClasses: Record<Variant, string> = {
-  primary: 'bg-brand-600 text-white hover:bg-brand-700',
-  secondary: 'bg-white text-slate-900 ring-1 ring-slate-300 ring-inset hover:bg-slate-50',
+  primary: 'bg-primary text-on-primary hover:bg-primary-hover',
+  secondary: 'bg-surface text-primary ring-1 ring-line-strong ring-inset hover:bg-primary-soft',
 }
 
 interface ButtonProps {
@@ -14,10 +14,18 @@ interface ButtonProps {
   onClick?: () => void
   variant?: Variant
   className?: string
+  disabled?: boolean
 }
 
-function Button({ children, to, onClick, variant = 'primary', className = '' }: ButtonProps) {
-  const classes = `inline-flex items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold transition-colors ${variantClasses[variant]} ${className}`
+function Button({
+  children,
+  to,
+  onClick,
+  variant = 'primary',
+  className = '',
+  disabled = false,
+}: ButtonProps) {
+  const classes = `inline-flex items-center justify-center gap-2 rounded-control px-5 py-2.5 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:bg-sunken disabled:text-ink-muted disabled:ring-0 ${variantClasses[variant]} ${className}`
 
   if (to) {
     return (
@@ -28,7 +36,7 @@ function Button({ children, to, onClick, variant = 'primary', className = '' }: 
   }
 
   return (
-    <button type="button" onClick={onClick} className={classes}>
+    <button type="button" onClick={onClick} disabled={disabled} className={classes}>
       {children}
     </button>
   )

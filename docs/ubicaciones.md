@@ -37,17 +37,29 @@ la dirección predeterminada; reemplaza sus datos por los del cowork real:
   location: { latitude: -33.421795865179, longitude: -70.607290416391 },
   description: 'Descripción del nuevo espacio.',
   amenityIds: ['wifi', 'coffee'],
-  openingHours: 'Lun–Vie 9:00–18:00',
-  capacity: 20,
+  openingHours: schedule(9, 18), // Lun–Vie 9:00–18:00; sábado opcional: schedule(9, 18, [10, 14]).
+  rules: [...BASE_RULES],
   images: ['/images/nuevo-cowork.jpg'], // Archivo en public/images/nuevo-cowork.jpg.
+  photoCaptions: ['Zona de escritorios'], // Una descripción por foto (texto alternativo).
+  spaces: [
+    {
+      id: 'cw-10-desk',
+      type: 'coworking', // También 'meeting_room' u 'office_box'; ver src/types/space.ts.
+      name: 'Escritorio compartido',
+      description: 'Escritorio en zona abierta.',
+      pricePerHour: 4000, // CLP por hora.
+      minHours: 1,
+      capacity: 1,
+      deskCount: 20,
+    },
+  ],
 },
 ```
 
 El nuevo lugar aparecerá automáticamente en el listado y el mapa sin crear un marcador
 a mano. Los filtros activos pueden ocultarlo. Las comunas disponibles se calculan a
 partir de los registros. Para incorporar una comuna que todavía no admite el código,
-agrégala al tipo `Comuna` en `src/types/index.ts` y a `comunaGradients` en
-`src/components/CoworkImage.tsx`, que define el respaldo visual de las tarjetas.
+agrégala al tipo `Comuna` en `src/types/index.ts`.
 
 Si todavía no hay una foto, usa `images: []`. El mapa mostrará
 `public/cowork-placeholder.svg`; también lo usa si la imagen de portada falla al cargar.

@@ -1,7 +1,7 @@
 // EDITAR AQUÍ los colores del fondo vectorial y el comportamiento del mapa.
 // Los colores de burbujas/controles están en src/index.css, sección MAPA.
 export const MAP_COLORS = {
-  background: '#f7f2e8',
+  background: '#f7f0e3', // = --color-canvas in src/index.css
   urban: '#eee6d8',
   park: '#e2e8d7',
   water: '#cfe3dc',
