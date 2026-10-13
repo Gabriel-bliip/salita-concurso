@@ -1,6 +1,9 @@
 import { MapPin } from 'lucide-react'
 import { Link } from 'react-router'
+import { formatClp } from '../lib/format.ts'
+import { getLowestPrice, SPACE_TYPE_LABELS, SPACE_TYPES } from '../lib/spaces.ts'
 import type { Cowork } from '../types/index.ts'
+import type { Space } from '../types/space.ts'
 import AmenityBadge from './AmenityBadge.tsx'
 import CoworkImage from './CoworkImage.tsx'
 
@@ -9,11 +12,14 @@ const MAX_VISIBLE_AMENITIES = 4
 
 interface CoworkCardProps {
   cowork: Cowork
+  // Spaces to summarize (e.g. only those matching the active filters).
+  spaces?: Space[]
 }
 
-function CoworkCard({ cowork }: CoworkCardProps) {
+function CoworkCard({ cowork, spaces = cowork.spaces }: CoworkCardProps) {
   const visibleAmenities = cowork.amenityIds.slice(0, MAX_VISIBLE_AMENITIES)
   const hiddenCount = cowork.amenityIds.length - visibleAmenities.length
+  const spaceTypes = SPACE_TYPES.filter((type) => spaces.some((space) => space.type === type))
 
   return (
     <Link
@@ -29,12 +35,22 @@ function CoworkCard({ cowork }: CoworkCardProps) {
             {cowork.comuna}
           </p>
         </div>
-        <div className="mt-auto flex flex-wrap items-center gap-1.5">
+        <p className="text-sm text-ink-muted">
+          {spaceTypes.map((type) => SPACE_TYPE_LABELS[type]).join(' · ')}
+        </p>
+        <div className="flex flex-wrap items-center gap-1.5">
           {visibleAmenities.map((amenityId) => (
             <AmenityBadge key={amenityId} amenityId={amenityId} compact />
           ))}
           {hiddenCount > 0 && <span className="text-xs text-ink-muted">+{hiddenCount}</span>}
         </div>
+        <p className="mt-auto border-t border-line pt-3 text-sm text-ink-muted">
+          Desde{' '}
+          <span className="text-lg font-semibold text-primary">
+            {formatClp(getLowestPrice(spaces))}
+          </span>{' '}
+          por hora
+        </p>
       </div>
     </Link>
   )

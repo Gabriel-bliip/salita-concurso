@@ -4,11 +4,15 @@ import { Link } from 'react-router'
 import Button from '../components/Button.tsx'
 import CoworkCard from '../components/CoworkCard.tsx'
 import { COMUNAS, COWORKS } from '../data/coworks.ts'
+import { formatClp } from '../lib/format.ts'
+import { getLowestPrice } from '../lib/spaces.ts'
 
 // Loaded on demand: MapLibre is heavy and shouldn't delay the first paint of the home page.
 const CoworkMap = lazy(() => import('../components/CoworkMap.tsx'))
 
 const FEATURED_COWORK_SLUGS = ['casa-lastarria', 'patio-italia', 'distrito-golf']
+
+const lowestPrice = getLowestPrice(COWORKS.flatMap((cowork) => cowork.spaces))
 
 const featuredCoworks = COWORKS.filter((cowork) => FEATURED_COWORK_SLUGS.includes(cowork.slug))
 
@@ -54,7 +58,7 @@ function HomePage() {
               Cómo funciona
             </Button>
           </div>
-          <dl className="mt-14 grid max-w-xs grid-cols-2 gap-6">
+          <dl className="mt-14 grid max-w-md grid-cols-3 gap-6">
             <div>
               <dt className="text-sm text-ink-muted">Coworks</dt>
               <dd className="mt-1 text-2xl font-bold text-ink">{COWORKS.length}</dd>
@@ -62,6 +66,10 @@ function HomePage() {
             <div>
               <dt className="text-sm text-ink-muted">Comunas</dt>
               <dd className="mt-1 text-2xl font-bold text-ink">{COMUNAS.length}</dd>
+            </div>
+            <div>
+              <dt className="text-sm text-ink-muted">Desde, por hora</dt>
+              <dd className="mt-1 text-2xl font-bold text-ink">{formatClp(lowestPrice)}</dd>
             </div>
           </dl>
         </div>
