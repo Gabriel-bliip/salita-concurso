@@ -1,5 +1,6 @@
 import { createBrowserRouter, RouterProvider } from 'react-router'
 import Layout from './components/layout/Layout.tsx'
+import BookingConfirmationPage from './pages/BookingConfirmationPage.tsx'
 import BookingPage from './pages/BookingPage.tsx'
 import CoworkDetailPage from './pages/CoworkDetailPage.tsx'
 import CoworksPage from './pages/CoworksPage.tsx'
@@ -15,6 +16,7 @@ const router = createBrowserRouter([
       { path: '/mapa', lazy: async () => ({ Component: (await import('./pages/MapPage.tsx')).default }) },
       { path: '/coworks/:slug', element: <CoworkDetailPage /> },
       { path: '/reservar/:slug', element: <BookingPage /> },
+      { path: '/reservar/:slug/confirmacion', element: <BookingConfirmationPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },

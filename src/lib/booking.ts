@@ -1,8 +1,10 @@
-import type { DateKey, Hour, TimeSlot } from '../types/booking.ts'
+import type { Booking, DateKey, Hour, TimeSlot } from '../types/booking.ts'
 import type { Cowork } from '../types/index.ts'
 import type { Space } from '../types/space.ts'
 import { addDays, getWeekday, isDateKey, toDateKey } from './dates.ts'
 import { formatHour, formatHours } from './format.ts'
+import { hash } from './hash.ts'
+import { calculateBookingPrice } from './pricing.ts'
 import { getCapacityRange } from './spaces.ts'
 
 export const BOOKING_STEPS = ['space', 'date', 'time', 'people', 'summary', 'payment'] as const
@@ -111,4 +113,40 @@ export function validatePeople(space: Space, people: number) {
   if (people < min) return `Este espacio requiere al menos ${min} personas.`
   if (people > max) return `Este espacio admite hasta ${max} personas.`
   return null
+}
+
+// Stable code for the mock confirmation: the same booking always gets the same code.
+function getBookingCode(coworkId: string, selection: BookingSelection) {
+  const key = [coworkId, selection.spaceId, selection.date, selection.startHour, selection.endHour, selection.people].join('|')
+  return `SAL-${hash(key).toString(36).toUpperCase().padStart(7, '0').slice(-6)}`
+}
+
+// Builds the booking shown on the summary and confirmation screens, or null if the
+// selection is incomplete or inconsistent (e.g. a hand-edited URL).
+// It doesn't re-check slot availability, so reloading a confirmation later still works.
+export function buildBooking(cowork: Cowork, selection: BookingSelection): Booking | null {
+  const space = cowork.spaces.find((item) => item.id === selection.spaceId)
+  const { date, startHour, endHour, people } = selection
+  if (!space || !date || !isDateKey(date) || startHour === null || endHour === null || people === null) {
+    return null
+  }
+  const hours = cowork.openingHours[getWeekday(date)]
+  if (!hours || startHour < hours.open || endHour > hours.close || endHour - startHour < space.minHours) {
+    return null
+  }
+  if (validatePeople(space, people)) return null
+
+  const price = calculateBookingPrice({ pricePerHour: space.pricePerHour, hours: endHour - startHour })
+  return {
+    id: getBookingCode(cowork.id, selection),
+    coworkId: cowork.id,
+    spaceId: space.id,
+    date,
+    startHour,
+    endHour,
+    people,
+    hours: price.hours,
+    pricePerHour: price.pricePerHour,
+    total: price.total,
+  }
 }

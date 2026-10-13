@@ -99,7 +99,7 @@ function CoworkDetailPage() {
                     <SpaceCard
                       key={space.id}
                       space={space}
-                      bookingUrl={`${bookingUrl}?space=${space.id}`}
+                      bookingUrl={`${bookingUrl}?space=${space.id}&step=date`}
                     />
                   ))}
                 </div>
