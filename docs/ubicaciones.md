@@ -4,7 +4,7 @@
 
 Cada lugar se configura una sola vez en `coworkEntries`, dentro de
 [`src/data/coworks.ts`](../src/data/coworks.ts). El listado, las fichas y la pestaña
-**Mapa** usan los mismos registros normalizados (`COWORKS`).
+**Mapa** usan los mismos registros normalizados (`LOCATIONS`), filtrados por categoría.
 
 | Campo | Qué completar | Dónde se usa |
 | --- | --- | --- |
@@ -29,6 +29,7 @@ la dirección predeterminada; reemplaza sus datos por los del cowork real:
 ```ts
 {
   id: 'cw-10', // Debe ser único.
+  categoryId: 'cowork', // ID del registro central src/data/categories.ts.
   slug: 'nuevo-cowork', // Debe ser único y mantenerse estable.
   name: 'Nuevo cowork',
   // UBICACIÓN: editar estos tres campos juntos.
@@ -120,13 +121,15 @@ el marcador, su portada, el agrupamiento, los filtros y los enlaces se generan s
 
 ## Cómo funciona el mapa
 
-1. `coworkEntries.map(withLocation)` produce los registros de `COWORKS`.
-2. `MapPage.tsx` filtra esos registros por comuna y servicios desde la URL.
+1. `coworkEntries.map(withLocation)` produce `LOCATIONS`; `COWORKS` conserva solo Cowork.
+2. `useCategoryExploration` filtra por categoría y sus filtros configurados desde la URL.
 3. `CoworkMap.tsx` crea los marcadores de Leaflet usando `location` y `images[0]`.
 4. Seleccionar un lugar actualiza `?cowork=slug`, centra el mapa y abre su información.
 5. La sección **Ubicación** de la ficha enlaza a esa misma URL.
 
-Leaflet se carga al entrar a `/mapa`. `leaflet.markercluster` agrupa los marcadores.
+Leaflet se carga al entrar a `/espacios/:categoryId/mapa` (`/mapa` redirige a Cowork).
+`leaflet.markercluster` agrupa los marcadores. Consulta [espacios](espacios.md) para
+agregar categorías, filtros específicos o portadas de categorías.
 `src/lib/mapBasemap.ts` carga MapLibre por separado para renderizar el fondo vectorial
 con datos OpenMapTiles/OpenStreetMap servidos por OpenFreeMap. El fondo requiere
 conexión y WebGL; si falla se muestra un aviso y la lista de lugares sigue disponible.
@@ -139,16 +142,16 @@ no se consulta un geocodificador al abrir el mapa.
 Actualmente los lugares son datos estáticos: no existe un formulario de administración
 ni una API que persista cambios. Para incorporar una fuente dinámica:
 
-1. Guarda los campos de `Cowork` en la fuente de datos, incluidos dirección, comuna,
+1. Guarda los campos de `SpaceLocation` en la fuente de datos, incluidos `categoryId`, dirección, comuna,
    latitud, longitud y portada. Mantén `id` y `slug` únicos y estables.
 2. En el alta o edición, obtén y valida las coordenadas. Si se incorpora geocodificación,
    ejecútala al guardar la dirección y persiste el resultado, en lugar de repetirla
    en cada visita al mapa.
 3. Sustituye el arreglo estático por un proveedor o cargador compartido y adapta los
-   registros a `Cowork` mediante `withLocation`. Maneja carga y errores en ese proveedor.
-4. Conecta todos los consumidores de `COWORKS` y `COMUNAS` a esa misma fuente, incluidos
+   registros a `SpaceLocation` mediante `withLocation`. Maneja carga y errores en ese proveedor.
+4. Conecta todos los consumidores de `LOCATIONS`, `COWORKS` y `COMUNAS` a esa misma fuente, incluidos
    inicio, listado, filtros, fichas y mapa. Puedes encontrarlos con
-   `rg 'COWORKS|COMUNAS' src`. Así los cambios se reflejan de forma consistente.
+   `rg 'LOCATIONS|COWORKS|COMUNAS' src`. Así los cambios se reflejan de forma consistente.
 5. Conserva los enlaces por `slug` y recalcula las comunas con los datos normalizados.
    `CoworkMap` ya recibe una lista de registros como propiedad y no necesita conocer
    el origen de esos registros.

@@ -13,7 +13,8 @@ Business model: pay per hour only — no plans, subscriptions or hour balances. 
 - `npm run dev` — Vite dev server (port 3000, set in `vite.config.ts`)
 - `npm run lint` — ESLint (flat config, `eslint.config.js`)
 - `npm run build` — `tsc -b && vite build`; type errors fail the build
-- No test framework yet. Verify changes with `npm run lint` and `npm run build`.
+- `npm test` — category/filter regression tests using Node's built-in runner (Node 22.18+ or 24+).
+- No external test framework. Verify changes with `npm test`, `npm run lint` and `npm run build`.
 
 ## TypeScript gotchas (tsconfig.app.json)
 

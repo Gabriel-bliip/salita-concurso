@@ -8,10 +8,11 @@ export const DEFAULT_LOCATION = {
   location: { latitude: -33.421795865179, longitude: -70.607290416391 },
 }
 
-type CoworkInput = Omit<Cowork, 'address' | 'location'> &
-  Partial<Pick<Cowork, 'address' | 'location'>>
+type CoworkInput = Omit<Cowork, 'address' | 'location' | 'categoryId'> &
+  Partial<Pick<Cowork, 'address' | 'location' | 'categoryId'>>
 
 export function withLocation(cowork: CoworkInput): Cowork {
+  const categoryId = cowork.categoryId ?? 'cowork'
   const position = cowork.location
   const validPosition = position && Number.isFinite(position.latitude) &&
     Number.isFinite(position.longitude) && Math.abs(position.latitude) <= 90 &&
@@ -20,7 +21,7 @@ export function withLocation(cowork: CoworkInput): Cowork {
   if (!cowork.address?.trim() || !validPosition) {
     // Sustituye el conjunto completo, incluso si había una dirección escrita:
     // evita mostrar una dirección en la ficha y otra posición en el mapa.
-    return { ...cowork, ...DEFAULT_LOCATION }
+    return { ...cowork, categoryId, ...DEFAULT_LOCATION }
   }
-  return { ...cowork, address: cowork.address.trim(), location: position }
+  return { ...cowork, categoryId, address: cowork.address.trim(), location: position }
 }

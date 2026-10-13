@@ -23,7 +23,7 @@ function CoworkCard({ cowork, spaces = cowork.spaces }: CoworkCardProps) {
 
   return (
     <Link
-      to={`/coworks/${cowork.slug}`}
+      to={`/ubicaciones/${cowork.slug}`}
       className="group flex flex-col overflow-hidden rounded-card border border-line bg-surface transition hover:-translate-y-0.5 hover:shadow-card"
     >
       <CoworkImage cowork={cowork} className="aspect-[16/10] w-full" />
@@ -44,13 +44,13 @@ function CoworkCard({ cowork, spaces = cowork.spaces }: CoworkCardProps) {
           ))}
           {hiddenCount > 0 && <span className="text-xs text-ink-muted">+{hiddenCount}</span>}
         </div>
-        <p className="mt-auto border-t border-line pt-3 text-sm text-ink-muted">
+        {spaces.length > 0 ? <p className="mt-auto border-t border-line pt-3 text-sm text-ink-muted">
           Desde{' '}
           <span className="text-lg font-semibold text-primary">
             {formatClp(getLowestPrice(spaces))}
           </span>{' '}
           por hora
-        </p>
+        </p> : <p className="mt-auto border-t border-line pt-3 text-sm text-ink-muted">Sin espacios reservables por ahora</p>}
       </div>
     </Link>
   )

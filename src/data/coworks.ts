@@ -21,7 +21,7 @@ const BASE_RULES = [
   'Respeta el horario de término de tu reserva.',
 ]
 
-// ALTA Y EDICIÓN DE LUGARES: agregar un objeto por cowork en este arreglo.
+// ALTA Y EDICIÓN DE LUGARES: agregar un objeto por ubicación con su categoryId.
 // UBICACIÓN: completar address (dirección), comuna y location (latitud/longitud)
 // del mismo lugar. El mapa no convierte automáticamente direcciones en coordenadas.
 // PORTADA: images[0] se muestra dentro de la burbuja; [] usa una ilustración.
@@ -30,6 +30,7 @@ const BASE_RULES = [
 const coworkEntries: Parameters<typeof withLocation>[0][] = [
   {
     id: 'cw-1',
+    categoryId: 'cowork',
     // UBICACION: coordenadas de este cowork; actualizar junto con address y comuna.
     location: { latitude: -33.438890293684, longitude: -70.641217941642 },
     slug: 'casa-lastarria',
@@ -77,6 +78,7 @@ const coworkEntries: Parameters<typeof withLocation>[0][] = [
   },
   {
     id: 'cw-2',
+    categoryId: 'cowork',
     // UBICACION: coordenadas de este cowork; actualizar junto con address y comuna.
     location: { latitude: -33.440847682506, longitude: -70.651061614347 },
     slug: 'nodo-moneda',
@@ -134,6 +136,7 @@ const coworkEntries: Parameters<typeof withLocation>[0][] = [
   },
   {
     id: 'cw-3',
+    categoryId: 'cowork',
     // UBICACION: coordenadas de este cowork; actualizar junto con address y comuna.
     location: { latitude: -33.447368132338, longitude: -70.624687732886 },
     slug: 'patio-italia',
@@ -180,6 +183,7 @@ const coworkEntries: Parameters<typeof withLocation>[0][] = [
   },
   {
     id: 'cw-4',
+    categoryId: 'cowork',
     // UBICACION: coordenadas de este cowork; actualizar junto con address y comuna.
     location: { latitude: -33.435289743849, longitude: -70.60461204949 },
     slug: 'torre-pocuro',
@@ -237,6 +241,7 @@ const coworkEntries: Parameters<typeof withLocation>[0][] = [
   },
   {
     id: 'cw-5',
+    categoryId: 'cowork',
     // UBICACION: coordenadas de este cowork; actualizar junto con address y comuna.
     location: { latitude: -33.414162007819, longitude: -70.598394009563 },
     slug: 'distrito-golf',
@@ -293,6 +298,7 @@ const coworkEntries: Parameters<typeof withLocation>[0][] = [
   },
   {
     id: 'cw-6',
+    categoryId: 'cowork',
     // UBICACION: coordenadas de este cowork; actualizar junto con address y comuna.
     location: { latitude: -33.410236992525, longitude: -70.572856796154 },
     slug: 'apoquindo-hub',
@@ -340,6 +346,7 @@ const coworkEntries: Parameters<typeof withLocation>[0][] = [
   },
   {
     id: 'cw-7',
+    categoryId: 'cowork',
     // UBICACION: coordenadas de este cowork; actualizar junto con address y comuna.
     location: { latitude: -33.452285292303, longitude: -70.594205824004 },
     slug: 'plaza-nunoa',
@@ -378,6 +385,7 @@ const coworkEntries: Parameters<typeof withLocation>[0][] = [
   },
   {
     id: 'cw-8',
+    categoryId: 'cowork',
     // UBICACION: coordenadas de este cowork; actualizar junto con address y comuna.
     location: { latitude: -33.401633725447, longitude: -70.597191555717 },
     slug: 'alonso-de-cordova',
@@ -425,6 +433,7 @@ const coworkEntries: Parameters<typeof withLocation>[0][] = [
   },
   {
     id: 'cw-9',
+    categoryId: 'cowork',
     // UBICACION: coordenadas de este cowork; actualizar junto con address y comuna.
     location: { latitude: -33.361053162964, longitude: -70.51588913427 },
     slug: 'la-dehesa-work',
@@ -473,8 +482,10 @@ const coworkEntries: Parameters<typeof withLocation>[0][] = [
 ]
 
 // Coordenadas obtenidas de las direcciones de demostración (ArcGIS, 2026-10-12).
-// PUNTO DE INTEGRACIÓN: listado, fichas, filtros y mapa consumen COWORKS.
+// PUNTO DE INTEGRACIÓN: listado, fichas, filtros y mapa consumen LOCATIONS.
 // withLocation asigna Suecia 810 si faltan dirección o coordenadas válidas.
 // Una futura API debe normalizar sus registros aquí o en un proveedor compartido.
-export const COWORKS: Cowork[] = coworkEntries.map(withLocation)
+export const LOCATIONS: Cowork[] = coworkEntries.map(withLocation)
+// The home page keeps its cowork selection when more categories are added.
+export const COWORKS = LOCATIONS.filter(({ categoryId }) => categoryId === 'cowork')
 export const COMUNAS: Comuna[] = [...new Set(COWORKS.map((cowork) => cowork.comuna))]

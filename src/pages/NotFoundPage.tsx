@@ -14,8 +14,8 @@ function NotFoundPage({ message = 'La página que buscas no existe o fue movida.
       <p className="mt-4 text-ink-muted">{message}</p>
       <div className="mt-8 flex flex-wrap justify-center gap-4">
         <Button to="/">Volver al inicio</Button>
-        <Button to="/coworks" variant="secondary">
-          Ver coworks
+        <Button to="/espacios" variant="secondary">
+          Ver espacios
         </Button>
       </div>
     </div>
