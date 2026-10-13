@@ -1,7 +1,12 @@
 import { ArrowRight, CalendarClock, CreditCard, LayoutGrid } from 'lucide-react'
+import { lazy, Suspense, useState } from 'react'
+import { Link } from 'react-router'
 import Button from '../components/Button.tsx'
 import CoworkCard from '../components/CoworkCard.tsx'
 import { COMUNAS, COWORKS } from '../data/coworks.ts'
+
+// Loaded on demand: MapLibre is heavy and shouldn't delay the first paint of the home page.
+const CoworkMap = lazy(() => import('../components/CoworkMap.tsx'))
 
 const FEATURED_COWORK_SLUGS = ['casa-lastarria', 'patio-italia', 'distrito-golf']
 
@@ -26,6 +31,8 @@ const steps = [
 ]
 
 function HomePage() {
+  const [selectedSlug, setSelectedSlug] = useState<string | null>(null)
+
   return (
     <>
       <section className="bg-linear-to-b from-primary-soft to-canvas">
@@ -57,6 +64,25 @@ function HomePage() {
               <dd className="mt-1 text-2xl font-bold text-ink">{COMUNAS.length}</dd>
             </div>
           </dl>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 pt-4 sm:px-6" aria-labelledby="mapa-titulo">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h2 id="mapa-titulo" className="text-3xl font-bold tracking-tight text-ink">
+              Coworks en el mapa
+            </h2>
+            <p className="mt-2 text-ink-muted">Toca una burbuja para ver el espacio.</p>
+          </div>
+          <Link to="/mapa" className="text-sm font-semibold text-primary hover:text-primary-hover">
+            Abrir mapa con filtros →
+          </Link>
+        </div>
+        <div className="mt-6">
+          <Suspense fallback={<div className="cowork-map bg-sunken" aria-hidden />}>
+            <CoworkMap coworkers={COWORKS} selectedSlug={selectedSlug} onSelect={setSelectedSlug} />
+          </Suspense>
         </div>
       </section>
 
