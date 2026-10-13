@@ -44,6 +44,13 @@ function CoworkDetailPage() {
             {cowork.address} · {cowork.comuna}
           </p>
           <p className="mt-6 text-lg leading-relaxed text-slate-700">{cowork.description}</p>
+          <section className="mt-8 rounded-2xl bg-brand-50 p-5">
+            <h2 className="font-semibold text-slate-900">Ubicación</h2>
+            <p className="mt-1 text-sm text-slate-600">{cowork.address}</p>
+            <Link to={`/mapa?cowork=${cowork.slug}`} className="mt-3 inline-flex items-center gap-2 font-medium text-brand-700 hover:underline">
+              <MapPin className="size-4" aria-hidden /> Ver ubicación en el mapa
+            </Link>
+          </section>
 
           <h2 className="mt-10 text-xl font-semibold text-slate-900">Servicios</h2>
           <div className="mt-4 flex flex-wrap gap-2">

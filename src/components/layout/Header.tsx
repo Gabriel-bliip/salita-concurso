@@ -20,6 +20,9 @@ function Header() {
           <NavLink to="/planes" className={navLinkClass}>
             Planes
           </NavLink>
+          <NavLink to="/mapa" className={navLinkClass}>
+            Mapa
+          </NavLink>
         </nav>
       </div>
     </header>

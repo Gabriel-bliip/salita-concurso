@@ -1,4 +1,12 @@
-# React + TypeScript + Vite
+# Salita
+
+## Ubicaciones y mapa
+
+Para agregar lugares, cambiar sus direcciones o conectar una futura fuente de datos,
+consulta [la guía de ubicaciones](docs/ubicaciones.md).
+Los registros se editan en `src/data/coworks.ts`, donde están marcados los campos de ubicación.
+
+## React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 

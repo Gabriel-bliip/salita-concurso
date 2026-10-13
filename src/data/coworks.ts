@@ -1,9 +1,17 @@
 import type { Comuna, Cowork } from '../types/index.ts'
+import { withLocation } from '../lib/location.ts'
 
-// Fictional coworks for the demo.
-export const COWORKS: Cowork[] = [
+// ALTA Y EDICIÓN DE LUGARES: agregar un objeto por cowork en este arreglo.
+// UBICACIÓN: completar address (dirección), comuna y location (latitud/longitud)
+// del mismo lugar. El mapa no convierte automáticamente direcciones en coordenadas.
+// PORTADA: images[0] se muestra dentro de la burbuja; [] usa una ilustración.
+// GUÍA Y EJEMPLO: docs/ubicaciones.md.
+// Coworks ficticios para la demostración.
+const coworkEntries: Parameters<typeof withLocation>[0][] = [
   {
     id: 'cw-1',
+    // UBICACION: coordenadas de este cowork; actualizar junto con address y comuna.
+    location: { latitude: -33.438890293684, longitude: -70.641217941642 },
     slug: 'casa-lastarria',
     name: 'Casa Lastarria',
     comuna: 'Santiago Centro',
@@ -17,6 +25,8 @@ export const COWORKS: Cowork[] = [
   },
   {
     id: 'cw-2',
+    // UBICACION: coordenadas de este cowork; actualizar junto con address y comuna.
+    location: { latitude: -33.440847682506, longitude: -70.651061614347 },
     slug: 'nodo-moneda',
     name: 'Nodo Moneda',
     comuna: 'Santiago Centro',
@@ -30,6 +40,8 @@ export const COWORKS: Cowork[] = [
   },
   {
     id: 'cw-3',
+    // UBICACION: coordenadas de este cowork; actualizar junto con address y comuna.
+    location: { latitude: -33.447368132338, longitude: -70.624687732886 },
     slug: 'patio-italia',
     name: 'Patio Italia',
     comuna: 'Providencia',
@@ -43,6 +55,8 @@ export const COWORKS: Cowork[] = [
   },
   {
     id: 'cw-4',
+    // UBICACION: coordenadas de este cowork; actualizar junto con address y comuna.
+    location: { latitude: -33.435289743849, longitude: -70.60461204949 },
     slug: 'torre-pocuro',
     name: 'Torre Pocuro',
     comuna: 'Providencia',
@@ -56,6 +70,8 @@ export const COWORKS: Cowork[] = [
   },
   {
     id: 'cw-5',
+    // UBICACION: coordenadas de este cowork; actualizar junto con address y comuna.
+    location: { latitude: -33.414162007819, longitude: -70.598394009563 },
     slug: 'distrito-golf',
     name: 'Distrito Golf',
     comuna: 'Las Condes',
@@ -69,6 +85,8 @@ export const COWORKS: Cowork[] = [
   },
   {
     id: 'cw-6',
+    // UBICACION: coordenadas de este cowork; actualizar junto con address y comuna.
+    location: { latitude: -33.410236992525, longitude: -70.572856796154 },
     slug: 'apoquindo-hub',
     name: 'Apoquindo Hub',
     comuna: 'Las Condes',
@@ -82,6 +100,8 @@ export const COWORKS: Cowork[] = [
   },
   {
     id: 'cw-7',
+    // UBICACION: coordenadas de este cowork; actualizar junto con address y comuna.
+    location: { latitude: -33.452285292303, longitude: -70.594205824004 },
     slug: 'plaza-nunoa',
     name: 'Plaza Ñuñoa Studio',
     comuna: 'Ñuñoa',
@@ -95,6 +115,8 @@ export const COWORKS: Cowork[] = [
   },
   {
     id: 'cw-8',
+    // UBICACION: coordenadas de este cowork; actualizar junto con address y comuna.
+    location: { latitude: -33.401633725447, longitude: -70.597191555717 },
     slug: 'alonso-de-cordova',
     name: 'Estudio Alonso',
     comuna: 'Vitacura',
@@ -108,6 +130,8 @@ export const COWORKS: Cowork[] = [
   },
   {
     id: 'cw-9',
+    // UBICACION: coordenadas de este cowork; actualizar junto con address y comuna.
+    location: { latitude: -33.361053162964, longitude: -70.51588913427 },
     slug: 'la-dehesa-work',
     name: 'Dehesa Work',
     comuna: 'Lo Barnechea',
@@ -121,4 +145,9 @@ export const COWORKS: Cowork[] = [
   },
 ]
 
+// Coordenadas obtenidas de las direcciones de demostración (ArcGIS, 2026-10-12).
+// PUNTO DE INTEGRACIÓN: listado, fichas, filtros y mapa consumen COWORKS.
+// withLocation asigna Suecia 810 si faltan dirección o coordenadas válidas.
+// Una futura API debe normalizar sus registros aquí o en un proveedor compartido.
+export const COWORKS: Cowork[] = coworkEntries.map(withLocation)
 export const COMUNAS: Comuna[] = [...new Set(COWORKS.map((cowork) => cowork.comuna))]
