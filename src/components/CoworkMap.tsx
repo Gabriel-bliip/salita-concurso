@@ -48,7 +48,7 @@ function CoworkMap({ coworkers, selectedSlug, onSelect }: CoworkMapProps) {
     if (!container.current) return
     const { latitude, longitude } = DEFAULT_LOCATION.location
     container.current.style.backgroundColor = MAP_COLORS.background
-    const map = L.map(container.current, { scrollWheelZoom: true, zoomControl: false, zoomAnimation: false, minZoom: MAP_CONFIG.minZoom, maxZoom: MAP_CONFIG.maxZoom }).setView([latitude, longitude], 13)
+    const map = L.map(container.current, { scrollWheelZoom: true, wheelPxPerZoomLevel: 200, wheelDebounceTime: 40, zoomSnap: 0.25, touchZoom: true, doubleClickZoom: true, zoomDelta: 1, zoomControl: false, zoomAnimation: false, minZoom: MAP_CONFIG.minZoom, maxZoom: MAP_CONFIG.maxZoom }).setView([latitude, longitude], 13)
     L.control.zoom({ position: 'bottomright', zoomInTitle: 'Acercar', zoomOutTitle: 'Alejar' }).addTo(map)
     mapRef.current = map
     map.on('resize', () => reframeOnResize(map))
