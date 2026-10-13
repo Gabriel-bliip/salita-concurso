@@ -1,4 +1,5 @@
 import type { Space } from './space.ts'
+import type { CategoryId } from '../data/categories.ts'
 
 export type Comuna =
   | 'Santiago Centro'
@@ -30,8 +31,11 @@ export type Weekday = 0 | 1 | 2 | 3 | 4 | 5 | 6
 // Whole hours, e.g. { open: 8, close: 20 } = 8:00–20:00. null = closed that day.
 export type OpeningHours = Record<Weekday, { open: number; close: number } | null>
 
-export interface Cowork {
+export interface SpaceLocation {
   id: string
+  categoryId: CategoryId
+  // Optional category-specific data; only populate attributes verified for the location.
+  attributes?: Record<string, string | number | boolean | readonly string[]>
   slug: string
   name: string
   comuna: Comuna
@@ -50,3 +54,6 @@ export interface Cowork {
   photoCaptions: string[]
   spaces: Space[]
 }
+
+// Compatibility with the existing cards, map and booking flow.
+export type Cowork = SpaceLocation
