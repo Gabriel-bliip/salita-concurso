@@ -78,7 +78,10 @@ function CoworkMap({ coworkers, selectedSlug, onSelect }: CoworkMapProps) {
         title.textContent = place.name
         const address = document.createElement('p')
         address.textContent = place.address
-        entry.append(cover(place), title, address)
+        const link = document.createElement('a')
+        link.href = `/coworks/${place.slug}`
+        link.textContent = 'Ver cowork →'
+        entry.append(cover(place), title, address, link)
         popup.append(entry)
       }
       const marker = L.marker([cowork.location.latitude, cowork.location.longitude], {

@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react'
-import { useSearchParams } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 import { MapPin, SearchX } from 'lucide-react'
 import CoworkMap from '../components/CoworkMap.tsx'
 import CoworkFilters from '../components/CoworkFilters.tsx'
@@ -28,6 +28,8 @@ function MapPage() {
     if (nextAmenities.length) next.set('amenities', nextAmenities.join(','))
     setParams(next, { replace: true })
   }
+  const listParams = new URLSearchParams(params)
+  listParams.delete('cowork')
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
@@ -37,6 +39,7 @@ function MapPage() {
           <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Encuentra tu cowork en el mapa</h1>
           <p className="mt-3 text-slate-600">Explora Santiago y toca una burbuja para conocer el espacio.</p>
         </div>
+        <Link to={`/coworks?${listParams}`} className="text-sm font-semibold text-brand-700 hover:underline">Ver listado de coworks →</Link>
       </div>
       <div className="mt-8 grid gap-6 lg:grid-cols-[18rem_1fr]">
         <aside>
@@ -63,6 +66,7 @@ function MapPage() {
                 </button>
                 <div className="mt-3 flex items-center justify-between gap-2 text-xs text-brand-700">
                   <span className="flex items-center gap-1"><MapPin className="size-3" aria-hidden />{cowork.comuna}</span>
+                  <Link to={`/coworks/${cowork.slug}`} className="font-semibold hover:underline">Ver cowork →</Link>
                 </div>
               </article>
             ))}
