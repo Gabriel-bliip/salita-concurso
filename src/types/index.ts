@@ -39,6 +39,7 @@ export interface Cowork {
   name: string
   comuna: Comuna
   address: string
+  location: { latitude: number; longitude: number }
   description: string
   amenityIds: AmenityId[]
   openingHours: string
