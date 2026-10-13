@@ -2,6 +2,9 @@
 
 ## Ubicaciones y mapa
 
+Para agregar categorías, ubicaciones, filtros o portadas al catálogo de **Espacios**,
+consulta [la guía de espacios](docs/espacios.md).
+
 Para agregar lugares, cambiar sus direcciones o conectar una futura fuente de datos,
 consulta [la guía de ubicaciones](docs/ubicaciones.md).
 Los registros se editan en `src/data/coworks.ts`, donde están marcados los campos de ubicación.
