@@ -1,28 +1,71 @@
 @import 'tailwindcss';
 
+/*
+ * DESIGN TOKENS — the only place colors, fonts and radii are defined.
+ * `--color-*: initial` drops Tailwind's default palette, so components can only
+ * use these tokens (bg-canvas, text-ink, border-line, …).
+ * Contrast (WCAG AA) checked for every text/background pair; see the PR notes.
+ */
 @theme {
-  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
 
-  --color-brand-50: #f0fdfa;
-  --color-brand-100: #ccfbf1;
-  --color-brand-200: #99f6e4;
-  --color-brand-500: #14b8a6;
-  --color-brand-600: #0d9488;
-  --color-brand-700: #0f766e;
-  --color-brand-900: #134e4a;
+  --color-canvas: #f7f0e3; /* page background (cream) */
+  --color-surface: #fffbf4; /* cards, panels, inputs */
+  --color-sunken: #efe5d3; /* placeholders, subtle fills */
+  --color-ink: #2b211c; /* body text — 13.9:1 on canvas */
+  --color-ink-muted: #6b5b53; /* secondary text — 5.7:1 on canvas */
+  --color-primary: #6d1a36; /* burgundy — 10:1 on canvas */
+  --color-primary-hover: #4e1126;
+  --color-primary-soft: #f1e1e4; /* selected chips, badges */
+  --color-on-primary: #fffbf4; /* text on primary — 11:1 */
+  --color-on-primary-muted: #e9cbd3; /* secondary text on primary — 7.5:1 */
+  --color-line: #e4d8c6; /* decorative dividers only (not for controls) */
+  --color-line-strong: #8f7a6b; /* form control borders — 3.6:1 on canvas */
+  --color-danger: #a1262b; /* 7.2:1 on surface */
+  --color-success: #2f6b3a; /* 6.2:1 on surface */
+  --color-shadow: #4e112614;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+
+  --radius-control: 0.625rem;
+  --radius-card: 1rem;
+  --radius-panel: 1.5rem;
+
+  --shadow-card: 0 1px 2px var(--color-shadow), 0 8px 24px var(--color-shadow);
 }
 
-body {
-  @apply bg-white text-slate-800 antialiased;
+@layer base {
+  body {
+    @apply bg-canvas font-sans text-ink antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display text-ink;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--color-primary-soft);
+    color: var(--color-ink);
+  }
 }
 
 .cowork-map {
   /* MAPA: colores de marcadores y controles. Fondo y calles: src/lib/mapConfig.ts. */
-  --map-accent: var(--color-brand-700);
-  --map-cluster-bg: var(--color-brand-50);
+  --map-accent: var(--color-primary);
+  --map-cluster-bg: var(--color-primary-soft);
   height: clamp(360px, 65vh, 620px);
   width: 100%;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-line);
   border-radius: 1.25rem;
   isolation: isolate;
   z-index: 0;
@@ -35,10 +78,10 @@ body {
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  border: 3px solid white;
+  border: 3px solid var(--color-surface);
   background: var(--map-cluster-bg);
   color: var(--map-accent);
-  box-shadow: 0 2px 8px #134e4a26;
+  box-shadow: var(--shadow-card);
   font-size: 17px;
   font-weight: 700;
 }
@@ -49,10 +92,10 @@ body {
   position: relative;
   width: 48px;
   height: 48px;
-  border: 3px solid white;
+  border: 3px solid var(--color-surface);
   border-radius: 50%;
   background: var(--map-cluster-bg);
-  box-shadow: 0 1px 5px #134e4a26;
+  box-shadow: var(--shadow-card);
   transition: border-color 150ms, box-shadow 150ms;
 }
 
@@ -63,7 +106,7 @@ body {
   bottom: -11px;
   width: 8px;
   height: 8px;
-  border: 2px solid white;
+  border: 2px solid var(--color-surface);
   border-radius: 50%;
   background: var(--map-accent);
 }
@@ -79,13 +122,13 @@ body {
 .cowork-map-marker:focus-visible .cowork-map-bubble,
 .cowork-map-marker.is-selected .cowork-map-bubble {
   border-color: var(--map-accent);
-  box-shadow: 0 0 0 3px #ccfbf180, 0 2px 8px #134e4a26;
+  box-shadow: 0 0 0 3px var(--color-primary-soft), var(--shadow-card);
 }
 
 .cowork-map .leaflet-bar {
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-line);
   border-radius: 12px;
-  box-shadow: 0 2px 8px #134e4a0d;
+  box-shadow: var(--shadow-card);
   overflow: hidden;
 }
 .cowork-map .leaflet-control-zoom { margin: 0 16px 16px 0; }
@@ -93,8 +136,8 @@ body {
   width: 38px;
   height: 38px;
   line-height: 38px;
-  border-color: #f1f5f9;
-  background: white;
+  border-color: var(--color-line);
+  background: var(--color-surface);
   color: var(--map-accent);
   font-family: var(--font-sans);
   font-size: 22px;
@@ -102,16 +145,16 @@ body {
 }
 .cowork-map .leaflet-bar a:hover,
 .cowork-map .leaflet-bar a:focus-visible { background: var(--map-cluster-bg); }
-.cowork-map .leaflet-bar a.leaflet-disabled { color: #94a3b8; }
+.cowork-map .leaflet-bar a.leaflet-disabled { color: var(--color-line-strong); }
 .cowork-map .leaflet-popup-content-wrapper {
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-line);
   border-radius: 16px;
-  box-shadow: 0 4px 16px #134e4a14;
+  box-shadow: var(--shadow-card);
 }
-.cowork-map .leaflet-popup-tip { box-shadow: 0 3px 8px #134e4a0d; }
+.cowork-map .leaflet-popup-tip { box-shadow: none; }
 .cowork-map .leaflet-popup-content { margin: 18px; }
-.cowork-map .leaflet-popup-close-button { top: 5px; right: 5px; color: #64748b; }
-.cowork-map .leaflet-control-attribution { background: #ffffffeb; color: #475569; font-size: 10px; }
+.cowork-map .leaflet-popup-close-button { top: 5px; right: 5px; color: var(--color-ink-muted); }
+.cowork-map .leaflet-control-attribution { background: var(--color-surface); color: var(--color-ink-muted); font-size: 10px; }
 .cowork-map .leaflet-control-attribution a { color: var(--map-accent); }
 .cowork-map-entry {
   display: grid;
@@ -120,10 +163,10 @@ body {
   padding: 8px 0;
   min-width: 190px;
 }
-.cowork-map-entry + .cowork-map-entry { border-top: 1px solid #e2e8f0; }
+.cowork-map-entry + .cowork-map-entry { border-top: 1px solid var(--color-line); }
 .cowork-map-entry .cowork-map-cover { width: 40px; height: 40px; grid-row: 1 / 4; }
-.cowork-map-entry strong { display: block; font-size: 15px; color: #0f172a; }
-.cowork-map-entry p { grid-column: 2; margin: 4px 0 10px; color: #64748b; line-height: 1.5; }
+.cowork-map-entry strong { display: block; font-size: 15px; color: var(--color-ink); }
+.cowork-map-entry p { grid-column: 2; margin: 4px 0 10px; color: var(--color-ink-muted); line-height: 1.5; }
 .cowork-map-entry a { grid-column: 2; color: var(--map-accent); font-weight: 600; }
 
 @media (prefers-reduced-motion: reduce) {

@@ -18,13 +18,13 @@ function CoworkCard({ cowork }: CoworkCardProps) {
   return (
     <Link
       to={`/coworks/${cowork.slug}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white transition hover:-translate-y-0.5 hover:shadow-lg"
+      className="group flex flex-col overflow-hidden rounded-card border border-line bg-surface transition hover:-translate-y-0.5 hover:shadow-card"
     >
       <CoworkImage cowork={cowork} className="aspect-[16/10] w-full" />
       <div className="flex flex-1 flex-col gap-3 p-5">
         <div>
-          <h3 className="font-semibold text-slate-900 group-hover:text-brand-700">{cowork.name}</h3>
-          <p className="mt-1 flex items-center gap-1 text-sm text-slate-500">
+          <h3 className="font-semibold text-ink group-hover:text-primary">{cowork.name}</h3>
+          <p className="mt-1 flex items-center gap-1 text-sm text-ink-muted">
             <MapPin className="size-4" aria-hidden />
             {cowork.comuna}
           </p>
@@ -33,7 +33,7 @@ function CoworkCard({ cowork }: CoworkCardProps) {
           {visibleAmenities.map((amenityId) => (
             <AmenityBadge key={amenityId} amenityId={amenityId} compact />
           ))}
-          {hiddenCount > 0 && <span className="text-xs text-slate-500">+{hiddenCount}</span>}
+          {hiddenCount > 0 && <span className="text-xs text-ink-muted">+{hiddenCount}</span>}
         </div>
       </div>
     </Link>

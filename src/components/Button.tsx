@@ -4,8 +4,8 @@ import { Link } from 'react-router'
 type Variant = 'primary' | 'secondary'
 
 const variantClasses: Record<Variant, string> = {
-  primary: 'bg-brand-600 text-white hover:bg-brand-700',
-  secondary: 'bg-white text-slate-900 ring-1 ring-slate-300 ring-inset hover:bg-slate-50',
+  primary: 'bg-primary text-on-primary hover:bg-primary-hover',
+  secondary: 'bg-surface text-primary ring-1 ring-line-strong ring-inset hover:bg-primary-soft',
 }
 
 interface ButtonProps {
@@ -17,7 +17,7 @@ interface ButtonProps {
 }
 
 function Button({ children, to, onClick, variant = 'primary', className = '' }: ButtonProps) {
-  const classes = `inline-flex items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold transition-colors ${variantClasses[variant]} ${className}`
+  const classes = `inline-flex items-center justify-center gap-2 rounded-control px-5 py-2.5 text-sm font-semibold transition-colors ${variantClasses[variant]} ${className}`
 
   if (to) {
     return (

@@ -45,10 +45,10 @@ function CoworksPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-      <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+      <h1 className="text-3xl font-bold tracking-tight text-ink sm:text-4xl">
         Coworks en Santiago
       </h1>
-      <p className="mt-2 text-slate-600">
+      <p className="mt-2 text-ink-muted">
         Reserva por hora, sin planes ni suscripciones. Filtra por comuna y servicios.
       </p>
       <Button to={`/mapa?${searchParams.toString()}`} variant="secondary" className="mt-5">
@@ -67,7 +67,7 @@ function CoworksPage() {
         </aside>
 
         <section>
-          <p className="text-sm text-slate-500" aria-live="polite">
+          <p className="text-sm text-ink-muted" aria-live="polite">
             {filteredCoworks.length === 1
               ? '1 cowork encontrado'
               : `${filteredCoworks.length} coworks encontrados`}
@@ -80,12 +80,12 @@ function CoworksPage() {
               ))}
             </div>
           ) : (
-            <div className="mt-4 flex flex-col items-center rounded-2xl border border-dashed border-slate-300 px-6 py-16 text-center">
-              <SearchX className="size-10 text-slate-400" aria-hidden />
-              <p className="mt-4 font-medium text-slate-900">
+            <div className="mt-4 flex flex-col items-center rounded-card border border-dashed border-line-strong px-6 py-16 text-center">
+              <SearchX className="size-10 text-ink-muted" aria-hidden />
+              <p className="mt-4 font-medium text-ink">
                 No hay coworks con esos filtros
               </p>
-              <p className="mt-1 text-sm text-slate-500">
+              <p className="mt-1 text-sm text-ink-muted">
                 Prueba con otra comuna o quita algunos servicios.
               </p>
               <Button onClick={clearFilters} variant="secondary" className="mt-6">

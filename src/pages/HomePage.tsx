@@ -28,13 +28,13 @@ const steps = [
 function HomePage() {
   return (
     <>
-      <section className="bg-linear-to-b from-brand-50 to-white">
+      <section className="bg-linear-to-b from-primary-soft to-canvas">
         <div className="mx-auto max-w-6xl px-4 pt-16 pb-12 sm:px-6 sm:pt-24 sm:pb-16">
-          <p className="text-sm font-semibold text-brand-700">Coworks en Santiago</p>
-          <h1 className="mt-3 max-w-3xl text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl">
+          <p className="text-sm font-semibold text-primary">Coworks en Santiago</p>
+          <h1 className="mt-3 max-w-3xl text-4xl font-bold tracking-tight text-ink sm:text-6xl">
             Reserva tu espacio de trabajo por hora en Santiago
           </h1>
-          <p className="mt-6 max-w-2xl text-lg text-slate-600">
+          <p className="mt-6 max-w-2xl text-lg text-ink-muted">
             Escritorios, salas de reuniones y oficinas privadas cerca de tu casa o de tu próxima
             reunión. Pagas solo las horas que reservas.
           </p>
@@ -49,38 +49,38 @@ function HomePage() {
           </div>
           <dl className="mt-14 grid max-w-xs grid-cols-2 gap-6">
             <div>
-              <dt className="text-sm text-slate-500">Coworks</dt>
-              <dd className="mt-1 text-2xl font-bold text-slate-900">{COWORKS.length}</dd>
+              <dt className="text-sm text-ink-muted">Coworks</dt>
+              <dd className="mt-1 text-2xl font-bold text-ink">{COWORKS.length}</dd>
             </div>
             <div>
-              <dt className="text-sm text-slate-500">Comunas</dt>
-              <dd className="mt-1 text-2xl font-bold text-slate-900">{COMUNAS.length}</dd>
+              <dt className="text-sm text-ink-muted">Comunas</dt>
+              <dd className="mt-1 text-2xl font-bold text-ink">{COMUNAS.length}</dd>
             </div>
           </dl>
         </div>
       </section>
 
       <section id="como-funciona" className="mx-auto max-w-6xl scroll-mt-16 px-4 py-20 sm:px-6">
-        <h2 className="text-3xl font-bold tracking-tight text-slate-900">Cómo funciona</h2>
+        <h2 className="text-3xl font-bold tracking-tight text-ink">Cómo funciona</h2>
         <ol className="mt-10 grid gap-8 md:grid-cols-3">
           {steps.map(({ icon: Icon, title, text }, index) => (
             <li key={title} className="flex flex-col gap-3">
-              <span className="flex size-12 items-center justify-center rounded-xl bg-brand-100 text-brand-700">
+              <span className="flex size-12 items-center justify-center rounded-card bg-primary-soft text-primary">
                 <Icon className="size-6" aria-hidden />
               </span>
-              <h3 className="font-semibold text-slate-900">
+              <h3 className="font-semibold text-ink">
                 {index + 1}. {title}
               </h3>
-              <p className="text-slate-600">{text}</p>
+              <p className="text-ink-muted">{text}</p>
             </li>
           ))}
         </ol>
       </section>
 
-      <section className="bg-slate-50">
+      <section className="bg-surface">
         <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
           <div className="flex flex-wrap items-end justify-between gap-4">
-            <h2 className="text-3xl font-bold tracking-tight text-slate-900">Coworks destacados</h2>
+            <h2 className="text-3xl font-bold tracking-tight text-ink">Coworks destacados</h2>
             <Button to="/coworks" variant="secondary">
               Ver todos
             </Button>
@@ -94,11 +94,11 @@ function HomePage() {
       </section>
 
       <section className="px-4 pb-20 sm:px-6">
-        <div className="mx-auto max-w-6xl rounded-3xl bg-brand-900 px-6 py-14 text-center sm:px-12">
-          <h2 className="text-3xl font-bold tracking-tight text-white">
+        <div className="mx-auto max-w-6xl rounded-panel bg-primary px-6 py-14 text-center sm:px-12">
+          <h2 className="text-3xl font-bold tracking-tight text-on-primary">
             Tu próxima oficina está a la vuelta de la esquina
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-brand-100">
+          <p className="mx-auto mt-4 max-w-xl text-on-primary-muted">
             Elige un cowork, reserva las horas que necesitas y llega a trabajar.
           </p>
           <Button to="/coworks" variant="secondary" className="mt-8">

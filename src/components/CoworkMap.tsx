@@ -155,7 +155,7 @@ function CoworkMap({ coworkers, selectedSlug, onSelect }: CoworkMapProps) {
   return (
     <div>
       <div ref={container} className="cowork-map" role="region" aria-label="Mapa de ubicaciones de coworks" />
-      {tileError && <p role="status" className="mt-2 text-sm text-amber-800">No se pudo cargar parte del mapa. Revisa tu conexión; puedes seguir consultando los lugares en la lista.</p>}
+      {tileError && <p role="status" className="mt-2 text-sm text-danger">No se pudo cargar parte del mapa. Revisa tu conexión; puedes seguir consultando los lugares en la lista.</p>}
     </div>
   )
 }
