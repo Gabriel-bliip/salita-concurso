@@ -65,9 +65,46 @@ escribir una dirección sin coordenadas válidas también activa la sustitución
 No verifica que una dirección escrita coincida geográficamente con las coordenadas:
 esa comprobación debe hacerse al cargar los datos.
 
-Si varios lugares tienen exactamente las mismas coordenadas, comparten una burbuja
-con un contador. Al abrirla aparecen todos sus nombres, portadas y enlaces; cada
-lugar también conserva su entrada individual debajo del mapa.
+Los lugares cercanos se agrupan automáticamente en una burbuja con contador al alejar
+el mapa. Al acercar, se separan. Pulsar un grupo acerca el mapa a sus integrantes.
+Los filtros recalculan los grupos y sus contadores usando solo los resultados visibles.
+Si varios lugares tienen exactamente las mismas coordenadas (por ejemplo, el respaldo
+Suecia 810), al abrir su grupo se despliegan en abanico con líneas hacia su ubicación.
+Esto permite seleccionar cada portada sin cambiar las coordenadas guardadas.
+Seleccionar un lugar desde la lista o desde `?cowork=slug` también revela su marcador,
+aunque estuviera oculto en un grupo. Cada registro conserva su propia ficha.
+
+## Dónde cambiar colores, detalle y agrupación
+
+| Qué cambiar | Archivo y sección |
+| --- | --- |
+| Fondo crema | `src/lib/mapConfig.ts` → `MAP_COLORS.background` |
+| Mancha urbana, parques y agua | `MAP_COLORS.urban`, `park`, `water` |
+| Calles y avenidas | `MAP_COLORS.street`, `avenue`, `avenueBorder` |
+| Edificios y textos del fondo | `MAP_COLORS.building`, `text` |
+| Color de burbujas y controles | `src/index.css` → sección `MAPA` y variables `--map-accent`, `--map-cluster-bg` |
+| Radio de agrupamiento | `MAP_CONFIG.clusterRadius`, en píxeles de pantalla |
+| Separación de portadas coincidentes | `MAP_CONFIG.spiderfyDistanceMultiplier` |
+| Zoom mínimo/máximo y al seleccionar | `MAP_CONFIG.minZoom`, `maxZoom`, `selectionZoom` |
+| Cuándo aparecen detalles | `MAP_CONFIG.detailZoom` |
+| Portada de respaldo del mapa y su lista | `MAP_CONFIG.fallbackCover` |
+
+Por ejemplo, `background: '#faf4e6'` cambia el fondo a un crema más cálido.
+Aumentar `clusterRadius` de `64` a `80` agrupa más lugares; reducirlo los separa antes.
+El radio se mide en píxeles, por lo que la distancia geográfica agrupada disminuye
+naturalmente al acercar. No hay que mantener una lista manual de grupos.
+
+`src/lib/mapStyle.ts` define qué capas se dibujan. De lejos se ven avenidas principales,
+áreas urbanas, parques y agua. Las vías secundarias aparecen gradualmente desde zoom 13,
+las calles locales y sus nombres desde 14, y los edificios desde 16. Estos umbrales
+son de **MapLibre**, cuyo zoom es uno menor que el de Leaflet en esta integración.
+Cada detalle aparece progresivamente durante el siguiente nivel de zoom.
+No se agregan iconos de comercios ni puntos de interés ajenos a los coworks.
+
+Para incorporar una nueva capa cartográfica, agrega una entrada a `mapStyle.layers`,
+indica su `source-layer`, `filter`, `minzoom` y colores en `paint`.
+Para incorporar un nuevo cowork, basta con agregar su registro a `coworkEntries`:
+el marcador, su portada, el agrupamiento, los filtros y los enlaces se generan solos.
 
 ## Cómo funciona el mapa
 
@@ -77,8 +114,12 @@ lugar también conserva su entrada individual debajo del mapa.
 4. Seleccionar un lugar actualiza `?cowork=slug`, centra el mapa y abre su información.
 5. La sección **Ubicación** de la ficha enlaza a esa misma URL.
 
-Leaflet se carga al entrar a `/mapa`. El fondo cartográfico se solicita a OpenStreetMap
-y requiere conexión. Las coordenadas están guardadas en los datos del proyecto;
+Leaflet se carga al entrar a `/mapa`. `leaflet.markercluster` agrupa los marcadores.
+`src/lib/mapBasemap.ts` carga MapLibre por separado para renderizar el fondo vectorial
+con datos OpenMapTiles/OpenStreetMap servidos por OpenFreeMap. El fondo requiere
+conexión y WebGL; si falla se muestra un aviso y la lista de lugares sigue disponible.
+La atribución de los proveedores permanece visible en el mapa.
+Las coordenadas están guardadas en los datos del proyecto;
 no se consulta un geocodificador al abrir el mapa.
 
 ## Integración futura con API, base de datos o administrador
@@ -106,3 +147,6 @@ ni una API que persista cambios. Para incorporar una fuente dinámica:
 - Abre `/mapa`, busca el lugar y comprueba su dirección, posición y portada.
 - Abre `/coworks/tu-slug` y prueba **Ver ubicación en el mapa**, también al recargar.
 - Prueba sus filtros, la vista móvil y, si corresponde, la burbuja de dirección compartida.
+- Aleja para comprobar contadores; acerca o pulsa un grupo para ver sus integrantes.
+- Selecciona desde la lista un lugar agrupado y prueba varios lugares con coordenadas idénticas.
+- Comprueba que las calles pequeñas y los edificios aparecen solo al acercar.
