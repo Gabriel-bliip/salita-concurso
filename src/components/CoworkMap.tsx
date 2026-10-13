@@ -31,7 +31,7 @@ function CoworkMap({ coworkers, selectedSlug, onSelect }: CoworkMapProps) {
   useEffect(() => {
     if (!container.current) return
     const { latitude, longitude } = DEFAULT_LOCATION.location
-    const map = L.map(container.current, { scrollWheelZoom: false }).setView([latitude, longitude], 13)
+    const map = L.map(container.current, { scrollWheelZoom: true }).setView([latitude, longitude], 13)
     mapRef.current = map
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
