@@ -4,6 +4,7 @@ import AmenityBadge from '../components/AmenityBadge.tsx'
 import CoworkCard from '../components/CoworkCard.tsx'
 import CoworkImage from '../components/CoworkImage.tsx'
 import { COWORKS } from '../data/coworks.ts'
+import { formatOpeningHours } from '../lib/format.ts'
 import NotFoundPage from './NotFoundPage.tsx'
 
 const MAX_RELATED_COWORKS = 3
@@ -64,14 +65,14 @@ function CoworkDetailPage() {
             <Clock className="size-5 shrink-0 text-primary" aria-hidden />
             <div>
               <p className="text-sm font-semibold text-ink">Horario</p>
-              <p className="text-sm text-ink-muted">{cowork.openingHours}</p>
+              <p className="text-sm text-ink-muted">{formatOpeningHours(cowork.openingHours)}</p>
             </div>
           </div>
           <div className="flex gap-3">
             <Users className="size-5 shrink-0 text-primary" aria-hidden />
             <div>
-              <p className="text-sm font-semibold text-ink">Capacidad</p>
-              <p className="text-sm text-ink-muted">{cowork.capacity} personas</p>
+              <p className="text-sm font-semibold text-ink">Espacios</p>
+              <p className="text-sm text-ink-muted">{cowork.spaces.length} para reservar por hora</p>
             </div>
           </div>
           <p className="border-t border-line pt-5 text-sm text-ink-muted">
