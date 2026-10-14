@@ -4,11 +4,16 @@ import { hasAmenity } from '../data/amenities.ts'
 import { SPACE_DEFINITIONS } from '../data/spaceTypes.ts'
 
 export const normalize = (value: string) => value.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase()
-export function filterLocations(entries: SpaceLocation[], filters: { name: string; category: string; comuna: string; amenity: string; type: string }) {
+export function filterLocations(entries: SpaceLocation[], filters: { name: string; category: string; comuna: string; amenity: string; type: string; attributes?: Record<string, string[]> }) {
   return entries.filter((entry) => normalize(entry.name).includes(normalize(filters.name)) &&
     (!filters.category || entry.categoryId === filters.category) && (!filters.comuna || entry.comuna === filters.comuna) &&
     (!filters.amenity || hasAmenity(entry, filters.amenity)) &&
-    (!filters.type || entry.spaces.some(({ type }) => type === filters.type)))
+    (!filters.type || entry.spaces.some(({ type }) => type === filters.type)) &&
+    (!filters.category || Object.entries(filters.attributes ?? {}).every(([id, values]) => values.every((value) => {
+      const attribute = entry.attributes?.[id]
+      return (Array.isArray(attribute) ? attribute : attribute === undefined ? [] : [String(attribute)]).includes(value)
+    }))))
+}
 }
 export function newSpace(type: SpaceType): Space {
   return { id: crypto.randomUUID(), type, name: '', description: '', pricePerHour: 0, minHours: 1, ...structuredClone(SPACE_DEFINITIONS[type].defaults) } as Space

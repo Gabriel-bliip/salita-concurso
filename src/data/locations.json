@@ -8,7 +8,7 @@
     },
     "slug": "casa-lastarria",
     "name": "Casa Lastarria",
-    "comuna": "Santiago Centro",
+    "comuna": "Santiago",
     "address": "José Victorino Lastarria 120, Santiago",
     "description": "Una casona restaurada en pleno barrio Lastarria, con techos altos, luz natural y un patio interior para tomar un respiro entre reuniones.",
     "amenityIds": [
@@ -103,7 +103,7 @@
     },
     "slug": "nodo-moneda",
     "name": "Nodo Moneda",
-    "comuna": "Santiago Centro",
+    "comuna": "Santiago",
     "address": "Agustinas 1050, piso 9, Santiago",
     "description": "Oficina en altura a pasos de metro La Moneda. Silencioso, con escritorios ergonómicos y vista a la cordillera.",
     "amenityIds": [
@@ -967,7 +967,7 @@
     },
     "slug": "demo-hub-plaza-brasil",
     "name": "Hub Plaza Brasil",
-    "comuna": "Santiago Centro",
+    "comuna": "Santiago",
     "address": "Sector Plaza Brasil, calle Brasil, Santiago",
     "description": "Casa de trabajo colaborativo inspirada en los inmuebles tradicionales del barrio, con escritorios y oficinas privadas. Espacio ficticio de demostración, no disponible para reservas reales.",
     "amenityIds": [
@@ -1180,7 +1180,7 @@
     },
     "slug": "demo-pigmento-lastarria",
     "name": "Pigmento Lastarria",
-    "comuna": "Santiago Centro",
+    "comuna": "Santiago",
     "address": "Sector Barrio Lastarria, calle Merced, Santiago",
     "description": "Taller con luz natural, mesones amplios y lavaderos para pintura, dibujo y actividades creativas. Espacio ficticio de demostración, no disponible para reservas reales.",
     "amenityIds": [
@@ -1381,7 +1381,7 @@
     },
     "slug": "demo-encuentro-monjitas",
     "name": "Encuentro Monjitas",
-    "comuna": "Santiago Centro",
+    "comuna": "Santiago",
     "address": "Sector Plaza de Armas, calle Monjitas, Santiago",
     "description": "Sala acogedora para acompañamiento y orientación profesional, con acceso céntrico. Espacio ficticio de demostración, no disponible para reservas reales.",
     "amenityIds": [
@@ -1442,7 +1442,7 @@
     },
     "slug": "demo-patio-encuentro-brasil",
     "name": "Patio Encuentro Brasil",
-    "comuna": "Santiago Centro",
+    "comuna": "Santiago",
     "address": "Sector Plaza Brasil, calle Maturana, Santiago",
     "description": "Patio techado y salón multiuso para encuentros culturales, charlas y celebraciones de tamaño mediano. Espacio ficticio de demostración, no disponible para reservas reales.",
     "amenityIds": [
@@ -1655,7 +1655,7 @@
     },
     "slug": "demo-mesa-centro",
     "name": "Mesa Centro",
-    "comuna": "Santiago Centro",
+    "comuna": "Santiago",
     "address": "Sector Plaza de Armas, calle Catedral, Santiago",
     "description": "Sala compacta para entrevistas, reuniones de coordinación y sesiones de trabajo en equipo. Espacio ficticio de demostración, no disponible para reservas reales.",
     "amenityIds": [
@@ -1724,7 +1724,7 @@
     },
     "slug": "demo-luz-lastarria",
     "name": "Luz Lastarria",
-    "comuna": "Santiago Centro",
+    "comuna": "Santiago",
     "address": "Sector Barrio Lastarria, calle José Ramón Gutiérrez, Santiago",
     "description": "Estudio con fondos neutros y zona adaptable para retratos, catálogos y fotografías de producto. Espacio ficticio de demostración, no disponible para reservas reales.",
     "amenityIds": [
@@ -1931,7 +1931,7 @@
     },
     "slug": "demo-bunker-brasil",
     "name": "Búnker Brasil",
-    "comuna": "Santiago Centro",
+    "comuna": "Santiago",
     "address": "Sector Plaza Brasil, calle Compañía, Santiago",
     "description": "Sala acondicionada para ensayos de música amplificada, con horarios extendidos y acceso céntrico. Espacio ficticio de demostración, no disponible para reservas reales.",
     "amenityIds": [
@@ -2070,7 +2070,7 @@
     },
     "slug": "demo-academia-lastarria",
     "name": "Academia Lastarria",
-    "comuna": "Santiago Centro",
+    "comuna": "Santiago",
     "address": "Sector Barrio Lastarria, calle Rosal, Santiago",
     "description": "Sala formativa para grupos pequeños con buena accesibilidad y apoyo audiovisual. Espacio ficticio de demostración, no disponible para reservas reales.",
     "amenityIds": [

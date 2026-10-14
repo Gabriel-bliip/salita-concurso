@@ -13,7 +13,7 @@ import SchemaFields from './SchemaFields.tsx'
 import './admin.css'
 
 type Snapshot = { locations: SpaceLocation[]; revision: string }
-const emptyFilters = { name: '', category: '', comuna: '', amenity: '', type: '' }
+const emptyFilters = { name: '', category: '', comuna: '', amenity: '', type: '', attributes: {} as Record<string, string[]> }
 const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
 function Field({ label, children }: { label: string; children: ReactNode }) { return <label className="admin-field"><span>{label}</span>{children}</label> }
 function Text({ label, value, onChange, required = true, type = 'text' }: { label: string; value: string; onChange: (value: string) => void; required?: boolean; type?: string }) {
@@ -88,6 +88,8 @@ export default function Admin() {
   }
   const category = draft && getCategory(draft.categoryId)
   const attributes = category ? attributeFields(category) : {}
+  const filterCategory = getCategory(filters.category)
+  const availableTypes = category?.filters.spaceTypes ?? SPACE_TYPES
   return <main className="admin">
     <header className="admin-bar"><div><a href="/">Salita</a><h1>Administrar ubicaciones</h1><p>Panel local · cambios guardados en el proyecto</p></div>{!draft && <button disabled={!data} onClick={() => open(newLocation(), false)}>Crear espacio</button>}</header>
     {error && <p className="admin-error" role="alert">{error}</p>}
@@ -97,6 +99,7 @@ export default function Admin() {
       <section className="admin-panel admin-grid" aria-label="Filtros">
         <Text label="Buscar por nombre" value={filters.name} required={false} onChange={(name) => setFilters({ ...filters, name })} />
         {([['category', 'Categoría', CATEGORIES.map(({ id, name }) => [id, name])], ['comuna', 'Comuna', [...new Set((data?.locations ?? []).map(({ comuna }) => comuna))].sort().map((v) => [v, v])], ['amenity', 'Servicio', AMENITIES.map(({ id, label }) => [id, label])], ['type', 'Unidad reservable', SPACE_TYPES.map((id) => [id, SPACE_TYPE_LABELS[id]])]] as const).map(([key, label, options]) => <Field key={key} label={label}><select value={filters[key]} onChange={(e) => setFilters({ ...filters, [key]: e.target.value })}><option value="">Todas las opciones</option>{options.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select></Field>)}
+        {filterCategory?.filters.attributes?.map(({ id, label, options }) => <Field key={id} label={label}><select multiple value={filters.attributes[id] ?? []} onChange={(e) => setFilters({ ...filters, attributes: { ...filters.attributes, [id]: Array.from(e.target.selectedOptions, ({ value }) => value) } })}>{options.map(({ value, label }) => <option key={value} value={value}>{label}</option>)}</select></Field>)}
         <button className="secondary" onClick={() => setFilters(emptyFilters)}>Limpiar filtros</button>
         <button className="secondary" onClick={() => { setError(''); api().then(setData).catch((e: Error) => setError(e.message)) }}>Recargar datos</button>
       </section>
