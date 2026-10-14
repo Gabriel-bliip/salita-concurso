@@ -28,12 +28,21 @@ function save(f, action, location, id, rev = snapshot(f.file).revision) {
 
 test('admin CRUD preserves existing records, IDs, captions and unknown properties', (t) => {
   const f = fixture(t)
-  const value = { ...sample(), extra: { preserved: true } }
+  const value = { ...sample(), extra: { preserved: true }, images: ['https://example.com/sala.jpg', '/images/sala.jpg'], photoCaptions: ['Foto externa', 'Foto local existente'] }
   const created = save(f, 'create', value)
   assert.deepEqual(created.locations.slice(0, -1), JSON.parse(original))
+  let persisted = JSON.parse(readFileSync(f.file, 'utf8'))
+  assert.deepEqual(persisted.slice(0, -1), JSON.parse(original))
+  assert.equal(persisted.at(-1).id, value.id)
+  assert.deepEqual(persisted.at(-1).images, value.images)
   const updated = save(f, 'update', { ...value, name: 'Nuevo nombre' }, value.id)
   assert.equal(updated.locations.at(-1).id, value.id)
   assert.deepEqual(updated.locations.at(-1).extra, value.extra)
+  persisted = JSON.parse(readFileSync(f.file, 'utf8'))
+  assert.equal(persisted.at(-1).name, 'Nuevo nombre')
+  assert.equal(persisted.at(-1).id, value.id)
+  assert.deepEqual(persisted.at(-1).images, value.images)
+  assert.deepEqual(persisted.at(-1).photoCaptions, value.photoCaptions)
   const duplicate = duplicateLocation(updated.locations.at(-1), updated.locations)
   assert.notEqual(duplicate.id, value.id)
   assert.notEqual(duplicate.spaces[0].id, value.spaces[0].id)
@@ -42,6 +51,7 @@ test('admin CRUD preserves existing records, IDs, captions and unknown propertie
   save(f, 'delete', undefined, duplicate.id)
   const deleted = save(f, 'delete', undefined, value.id)
   assert.deepEqual(deleted.locations, JSON.parse(original))
+  assert.deepEqual(JSON.parse(readFileSync(f.file, 'utf8')), JSON.parse(original))
   const legacy = deleted.locations.find((entry) => !entry.images.length && entry.photoCaptions.length)
   assert.ok(legacy)
   const legacyUpdated = save(f, 'update', { ...legacy, name: `${legacy.name} editado` }, legacy.id)

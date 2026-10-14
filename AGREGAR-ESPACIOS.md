@@ -2,6 +2,10 @@
 
 ## 1. Administrador visual
 
+Usa **`/admin` como opción principal** para crear, editar, duplicar y eliminar
+ubicaciones. El asistente de terminal se conserva únicamente porque el panel
+todavía no permite añadir imágenes mediante URL externa o una ruta pública existente.
+
 ### Acceder y encontrar ubicaciones
 
 Desde la raíz del proyecto, con Node **22.18+ o 24+** y las dependencias instaladas:
@@ -58,7 +62,7 @@ Usa **Subir desde el computador** para seleccionar PNG, JPEG o WebP de hasta
 **5 MB por archivo**. Revisa las previsualizaciones y sus descripciones; la primera
 imagen es la portada. **Quitar imagen** solicita confirmación y prepara su retirada.
 
-Las imágenes seleccionadas permanecen en memoria hasta **Guardar cambios**.
+Las imágenes seleccionadas permanecen en memoria hasta **Guardar**.
 Al guardar se escriben en `public/images/admin/` y sus rutas públicas quedan en
 el JSON. La solicitud completa admite hasta 35 MB: si supera el límite, guarda
 menos imágenes por vez. Al retirar imágenes o eliminar una ubicación, solo se
@@ -66,7 +70,9 @@ borran archivos creados por el panel que ya no use ninguna ubicación; los demá
 archivos y las imágenes externas no se eliminan del disco. Una copia puede
 compartir imágenes con el original.
 
-**Guardar cambios** valida y escribe directamente en `src/data/locations.json`.
+**Guardar** valida y escribe directamente en `src/data/locations.json`.
+Cambiar campos, seleccionar opciones, subir imágenes o enviar el formulario sin
+pulsar ese botón no guarda datos. Cancelar o abandonar descarta los cambios locales.
 Si falla, corrige el error indicado. **Cancelar** permite descartar el formulario
 con confirmación. Si otra sesión cambió los datos, cancela el formulario, recarga
 el listado y repite el cambio sobre la versión actual.
@@ -81,10 +87,11 @@ Los cambios siguen siendo locales hasta publicarlos mediante el flujo habitual.
 Revisa y versiona el JSON y las nuevas imágenes, por ejemplo con
 `git diff -- src/data/locations.json`.
 
-### Alternativa: asistente de terminal
+### Excepción: imágenes por URL o ruta pública
 
-Si faltan las dependencias, ejecuta `npm install`. Para agregar una ubicación
-sin editar código también puedes usar:
+El panel permite subir imágenes desde el computador y conserva las URLs y rutas
+ya guardadas, pero no ofrece un campo para añadirlas. Para crear una ubicación
+con imágenes externas o archivos que ya están en `public/`, se conserva:
 
 ```sh
 npm run spaces:add
@@ -181,7 +188,8 @@ No agregues otra lista de categorías ni otra fuente de ubicaciones.
 
 ### Agregar ubicaciones, categorías y comunas
 
-Para una ubicación, usa el panel o `npm run spaces:add`.
+Para una ubicación, usa `/admin`; para el caso de imágenes por URL o ruta pública,
+usa `npm run spaces:add`. Este comando solo crea ubicaciones, no edita las existentes.
 Para una categoría, agrega una entrada en `definitions`, en
 **`src/data/categories.ts`**:
 
