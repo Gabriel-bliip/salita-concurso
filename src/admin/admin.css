@@ -1,0 +1,26 @@
+.admin { max-width: 1180px; margin: auto; padding: 32px 20px; }
+.admin h1 { font-size: 2rem; }
+.admin h2 { font-size: 1.5rem; margin-bottom: 16px; }
+.admin h3 { font-size: 1.2rem; margin-bottom: 8px; }
+.admin p { margin: 8px 0 16px; color: var(--color-ink-muted); }
+.admin-bar, .admin-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.admin-bar { justify-content: space-between; margin-bottom: 24px; }
+.admin-bar a { color: var(--color-primary); font-family: var(--font-display); font-size: 1.5rem; }
+.admin-panel { background: var(--color-surface); border: 1px solid var(--color-line); border-radius: var(--radius-panel); padding: 24px; margin-bottom: 20px; }
+.admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 16px; }
+.admin-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; font-size: .9rem; }
+.admin input:not([type=checkbox]), .admin select, .admin textarea { width: 100%; min-width: 0; padding: 10px 12px; border: 1px solid var(--color-line-strong); border-radius: var(--radius-control); background: var(--color-surface); color: var(--color-ink); }
+.admin textarea { min-height: 110px; resize: vertical; }
+.admin input[type=checkbox] { accent-color: var(--color-primary); margin-right: 8px; width: 17px; height: 17px; }
+.admin button { padding: 10px 16px; background: var(--color-primary); color: var(--color-on-primary); border-radius: var(--radius-control); cursor: pointer; border: 1px solid var(--color-primary); }
+.admin button.secondary { color: var(--color-primary); background: var(--color-primary-soft); }
+.admin button.danger { color: var(--color-danger); background: var(--color-surface); border-color: var(--color-danger); }
+.admin button:disabled { opacity: .5; cursor: wait; }
+.admin .admin-error { color: var(--color-danger); border: 1px solid currentColor; border-radius: var(--radius-control); padding: 16px; }
+.admin-checks { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 20px; }
+.admin-hours { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; align-items: center; margin-bottom: 10px; }
+.admin-unit { border-bottom: 1px solid var(--color-line); margin-bottom: 20px; padding-bottom: 20px; }
+.admin-photo { width: 100%; height: 180px; object-fit: cover; border-radius: var(--radius-card); margin-bottom: 12px; }
+.admin-save { padding: 16px 0; }
+.admin small { font-family: var(--font-sans); color: var(--color-ink-muted); font-size: .9rem; }
+@media (max-width: 520px) { .admin-panel { padding: 16px; } .admin-hours { grid-template-columns: 1fr 1fr; } .admin-hours > label:first-child { grid-column: 1 / -1; } }
