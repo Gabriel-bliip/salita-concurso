@@ -11,11 +11,11 @@ el listado, las fichas y el mapa. `COWORKS` conserva la selección Cowork del in
 Desde la raíz ejecuta:
 
 ```sh
-npm run spaces:add
+npm run dev
 ```
 
-El asistente pide los datos y guarda después de mostrar un resumen y recibir tu
-confirmación. Consulta [la guía práctica](../AGREGAR-ESPACIOS.md) para completar
+Abre `/admin`, completa el formulario y pulsa **Guardar** para confirmar los datos.
+Consulta [la guía práctica](../AGREGAR-ESPACIOS.md) para completar
 una ubicación, crear categorías y configurar atributos sin duplicar formularios.
 
 La dirección no se geocodifica automáticamente: indica las coordenadas reales y
@@ -74,7 +74,7 @@ No se agregan iconos de comercios ni puntos de interés ajenos a los coworks.
 
 Para incorporar una nueva capa cartográfica, agrega una entrada a `mapStyle.layers`,
 indica su `source-layer`, `filter`, `minzoom` y colores en `paint`.
-Para incorporar un nuevo lugar, ejecuta `npm run spaces:add`:
+Para incorporar un nuevo lugar, usa `/admin` con `npm run dev`:
 el marcador, su portada, el agrupamiento, los filtros y los enlaces se generan solos.
 
 ## Cómo funciona el mapa

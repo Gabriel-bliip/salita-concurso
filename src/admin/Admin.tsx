@@ -7,7 +7,7 @@ import type { SpaceLocation, Weekday } from '../types/index.ts'
 import type { Space } from '../types/space.ts'
 import { SPACE_TYPES, SPACE_TYPE_LABELS } from '../lib/spaces.ts'
 import { duplicateLocation, filterLocations, newLocation, newSpace, normalize } from './model.ts'
-import { attributeFields } from '../lib/fields.ts'
+import { attributeFields, validateImageReference } from '../lib/fields.ts'
 import { spaceFields } from '../data/spaceTypes.ts'
 import SchemaFields from './SchemaFields.tsx'
 import './admin.css'
@@ -38,6 +38,7 @@ export default function Admin() {
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
   const [reading, setReading] = useState(false)
+  const [imageReference, setImageReference] = useState('')
   useEffect(() => { api().then(setData).catch((e: Error) => setError(e.message)) }, [])
   useEffect(() => {
     if (!draft) return
@@ -57,7 +58,16 @@ export default function Admin() {
     } catch (e) { setError((e as Error).message); window.scrollTo(0, 0) }
     finally { setBusy(false) }
   }
-  function open(value: SpaceLocation, existing: boolean) { setDraft(structuredClone(value)); setEditing(existing); setError(''); setMessage(''); window.scrollTo(0, 0) }
+  function open(value: SpaceLocation, existing: boolean) { setDraft(structuredClone(value)); setImageReference(''); setEditing(existing); setError(''); setMessage(''); window.scrollTo(0, 0) }
+  function addImageReference() {
+    if (!draft) return
+    try {
+      const src = imageReference.trim()
+      validateImageReference(src)
+      update({ images: [...draft.images, src], photoCaptions: [...draft.images.map((_, i) => draft.photoCaptions[i] ?? ''), ''] })
+      setImageReference(''); setError('')
+    } catch (e) { setError((e as Error).message) }
+  }
   async function upload(files: FileList | null) {
     if (!files || !draft) return
     setReading(true); setError('')
@@ -93,7 +103,7 @@ export default function Admin() {
       <p role="status">{visible.length} resultados</p>
       {CATEGORIES.map((category) => { const entries = visible.filter(({ categoryId }) => categoryId === category.id); return entries.length > 0 && <section key={category.id} className="admin-category"><h2>{category.name} <small>({entries.length})</small></h2><div className="admin-grid">{entries.map((entry) => <article className="admin-panel" key={entry.id}><h3>{entry.name}</h3><p>{entry.comuna}</p><p>{entry.address}</p><p>{entry.spaces.length} unidades reservables</p><div className="admin-actions"><button disabled={busy} onClick={() => open(entry, true)}>Editar</button><button disabled={busy} className="secondary" onClick={() => open(duplicateLocation(entry, data!.locations), false)}>Duplicar</button><button disabled={busy} className="danger" onClick={() => { if (confirm(`¿Eliminar «${entry.name}»? Esta acción no se puede deshacer.`)) void commit('delete', undefined, entry.id) }}>Eliminar</button></div></article>)}</div></section> })}
       {data && !visible.length && <p>No hay ubicaciones que coincidan con los filtros.</p>}
-    </> : <form onSubmit={(e) => { e.preventDefault(); void commit(editing ? 'update' : 'create', draft, editing ? draft.id : undefined) }}>
+    </> : <form onSubmit={(e) => e.preventDefault()}>
       <fieldset disabled={busy || reading}>
         <section className="admin-panel"><h2>{editing ? 'Editar' : 'Crear'} espacio</h2><div className="admin-grid">
           <Text label="Nombre" value={draft.name} onChange={(name) => update({ name, ...(!editing ? { slug: normalize(name).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '-' + draft.id } : {}) })} />
@@ -110,8 +120,8 @@ export default function Admin() {
         <section className="admin-panel"><h2>Reglas y contacto</h2><Field label="Reglas (una por línea)"><textarea value={draft.rules.join('\n')} onChange={(e) => update({ rules: e.target.value.split('\n') })} /></Field><div className="admin-grid">{(['email', 'phone', 'website'] as const).map((key) => <Text key={key} label={{ email: 'Correo', phone: 'Teléfono', website: 'Sitio web' }[key]} type={{ email: 'email', phone: 'tel', website: 'url' }[key]} required={false} value={draft.contact?.[key] ?? ''} onChange={(value) => { const contact = { ...draft.contact }; if (value) contact[key] = value; else delete contact[key]; update({ contact }) }} />)}</div></section>
         <section className="admin-panel"><h2>Unidades reservables</h2>{draft.spaces.map((space, index) => <section className="admin-unit" key={space.id}><h3>{SPACE_TYPE_LABELS[space.type]}</h3><div className="admin-grid"><SchemaFields fields={spaceFields(space.type)} values={space} onChange={(value) => updateSpace(index, value)} />
         </div><button type="button" className="danger" onClick={() => { if (confirm('¿Eliminar esta unidad reservable?')) update({ spaces: draft.spaces.filter((_, i) => i !== index) }) }}>Eliminar unidad</button></section>)}<div className="admin-actions">{SPACE_TYPES.map((type) => <button key={type} type="button" className="secondary" onClick={() => update({ spaces: [...draft.spaces, newSpace(type)] })}>Añadir {SPACE_TYPE_LABELS[type].toLowerCase()}</button>)}</div></section>
-        <section className="admin-panel"><h2>Imágenes</h2><p>PNG, JPEG o WebP · hasta 5 MB cada una. La primera imagen es la portada.</p><Field label="Subir desde el computador"><input type="file" accept="image/png,image/jpeg,image/webp" multiple onChange={(e) => { void upload(e.target.files); e.target.value = '' }} /></Field><div className="admin-grid">{draft.images.map((src, index) => <div key={`${index}-${src.slice(-40)}`}><img className="admin-photo" src={src} alt={draft.photoCaptions[index] ?? ''} /><Text label={`Descripción de imagen ${index + 1}`} value={draft.photoCaptions[index] ?? ''} onChange={(caption) => { const captions = [...draft.photoCaptions]; captions[index] = caption; update({ photoCaptions: captions }) }} /><button type="button" className="danger" onClick={() => { if (confirm('¿Quitar esta imagen?')) update({ images: draft.images.filter((_, i) => i !== index), photoCaptions: draft.photoCaptions.filter((_, i) => i !== index) }) }}>Quitar imagen</button></div>)}</div></section>
-        <div className="admin-actions admin-save"><button type="submit">{busy ? 'Guardando…' : 'Guardar cambios'}</button><button type="button" className="secondary" onClick={() => { if (confirm('¿Descartar los cambios del formulario?')) { setDraft(undefined); setError('') } }}>Cancelar</button></div>
+        <section className="admin-panel"><h2>Imágenes</h2><p>PNG, JPEG o WebP · hasta 5 MB cada una. La primera imagen es la portada.</p><Field label="Subir desde el computador"><input type="file" accept="image/png,image/jpeg,image/webp" multiple onChange={(e) => { void upload(e.target.files); e.target.value = '' }} /></Field><div className="admin-actions"><Text label="URL HTTPS o ruta pública de imagen" required={false} value={imageReference} onChange={setImageReference} /><button type="button" className="secondary" onClick={addImageReference}>Añadir imagen</button></div><div className="admin-grid">{draft.images.map((src, index) => <div key={`${index}-${src.slice(-40)}`}><img className="admin-photo" src={src} alt={draft.photoCaptions[index] ?? ''} /><Text label={`Descripción de imagen ${index + 1}`} required={false} value={draft.photoCaptions[index] ?? ''} onChange={(caption) => { const captions = [...draft.photoCaptions]; captions[index] = caption; update({ photoCaptions: captions }) }} /><button type="button" className="danger" onClick={() => { if (confirm('¿Quitar esta imagen?')) update({ images: draft.images.filter((_, i) => i !== index), photoCaptions: draft.photoCaptions.filter((_, i) => i !== index) }) }}>Quitar imagen</button></div>)}</div></section>
+        <div className="admin-actions admin-save"><button type="button" onClick={(e) => { if (e.currentTarget.form?.reportValidity()) void commit(editing ? 'update' : 'create', draft, editing ? draft.id : undefined) }}>{busy ? 'Guardando…' : 'Guardar'}</button><button type="button" className="secondary" onClick={() => { if (confirm('¿Descartar los cambios del formulario?')) { setDraft(undefined); setError('') } }}>Cancelar</button></div>
       </fieldset>
     </form>}
   </main>

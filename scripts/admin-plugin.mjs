@@ -1,6 +1,7 @@
 import { createHash, randomUUID } from 'node:crypto'
-import { readFileSync, openSync, writeFileSync, fsyncSync, closeSync, renameSync, unlinkSync, mkdirSync, existsSync } from 'node:fs'
-import { join } from 'node:path'
+import { readFileSync, openSync, writeFileSync, fsyncSync, closeSync, renameSync, unlinkSync, mkdirSync, existsSync, realpathSync, statSync } from 'node:fs'
+import { join, relative, isAbsolute } from 'node:path'
+import { validateImageReference } from '../src/lib/fields.ts'
 import { validateLocation, validateLocationShape } from '../src/lib/locationSchema.ts'
 import { normalizeLocation, withLocation, serializeLocation } from '../src/lib/location.ts'
 
@@ -19,7 +20,7 @@ export function snapshot(file) {
   return { ...current, locations: current.locations.map(withLocation) }
 }
 
-// Shares the CLI lock. The JSON rename is the transaction commit point.
+// Locks concurrent saves. The JSON rename is the transaction commit point.
 export function mutate(file, publicDir, request) {
   const lock = `${file}.lock`
   const temporary = `${file}.${randomUUID()}.tmp`
@@ -48,7 +49,17 @@ export function mutate(file, publicDir, request) {
       const uploads = []
       value.images = value.images.map((src) => {
         if (typeof src !== 'string') fail('Imagen inválida.')
-        if (!src.startsWith('data:')) return src
+        if (!src.startsWith('data:')) {
+          if (request.action === 'update' && entries[index].images?.includes(src)) return src
+          validateImageReference(src)
+          if (src.startsWith('/')) {
+            const path = join(publicDir, decodeURIComponent(src).slice(1))
+            if (!existsSync(path) || !statSync(path).isFile()) fail('La imagen no existe en public/.')
+            const inside = relative(realpathSync(publicDir), realpathSync(path))
+            if (inside.startsWith('..') || isAbsolute(inside)) fail('La imagen debe estar dentro de public/.')
+          }
+          return src
+        }
         const match = /^data:image\/(png|jpeg|webp);base64,([A-Za-z0-9+/]+={0,2})$/.exec(src)
         if (!match) fail('Usa imágenes PNG, JPEG o WebP.')
         const bytes = Buffer.from(match[2], 'base64')

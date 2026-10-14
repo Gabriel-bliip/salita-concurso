@@ -6,9 +6,12 @@ import { join } from 'node:path'
 import { get as httpGet } from 'node:http'
 import { createServer } from 'vite'
 import { adminPlugin, mutate, snapshot } from '../scripts/admin-plugin.mjs'
-import { DATA_FILE } from '../scripts/spaces-add.mjs'
+import { fileURLToPath } from 'node:url'
+import { CATEGORIES } from '../src/data/categories.ts'
+import { validateLocation } from '../src/lib/locationSchema.ts'
 import { newLocation, newSpace, duplicateLocation, filterLocations } from '../src/admin/model.ts'
 
+const DATA_FILE = fileURLToPath(new URL('../src/data/locations.json', import.meta.url))
 const original = readFileSync(DATA_FILE, 'utf8')
 const png = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aF9sAAAAASUVORK5CYII='
 function fixture(t) {
@@ -17,6 +20,8 @@ function fixture(t) {
   mkdirSync(join(root, 'src/data'), { recursive: true })
   const file = join(root, 'src/data/locations.json')
   writeFileSync(file, original)
+  mkdirSync(join(root, 'public/images'), { recursive: true })
+  writeFileSync(join(root, 'public/images/sala.jpg'), Buffer.from(png.split(',')[1], 'base64'))
   return { root, file, publicDir: join(root, 'public') }
 }
 function sample() {
@@ -26,14 +31,31 @@ function save(f, action, location, id, rev = snapshot(f.file).revision) {
   return mutate(f.file, f.publicDir, { action, location, id, revision: rev })
 }
 
+test('existing locations retain compatibility with shared validation', () => {
+  const records = JSON.parse(original)
+  const categories = CATEGORIES.map((category) => ({ ...category, attributes: category.attributes?.map((field) => ({ ...field, required: false })) }))
+  for (const record of records) {
+    assert.doesNotThrow(() => validateLocation(record, records.filter(({ id }) => id !== record.id), categories))
+  }
+})
+
 test('admin CRUD preserves existing records, IDs, captions and unknown properties', (t) => {
   const f = fixture(t)
-  const value = { ...sample(), extra: { preserved: true } }
+  const value = { ...sample(), extra: { preserved: true }, images: ['https://example.com/sala.jpg', '/images/sala.jpg'], photoCaptions: ['Foto externa', 'Foto local existente'] }
   const created = save(f, 'create', value)
   assert.deepEqual(created.locations.slice(0, -1), JSON.parse(original))
+  let persisted = JSON.parse(readFileSync(f.file, 'utf8'))
+  assert.deepEqual(persisted.slice(0, -1), JSON.parse(original))
+  assert.equal(persisted.at(-1).id, value.id)
+  assert.deepEqual(persisted.at(-1).images, value.images)
   const updated = save(f, 'update', { ...value, name: 'Nuevo nombre' }, value.id)
   assert.equal(updated.locations.at(-1).id, value.id)
   assert.deepEqual(updated.locations.at(-1).extra, value.extra)
+  persisted = JSON.parse(readFileSync(f.file, 'utf8'))
+  assert.equal(persisted.at(-1).name, 'Nuevo nombre')
+  assert.equal(persisted.at(-1).id, value.id)
+  assert.deepEqual(persisted.at(-1).images, value.images)
+  assert.deepEqual(persisted.at(-1).photoCaptions, value.photoCaptions)
   const duplicate = duplicateLocation(updated.locations.at(-1), updated.locations)
   assert.notEqual(duplicate.id, value.id)
   assert.notEqual(duplicate.spaces[0].id, value.spaces[0].id)
@@ -42,6 +64,7 @@ test('admin CRUD preserves existing records, IDs, captions and unknown propertie
   save(f, 'delete', undefined, duplicate.id)
   const deleted = save(f, 'delete', undefined, value.id)
   assert.deepEqual(deleted.locations, JSON.parse(original))
+  assert.deepEqual(JSON.parse(readFileSync(f.file, 'utf8')), JSON.parse(original))
   const legacy = deleted.locations.find((entry) => !entry.images.length && entry.photoCaptions.length)
   assert.ok(legacy)
   const legacyUpdated = save(f, 'update', { ...legacy, name: `${legacy.name} editado` }, legacy.id)
@@ -49,7 +72,7 @@ test('admin CRUD preserves existing records, IDs, captions and unknown propertie
   assert.deepEqual(readdirSync(join(f.root, 'src/data')), ['locations.json'])
 })
 
-test('admin validates changes and prevents stale saves, duplicate IDs and CLI lock collisions', (t) => {
+test('admin validates changes and prevents stale saves, duplicate IDs and lock collisions', (t) => {
   const f = fixture(t)
   const value = sample()
   const rev = snapshot(f.file).revision
@@ -71,11 +94,13 @@ test('admin validates changes and prevents stale saves, duplicate IDs and CLI lo
 
 test('images persist only on valid saves and are removed after their final reference', (t) => {
   const f = fixture(t)
-  const value = { ...sample(), images: [png], photoCaptions: ['Imagen temporal'] }
+  const value = { ...sample(), images: [png, 'https://example.com/foto.jpg', '/images/sala.jpg'], photoCaptions: ['', '', ''] }
   const created = save(f, 'create', value).locations.at(-1)
   const imageFile = join(f.publicDir, created.images[0].slice(1))
   assert.ok(existsSync(imageFile))
   assert.equal(readFileSync(imageFile).toString('base64'), png.split(',')[1])
+  assert.deepEqual(JSON.parse(readFileSync(f.file, 'utf8')).at(-1).images.slice(1), value.images.slice(1))
+  assert.deepEqual(readdirSync(join(f.publicDir, 'images/admin')), [created.images[0].split('/').at(-1)])
   const copy = duplicateLocation(created, [created])
   save(f, 'create', copy)
   save(f, 'delete', undefined, created.id)
@@ -87,6 +112,16 @@ test('images persist only on valid saves and are removed after their final refer
   assert.throws(() => save(f, 'update', { ...copy, images: [png], photoCaptions: ['Buena'], name: '' }, copy.id), /Nombre/)
   assert.deepEqual(snapshot(f.file), before)
   assert.deepEqual(readdirSync(join(f.publicDir, 'images/admin')), [])
+  assert.ok(existsSync(join(f.publicDir, 'images/sala.jpg')))
+})
+
+test('image references reject unsafe URLs, traversal and missing public files without writes', (t) => {
+  const f = fixture(t)
+  for (const src of ['http://example.com/foto.jpg', 'https://user:pass@example.com/foto.jpg', 'javascript:alert(1)', '//example.com/foto.jpg', '/images/../sala.jpg', '/images/%2e%2e/sala.jpg', '/images/%2fetc.jpg', '/images/archivo.html', '/images/no-existe.jpg']) {
+    assert.throws(() => save(f, 'create', { ...sample(), images: [src], photoCaptions: [] }))
+    assert.equal(readFileSync(f.file, 'utf8'), original)
+    assert.ok(!existsSync(join(f.publicDir, 'images/admin')))
+  }
 })
 
 test('sparse legacy records round-trip through admin without materializing defaults or losing extras', (t) => {
