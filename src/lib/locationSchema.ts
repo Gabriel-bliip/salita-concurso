@@ -8,7 +8,6 @@ import { getCapacityRange } from './spaces.ts'
 import type { LocationInput } from './location.ts'
 import { attributeFields, choice, number, option, text, validateFields, validateValue } from './fields.ts'
 
-export { attributeFields, validateValue } from './fields.ts'
 export const commonFields = {
   name: text('Nombre del lugar'), description: text('Descripción del lugar'),
   address: text('Dirección completa', true, { example: 'Calle, número, piso, comuna y ciudad' }),
@@ -43,7 +42,7 @@ export function validateLocation(input: LocationInput, entries: readonly Locatio
   validateValue(location.amenityIds, amenities)
   if (typeof location.id !== 'string' || !location.id || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(location.slug)) throw new Error('Identificador o URL inválidos.')
   const ids = new Set(entries.flatMap((entry) => [entry.id, ...(entry.spaces ?? []).map(({ id }) => id)]))
-  if (ids.has(location.id) || entries.some((entry) => entry.slug === location.slug)) throw new Error('Ya existe ese identificador o URL. Reinicia el asistente.')
+  if (ids.has(location.id) || entries.some((entry) => entry.slug === location.slug)) throw new Error('Ya existe ese identificador o URL.')
   if (entries.some((entry) => normalizeName(entry.name) === normalizeName(location.name) && normalizeName(entry.address ?? '') === normalizeName(location.address))) throw new Error('Ya existe un lugar con ese nombre y dirección.')
   for (const hours of Object.values(location.openingHours)) {
     if (hours === null) continue

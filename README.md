@@ -7,8 +7,7 @@ consulta [la guía de espacios](docs/espacios.md).
 
 Para agregar lugares, cambiar sus direcciones o conectar una futura fuente de datos,
 consulta [la guía de ubicaciones](docs/ubicaciones.md).
-Para agregar un lugar desde la raíz, ejecuta `npm run spaces:add` (Node 22.18+ o 24+).
-El asistente valida y guarda en `src/data/locations.json` después de confirmar.
+Para administrar ubicaciones, ejecuta `npm run dev` y abre `http://localhost:3000/admin`. El panel valida y guarda en `src/data/locations.json` al pulsar **Guardar**.
 Consulta [la guía práctica](AGREGAR-ESPACIOS.md).
 
 ## React + TypeScript + Vite
@@ -93,8 +92,8 @@ Con `npm run dev`, abre `http://localhost:3000/admin`. El panel permite buscar y
 filtrar ubicaciones, crear, editar, duplicar y eliminar mediante formularios.
 Las categorías y los atributos provienen de `src/data/categories.ts`.
 
-Los cambios se confirman con **Guardar cambios** y escriben directamente en
-`src/data/locations.json`, usando las validaciones del asistente, bloqueo compartido,
+Los cambios se confirman con **Guardar** y escriben directamente en
+`src/data/locations.json`, usando las validaciones compartidas y bloqueo entre sesiones,
 comprobación de versión y reemplazo atómico. Si otro proceso modificó los datos,
 cancela el formulario y recarga el listado antes de repetir el cambio.
 Los IDs existentes y las descripciones de fotos de marcadores vacíos se conservan.

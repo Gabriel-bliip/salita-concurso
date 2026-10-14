@@ -16,7 +16,7 @@ Una categoría sin ubicaciones muestra un estado vacío en lista y mapa.
 
 ## 2. Agregar una ubicación
 
-Ejecuta `npm run spaces:add` desde la raíz. El asistente solicita categoría,
+Ejecuta `npm run dev` desde la raíz y abre `/admin`. El panel permite completar categoría,
 datos, contacto, horarios, fotos y espacios reservables; valida y guarda en
 `src/data/locations.json` únicamente después de confirmar. Consulta
 [la guía práctica](../AGREGAR-ESPACIOS.md) para el recorrido completo.
@@ -50,8 +50,8 @@ Los de selección incluyen `options: [{ value, label }]`; con `filter: true` gen
 también los filtros web. `required: true` exige una respuesta en las altas nuevas.
 Consulta [los ejemplos](../AGREGAR-ESPACIOS.md#agregar-atributos-específicos).
 
-El asistente guarda las respuestas en `location.attributes[id]`. Las definiciones
-anteriores en `filters.attributes` conservan sus filtros y generan preguntas
+El administrador guarda los valores en `location.attributes[id]`. Las definiciones
+anteriores en `filters.attributes` conservan sus filtros y generan campos
 opcionales de selección múltiple. No repitas una definición en ambos lugares.
 
 Las selecciones múltiples requieren todos los valores elegidos. Los atributos ausentes

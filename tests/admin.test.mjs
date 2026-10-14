@@ -6,9 +6,12 @@ import { join } from 'node:path'
 import { get as httpGet } from 'node:http'
 import { createServer } from 'vite'
 import { adminPlugin, mutate, snapshot } from '../scripts/admin-plugin.mjs'
-import { DATA_FILE } from '../scripts/spaces-add.mjs'
+import { fileURLToPath } from 'node:url'
+import { CATEGORIES } from '../src/data/categories.ts'
+import { validateLocation } from '../src/lib/locationSchema.ts'
 import { newLocation, newSpace, duplicateLocation, filterLocations } from '../src/admin/model.ts'
 
+const DATA_FILE = fileURLToPath(new URL('../src/data/locations.json', import.meta.url))
 const original = readFileSync(DATA_FILE, 'utf8')
 const png = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aF9sAAAAASUVORK5CYII='
 function fixture(t) {
@@ -25,6 +28,14 @@ function sample() {
 function save(f, action, location, id, rev = snapshot(f.file).revision) {
   return mutate(f.file, f.publicDir, { action, location, id, revision: rev })
 }
+
+test('existing locations retain compatibility with shared validation', () => {
+  const records = JSON.parse(original)
+  const categories = CATEGORIES.map((category) => ({ ...category, attributes: category.attributes?.map((field) => ({ ...field, required: false })) }))
+  for (const record of records) {
+    assert.doesNotThrow(() => validateLocation(record, records.filter(({ id }) => id !== record.id), categories))
+  }
+})
 
 test('admin CRUD preserves existing records, IDs, captions and unknown properties', (t) => {
   const f = fixture(t)
@@ -59,7 +70,7 @@ test('admin CRUD preserves existing records, IDs, captions and unknown propertie
   assert.deepEqual(readdirSync(join(f.root, 'src/data')), ['locations.json'])
 })
 
-test('admin validates changes and prevents stale saves, duplicate IDs and CLI lock collisions', (t) => {
+test('admin validates changes and prevents stale saves, duplicate IDs and lock collisions', (t) => {
   const f = fixture(t)
   const value = sample()
   const rev = snapshot(f.file).revision

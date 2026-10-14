@@ -1,10 +1,10 @@
-﻿# Administrar y extender los espacios de Salita
+# Administrar y extender los espacios de Salita
 
 ## 1. Administrador visual
 
-Usa **`/admin` como opción principal** para crear, editar, duplicar y eliminar
-ubicaciones. El asistente de terminal se conserva únicamente porque el panel
-todavía no permite añadir imágenes mediante URL externa o una ruta pública existente.
+Usa **`/admin`** para crear, editar, duplicar y eliminar ubicaciones. El panel
+permite subir imágenes desde el computador; añadir nuevas imágenes por URL o
+ruta pública aún no está disponible.
 
 ### Acceder y encontrar ubicaciones
 
@@ -87,34 +87,10 @@ Los cambios siguen siendo locales hasta publicarlos mediante el flujo habitual.
 Revisa y versiona el JSON y las nuevas imágenes, por ejemplo con
 `git diff -- src/data/locations.json`.
 
-### Excepción: imágenes por URL o ruta pública
-
-El panel permite subir imágenes desde el computador y conserva las URLs y rutas
-ya guardadas, pero no ofrece un campo para añadirlas. Para crear una ubicación
-con imágenes externas o archivos que ya están en `public/`, se conserva:
-
-```sh
-npm run spaces:add
-```
-
-Selecciona opciones por su número y usa `1,3` para seleccionar varias. **Enter**
-omite campos opcionales. El asistente pregunta categoría, datos básicos,
-coordenadas, contacto, atributos, servicios, horarios, reglas, fotos y unidades.
-Escribe horarios como `9-18`; Enter significa cerrado. Introduce una regla por
-respuesta y termina con Enter. Para añadir fotos, responde `sí` e indica una URL
-o una ruta como `/images/sala.jpg`, con descripción. Para esa ruta, coloca antes
-el archivo en `public/images/`: el asistente no copia ni descarga imágenes.
-
-Revisa el resumen y responde `sí` para guardar; Enter o `no` cancela.
-`:cancelar`, **Ctrl+C** o cerrar la entrada de terminal también cancela sin guardar.
-El asistente genera IDs y URL; ante nombres iguales de lugares distintos agrega
-un sufijo a la URL. Tanto el panel como el asistente rechazan una ubicación con
-el mismo nombre y dirección, ignorando mayúsculas, tildes y puntuación.
-
 ## 2. Estructura de los datos
 
 **`src/data/locations.json` es la única fuente de datos de las ubicaciones**:
-contiene una lista de objetos compartida por la web, el panel y el asistente.
+contiene una lista de objetos compartida por la web y el panel.
 No hay base de datos ni servicio externo de escritura.
 
 | Concepto | Qué representa |
@@ -155,8 +131,8 @@ Providencia · latitud -33.421795865179 · longitud -70.607290416391
 
 Con dirección y coordenadas válidas, solo se recortan los espacios al principio
 y al final de la dirección. Esta normalización de lectura no reescribe el JSON
-ni deduce coordenadas a partir de una dirección. El guardado del panel y del
-asistente valida los datos introducidos; no usa ese respaldo para corregirlos.
+ni deduce coordenadas a partir de una dirección. El guardado del panel valida
+los datos introducidos; no usa ese respaldo para corregirlos.
 
 El formulario nuevo del panel parte en categoría `cowork`, comuna Providencia,
 latitud `-33.42` y longitud `-70.6`; abre de lunes a viernes de 9 a 18 y deja
@@ -188,8 +164,7 @@ No agregues otra lista de categorías ni otra fuente de ubicaciones.
 
 ### Agregar ubicaciones, categorías y comunas
 
-Para una ubicación, usa `/admin`; para el caso de imágenes por URL o ruta pública,
-usa `npm run spaces:add`. Este comando solo crea ubicaciones, no edita las existentes.
+Para una ubicación, usa `/admin`.
 Para una categoría, agrega una entrada en `definitions`, en
 **`src/data/categories.ts`**:
 
@@ -204,15 +179,15 @@ Para una categoría, agrega una entrada en `definitions`, en
 Usa un ID único y estable, en minúsculas y con guiones. El catálogo, las rutas
 y el tipo `CategoryId` se derivan del mismo registro; no necesitas crear páginas.
 Puedes añadir `cover: { src: '/images/danza.jpg', alt: 'Sala de danza' }`.
-Recarga el panel o reinicia el asistente para usar la nueva configuración.
+Recarga el panel para usar la nueva configuración.
 Las comunas admitidas se definen en `COMUNA_OPTIONS`, en `src/types/index.ts`;
 los filtros web muestran las comunas con datos.
 
 ### Agregar amenities
 
 Añade una entrada a **`AMENITIES` en `src/data/amenities.ts`**, por ejemplo
-`{ id: 'ducha', label: 'Ducha' }`. El tipo `AmenityId`, las etiquetas, el panel y
-el asistente se derivan de ese registro. Las nuevas amenities usan un icono genérico
+`{ id: 'ducha', label: 'Ducha' }`. El tipo `AmenityId`, las etiquetas y el panel
+se derivan de ese registro. Las nuevas amenities usan un icono genérico
 si no tienen uno específico; no necesitas modificar componentes para incorporarlas.
 Las ubicaciones anteriores no cambian: el nuevo servicio queda desactivado hasta
 incluir su ID en `amenityIds`. Activa el servicio
@@ -244,10 +219,9 @@ Por defecto es opcional; `required: true` exige completarlo al guardar, también
 al editar una ubicación antigua. Antes de exigirlo, revisa los registros existentes.
 Los números admiten `min`, `max` e `integer: true`. `select` elige una opción y
 `multiselect` varias; ambos necesitan `options`. `boolean` permite sí/no.
-`example` sirve como ayuda en el asistente de terminal y como ejemplo en los inputs
-del administrador. Ambos usan `attributeFields` y la validación compartida de
-`src/lib/fields.ts` y `src/lib/locationSchema.ts`; no hay que agregar preguntas
-o controles manualmente.
+`example` sirve como ejemplo en los inputs del administrador. El panel usa
+`attributeFields` y la validación compartida de `src/lib/fields.ts` y
+`src/lib/locationSchema.ts`; no hay que agregar controles manualmente.
 
 En atributos de selección, **`filter: true` genera el filtro público de listado
 y mapa** usando las mismas opciones. No lo dupliques en `filters.attributes`.
@@ -271,7 +245,7 @@ el porcentaje de ocupación de la disponibilidad simulada.
 `fields` define texto, números o selecciones; las rutas `capacity.min` y
 `capacity.max` permiten editar capacidades anidadas sin cambiar el formato JSON.
 `defaults` define los valores iniciales del tipo. El tipo TypeScript `Space`, sus
-IDs, etiquetas y formularios del panel y del asistente se derivan del registro.
+IDs, etiquetas y formularios del panel se derivan del registro.
 No edites listas paralelas ni agregues ramas a los formularios.
 
 Habilita el ID en `filters.spaceTypes` de las categorías que usen una lista
@@ -291,7 +265,7 @@ npm run lint
 npm run build
 ```
 
-`npm test` ejecuta las pruebas existentes del asistente, categorías, filtros y
+`npm test` ejecuta las pruebas existentes de categorías, filtros y
 administración local. Las pruebas de escritura usan copias temporales y las
 eliminan al terminar: no pruebes el CRUD escribiendo sobre el catálogo real.
 Cubren validación, conservación de datos e IDs, conflictos entre sesiones,
@@ -330,7 +304,7 @@ Al ampliar la configuración, comprueba lo siguiente:
   deben seguir mostrándose sin ofrecer reservas. No des por cubierta toda la
   interacción del mapa y las reservas solo porque pasen los tests de filtros.
 
-El guardado comparte un bloqueo entre panel y asistente, comprueba que el archivo
+El guardado usa un bloqueo entre sesiones del panel, comprueba que el archivo
 no haya cambiado y lo reemplaza de forma atómica. Si un cierre forzado deja
 `src/data/locations.json.lock`, verifica que no haya ningún proceso guardando
 antes de eliminar ese bloqueo. Un archivo `locations.json.*.tmp` puede retirarse

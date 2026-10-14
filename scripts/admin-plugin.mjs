@@ -19,7 +19,7 @@ export function snapshot(file) {
   return { ...current, locations: current.locations.map(withLocation) }
 }
 
-// Shares the CLI lock. The JSON rename is the transaction commit point.
+// Locks concurrent saves. The JSON rename is the transaction commit point.
 export function mutate(file, publicDir, request) {
   const lock = `${file}.lock`
   const temporary = `${file}.${randomUUID()}.tmp`
