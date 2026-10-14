@@ -15,6 +15,7 @@ interface ButtonProps {
   variant?: Variant
   className?: string
   disabled?: boolean
+  type?: 'button' | 'submit'
 }
 
 function Button({
@@ -24,6 +25,7 @@ function Button({
   variant = 'primary',
   className = '',
   disabled = false,
+  type = 'button',
 }: ButtonProps) {
   const classes = `inline-flex items-center justify-center gap-2 rounded-control px-5 py-2.5 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:bg-sunken disabled:text-ink-muted disabled:ring-0 ${variantClasses[variant]} ${className}`
 
@@ -36,7 +38,7 @@ function Button({
   }
 
   return (
-    <button type="button" onClick={onClick} disabled={disabled} className={classes}>
+    <button type={type} onClick={onClick} disabled={disabled} className={classes}>
       {children}
     </button>
   )
