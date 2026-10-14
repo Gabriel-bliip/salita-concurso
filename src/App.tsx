@@ -5,6 +5,7 @@ import BookingPage from './pages/BookingPage.tsx'
 import CoworkDetailPage from './pages/CoworkDetailPage.tsx'
 import CoworksPage from './pages/CoworksPage.tsx'
 import HomePage from './pages/HomePage.tsx'
+import JoinPage from './pages/JoinPage.tsx'
 import NotFoundPage from './pages/NotFoundPage.tsx'
 import SpacesPage from './pages/SpacesPage.tsx'
 
@@ -28,6 +29,7 @@ const router = createBrowserRouter([
       { path: '/coworks/:slug', element: <CoworkDetailPage /> },
       { path: '/reservar/:slug', element: <BookingPage /> },
       { path: '/reservar/:slug/confirmacion', element: <BookingConfirmationPage /> },
+      { path: '/unete', element: <JoinPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },
