@@ -51,9 +51,8 @@ export function validateLocation(input: LocationInput, entries: readonly Locatio
   }
   for (const rule of location.rules) validateValue(rule, text('Regla'))
   for (const image of location.images) validateValue(image, photo)
-  if (location.images.length > location.photoCaptions.length) throw new Error('Cada foto necesita una descripción.')
   // Extra captions describe legacy placeholders; they are valid data, not images.
-  for (const caption of location.photoCaptions) validateValue(caption, text('Descripción de la foto'))
+  for (const caption of location.photoCaptions) validateValue(caption === '' ? undefined : caption, text('Descripción de la foto', false))
   ids.add(location.id)
   for (const space of location.spaces) {
     if (!SPACE_TYPES.includes(space.type)) throw new Error('Tipo reservable desconocido.')

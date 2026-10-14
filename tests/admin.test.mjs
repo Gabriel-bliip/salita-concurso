@@ -20,6 +20,8 @@ function fixture(t) {
   mkdirSync(join(root, 'src/data'), { recursive: true })
   const file = join(root, 'src/data/locations.json')
   writeFileSync(file, original)
+  mkdirSync(join(root, 'public/images'), { recursive: true })
+  writeFileSync(join(root, 'public/images/sala.jpg'), Buffer.from(png.split(',')[1], 'base64'))
   return { root, file, publicDir: join(root, 'public') }
 }
 function sample() {
@@ -92,11 +94,13 @@ test('admin validates changes and prevents stale saves, duplicate IDs and lock c
 
 test('images persist only on valid saves and are removed after their final reference', (t) => {
   const f = fixture(t)
-  const value = { ...sample(), images: [png], photoCaptions: ['Imagen temporal'] }
+  const value = { ...sample(), images: [png, 'https://example.com/foto.jpg', '/images/sala.jpg'], photoCaptions: ['', '', ''] }
   const created = save(f, 'create', value).locations.at(-1)
   const imageFile = join(f.publicDir, created.images[0].slice(1))
   assert.ok(existsSync(imageFile))
   assert.equal(readFileSync(imageFile).toString('base64'), png.split(',')[1])
+  assert.deepEqual(JSON.parse(readFileSync(f.file, 'utf8')).at(-1).images.slice(1), value.images.slice(1))
+  assert.deepEqual(readdirSync(join(f.publicDir, 'images/admin')), [created.images[0].split('/').at(-1)])
   const copy = duplicateLocation(created, [created])
   save(f, 'create', copy)
   save(f, 'delete', undefined, created.id)
@@ -108,6 +112,16 @@ test('images persist only on valid saves and are removed after their final refer
   assert.throws(() => save(f, 'update', { ...copy, images: [png], photoCaptions: ['Buena'], name: '' }, copy.id), /Nombre/)
   assert.deepEqual(snapshot(f.file), before)
   assert.deepEqual(readdirSync(join(f.publicDir, 'images/admin')), [])
+  assert.ok(existsSync(join(f.publicDir, 'images/sala.jpg')))
+})
+
+test('image references reject unsafe URLs, traversal and missing public files without writes', (t) => {
+  const f = fixture(t)
+  for (const src of ['http://example.com/foto.jpg', 'https://user:pass@example.com/foto.jpg', 'javascript:alert(1)', '//example.com/foto.jpg', '/images/../sala.jpg', '/images/%2e%2e/sala.jpg', '/images/%2fetc.jpg', '/images/archivo.html', '/images/no-existe.jpg']) {
+    assert.throws(() => save(f, 'create', { ...sample(), images: [src], photoCaptions: [] }))
+    assert.equal(readFileSync(f.file, 'utf8'), original)
+    assert.ok(!existsSync(join(f.publicDir, 'images/admin')))
+  }
 })
 
 test('sparse legacy records round-trip through admin without materializing defaults or losing extras', (t) => {

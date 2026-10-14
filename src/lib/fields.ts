@@ -77,3 +77,18 @@ export function validateFields(values: unknown, fields: Record<string, FormField
     catch (error) { throw new Error(`${field.label}: ${(error as Error).message}`, { cause: error }) }
   }
 }
+
+export function validateImageReference(value: string) {
+  if (value.startsWith('/')) {
+    let decoded: string
+    try { decoded = decodeURIComponent(value) } catch { throw new Error('Ruta de imagen inválida.') }
+    if (!/^\/images\/[^\s?#\\]+\.(png|jpe?g|webp|gif|avif|svg)$/i.test(decoded) ||
+        /[%?#\\\u0000-\u001f]/.test(decoded) || /%2f|%5c/i.test(value) ||
+        decoded.split('/').slice(1).some((part) => !part || part === '.' || part === '..')) {
+      throw new Error('Usa una ruta de imagen válida dentro de /images/, sin .. ni parámetros.')
+    }
+    return
+  }
+  validateValue(value, { label: 'Imagen', type: 'text', format: 'url', required: true })
+  if (!value.startsWith('https://') || /\s|\\/.test(value)) throw new Error('La URL de la imagen debe usar HTTPS.')
+}
