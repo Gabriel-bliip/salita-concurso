@@ -3,7 +3,7 @@ import { lazy, Suspense, useState } from 'react'
 import { Link } from 'react-router'
 import Button from '../components/Button.tsx'
 import CoworkCard from '../components/CoworkCard.tsx'
-import { COMUNAS, COWORKS } from '../data/coworks.ts'
+import { COMUNAS, COWORKS, LOCATIONS } from '../data/coworks.ts'
 import { formatClp } from '../lib/format.ts'
 import { getLowestPrice } from '../lib/spaces.ts'
 
@@ -79,7 +79,7 @@ function HomePage() {
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <h2 id="mapa-titulo" className="text-3xl font-bold tracking-tight text-ink">
-              Coworks en el mapa
+              Espacios en el mapa
             </h2>
             <p className="mt-2 text-ink-muted">Toca una burbuja para ver el espacio.</p>
           </div>
@@ -89,7 +89,7 @@ function HomePage() {
         </div>
         <div className="mt-6">
           <Suspense fallback={<div className="cowork-map bg-sunken" aria-hidden />}>
-            <CoworkMap coworkers={COWORKS} selectedSlug={selectedSlug} onSelect={setSelectedSlug} />
+            <CoworkMap coworkers={LOCATIONS} selectedSlug={selectedSlug} onSelect={setSelectedSlug} />
           </Suspense>
         </div>
       </section>
