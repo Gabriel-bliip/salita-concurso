@@ -1,6 +1,4 @@
-import type { Amenity, AmenityId } from '../types/index.ts'
-
-export const AMENITIES: Amenity[] = [
+export const AMENITIES = [
   { id: 'wifi', label: 'Wi-Fi de alta velocidad' },
   { id: 'coffee', label: 'Café de grano' },
   { id: 'phone-booth', label: 'Cabina telefónica' },
@@ -10,7 +8,13 @@ export const AMENITIES: Amenity[] = [
   { id: 'lockers', label: 'Lockers' },
   { id: 'terrace', label: 'Terraza' },
   { id: 'pet-friendly', label: 'Pet friendly' },
-]
+] as const
+
+export type AmenityId = typeof AMENITIES[number]['id']
+
+export function hasAmenity(location: { amenityIds?: readonly string[] }, id: string): boolean {
+  return location.amenityIds?.includes(id) ?? false
+}
 
 export const AMENITY_LABELS = Object.fromEntries(
   AMENITIES.map((amenity) => [amenity.id, amenity.label]),

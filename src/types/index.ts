@@ -1,21 +1,12 @@
 import type { Space } from './space.ts'
 import type { CategoryId } from '../data/categories.ts'
+import type { AmenityId } from '../data/amenities.ts'
+export type { AmenityId } from '../data/amenities.ts'
 
 export const COMUNA_OPTIONS = [
   'Santiago Centro', 'Providencia', 'Las Condes', 'Ñuñoa', 'Vitacura', 'Lo Barnechea',
 ] as const
 export type Comuna = typeof COMUNA_OPTIONS[number]
-
-export type AmenityId =
-  | 'wifi'
-  | 'coffee'
-  | 'phone-booth'
-  | 'parking'
-  | 'bike-parking'
-  | 'printer'
-  | 'lockers'
-  | 'terrace'
-  | 'pet-friendly'
 
 export interface Amenity {
   id: AmenityId

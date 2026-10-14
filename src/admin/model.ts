@@ -1,11 +1,12 @@
 import type { SpaceLocation } from '../types/index.ts'
 import type { Space, SpaceType } from '../types/space.ts'
+import { hasAmenity } from '../data/amenities.ts'
 
 export const normalize = (value: string) => value.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase()
 export function filterLocations(entries: SpaceLocation[], filters: { name: string; category: string; comuna: string; amenity: string; type: string }) {
   return entries.filter((entry) => normalize(entry.name).includes(normalize(filters.name)) &&
     (!filters.category || entry.categoryId === filters.category) && (!filters.comuna || entry.comuna === filters.comuna) &&
-    (!filters.amenity || entry.amenityIds.some((id) => id === filters.amenity)) &&
+    (!filters.amenity || hasAmenity(entry, filters.amenity)) &&
     (!filters.type || entry.spaces.some(({ type }) => type === filters.type)))
 }
 export function newSpace(type: SpaceType): Space {
