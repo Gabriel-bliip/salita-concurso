@@ -1,36 +1,17 @@
-import type { Equipment, Space, SpaceType } from '../types/space.ts'
+import type { Space } from '../types/space.ts'
+import { SPACE_DEFINITIONS, SPACE_TYPES } from '../data/spaceTypes.ts'
+import type { SpaceType } from '../data/spaceTypes.ts'
+export { SPACE_TYPES, EQUIPMENT_LABELS } from '../data/spaceTypes.ts'
 
-export const SPACE_TYPES: SpaceType[] = ['coworking', 'meeting_room', 'office_box']
-
-export const SPACE_TYPE_LABELS: Record<SpaceType, string> = {
-  coworking: 'Escritorio compartido',
-  meeting_room: 'Sala de reuniones',
-  office_box: 'Oficina privada',
-}
-
-export const SPACE_TYPE_PLURAL_LABELS: Record<SpaceType, string> = {
-  coworking: 'Escritorios compartidos',
-  meeting_room: 'Salas de reuniones',
-  office_box: 'Oficinas privadas',
-}
-
-export const EQUIPMENT_LABELS: Record<Equipment, string> = {
-  screen: 'Pantalla',
-  whiteboard: 'Pizarra',
-  video_call: 'Equipo de videollamada',
-  projector: 'Proyector',
-}
+export const SPACE_TYPE_LABELS = Object.fromEntries(SPACE_TYPES.map((id) => [id, SPACE_DEFINITIONS[id].label])) as Record<SpaceType, string>
+export const SPACE_TYPE_PLURAL_LABELS = Object.fromEntries(SPACE_TYPES.map((id) => [id, SPACE_DEFINITIONS[id].plural])) as Record<SpaceType, string>
 
 // How many people a single booking of this space can include.
 export function getCapacityRange(space: Space) {
-  switch (space.type) {
-    case 'coworking':
-      return { min: 1, max: 1 }
-    case 'meeting_room':
-      return space.capacity
-    case 'office_box':
-      return { min: 1, max: space.capacity }
-  }
+  // The discriminant pairs each payload with its own callback, even when a new
+  // definition accepts a narrower capacity shape than the other definitions.
+  const capacity = SPACE_DEFINITIONS[space.type].getCapacity as (value: Space) => { min: number; max: number }
+  return capacity(space)
 }
 
 export function formatCapacity(space: Space) {

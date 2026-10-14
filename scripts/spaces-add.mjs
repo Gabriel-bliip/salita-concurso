@@ -3,83 +3,16 @@ import { randomUUID } from 'node:crypto'
 import { readFileSync, openSync, writeFileSync, fsyncSync, closeSync, renameSync, unlinkSync } from 'node:fs'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { CATEGORIES } from '../src/data/categories.ts'
-import { COMUNA_OPTIONS } from '../src/types/index.ts'
 import { AMENITIES } from '../src/data/amenities.ts'
-import { SPACE_TYPES, SPACE_TYPE_LABELS, EQUIPMENT_LABELS } from '../src/lib/spaces.ts'
+import { SPACE_TYPES, SPACE_TYPE_LABELS, EQUIPMENT_LABELS, getCapacityRange } from '../src/lib/spaces.ts'
+import { SPACE_DEFINITIONS, SPACE_FIELDS as spaceFields } from '../src/data/spaceTypes.ts'
+import { option, text, number, choice, setFieldValue } from '../src/lib/fields.ts'
+import { commonFields, contactFields, amenities, photo, normalizeName as normalize, attributeFields, validateValue, validateLocation } from '../src/lib/locationSchema.ts'
+import { normalizeLocation, serializeLocation } from '../src/lib/location.ts'
+export { attributeFields, validateValue, validateLocation } from '../src/lib/locationSchema.ts'
 
 export const DATA_FILE = fileURLToPath(new URL('../src/data/locations.json', import.meta.url))
-const option = (value, label = value) => ({ value, label })
-const text = (label, required = true, extra = {}) => ({ label, type: 'text', required, ...extra })
-const number = (label, min, max, integer = true) => ({ label, type: 'number', required: true, min, max, integer })
-const choice = (label, options, required = true, multiple = false) => ({ label, type: multiple ? 'multiselect' : 'select', options, required })
-const commonFields = {
-  name: text('Nombre del lugar'),
-  description: text('Descripción del lugar'),
-  address: text('Dirección completa', true, { example: 'Calle, número, piso, comuna y ciudad' }),
-  comuna: choice('Comuna', COMUNA_OPTIONS.map((value) => option(value))),
-}
-const contactFields = {
-  email: text('Correo de contacto', false, { format: 'email', example: 'reservas@ejemplo.cl' }),
-  phone: text('Teléfono de contacto', false, { format: 'phone', example: '+56 9 1234 5678' }),
-  website: text('Sitio web', false, { format: 'url', example: 'https://ejemplo.cl' }),
-}
-const spaceFields = {
-  name: text('Nombre del espacio reservable'),
-  description: text('Descripción del espacio reservable'),
-  pricePerHour: number('Precio por hora (CLP)', 0, Number.MAX_SAFE_INTEGER),
-  minHours: number('Mínimo de horas por reserva', 1, 24),
-}
-const equipment = choice('Equipamiento', Object.entries(EQUIPMENT_LABELS).map(([id, label]) => option(id, label)), false, true)
-const spaceSpecific = {
-  coworking: { deskCount: number('Cantidad de escritorios', 1, Number.MAX_SAFE_INTEGER) },
-  meeting_room: { min: number('Capacidad mínima', 1, Number.MAX_SAFE_INTEGER), max: number('Capacidad máxima', 1, Number.MAX_SAFE_INTEGER), equipment },
-  office_box: { capacity: number('Capacidad de la oficina', 2, 6) },
-}
-const amenities = choice('Servicios disponibles', AMENITIES.map(({ id, label }) => option(id, label)), false, true)
-const photo = text('Ruta pública o URL de la foto', true, { format: 'image', example: '/images/sala.jpg o https://ejemplo.cl/sala.jpg' })
-const normalize = (value) => value.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()
-
 export class Cancelled extends Error {}
-
-// The same category definitions supply the terminal fields and the web filters.
-export function attributeFields(category) {
-  return Object.fromEntries([
-    ...(category.filters.attributes ?? []).filter((field) => !category.attributes?.some(({ id }) => id === field.id))
-      .map((field) => [field.id, { ...field, type: 'multiselect' }]),
-    ...(category.attributes ?? []).map((field) => [field.id, field]),
-  ])
-}
-
-export function validateValue(value, field) {
-  if (value === undefined || (Array.isArray(value) && !value.length)) {
-    if (field.required) throw new Error('Este campo es obligatorio.')
-    return
-  }
-  if (field.type === 'number') {
-    if (!Number.isFinite(value) || (field.integer && !Number.isSafeInteger(value)) ||
-        value < (field.min ?? -Infinity) || value > (field.max ?? Infinity)) {
-      throw new Error(`Ingresa un número ${field.integer ? 'entero ' : ''}entre ${field.min ?? '-∞'} y ${field.max ?? '∞'}.`)
-    }
-  } else if (field.type === 'boolean') {
-    if (typeof value !== 'boolean') throw new Error('Responde sí o no.')
-  } else if (field.type === 'select' || field.type === 'multiselect') {
-    const values = field.type === 'multiselect' ? value : [value]
-    if (!Array.isArray(values) || values.some((item) => !field.options.some(({ value }) => value === item))) {
-      throw new Error('Elige únicamente opciones de la lista.')
-    }
-  } else {
-    if (typeof value !== 'string' || !value.trim()) throw new Error('Ingresa un texto no vacío.')
-    if (field.format === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) throw new Error('Ingresa un correo válido, por ejemplo reservas@ejemplo.cl.')
-    if (field.format === 'phone' && (!/^\+?[\d ()-]+$/.test(value) || value.replace(/\D/g, '').length < 8 || value.replace(/\D/g, '').length > 15)) throw new Error('Ingresa un teléfono de 8 a 15 dígitos; puede incluir +, espacios y guiones.')
-    if (field.format === 'url' || field.format === 'image') {
-      if (field.format === 'image' && /^\/(?!\/)[^\s?#]+$/.test(value) && !value.split('/').includes('..')) return
-      try {
-        const url = new URL(value)
-        if (!['http:', 'https:'].includes(url.protocol) || !url.hostname || url.username || url.password) throw new Error()
-      } catch { throw new Error('Usa una URL http:// o https:// válida, o /images/archivo.jpg para una foto local.') }
-    }
-  }
-}
 
 export function parseAnswer(raw, field) {
   const input = raw.trim()
@@ -117,47 +50,6 @@ function uniqueSlug(name, entries) {
   return slug
 }
 
-export function validateLocation(location, entries, categories = CATEGORIES) {
-  const category = categories.find(({ id }) => id === location.categoryId)
-  if (!category) throw new Error('La categoría no existe.')
-  const validateFields = (values, fields) => {
-    for (const [key, field] of Object.entries(fields)) {
-      try { validateValue(values?.[key], field) }
-      catch (error) { throw new Error(`${field.label}: ${error.message}`, { cause: error }) }
-    }
-  }
-  validateFields(location, commonFields)
-  validateFields(location.contact, contactFields)
-  validateFields(location.attributes, attributeFields(category))
-  validateFields(location.location, { latitude: number('Latitud', -90, 90, false), longitude: number('Longitud', -180, 180, false) })
-  validateValue(location.amenityIds, amenities)
-  if (!location.id || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(location.slug)) throw new Error('Identificador o URL inválidos.')
-  if (entries.some((entry) => entry.id === location.id || entry.slug === location.slug)) throw new Error('Ya existe ese identificador o URL. Reinicia el asistente.')
-  if (entries.some((entry) => normalize(entry.name) === normalize(location.name) && normalize(entry.address) === normalize(location.address))) throw new Error('Ya existe un lugar con ese nombre y dirección.')
-  for (let day = 0; day < 7; day++) {
-    const hours = location.openingHours[day]
-    if (hours === null) continue
-    validateFields(hours, { open: number('Apertura', 0, 23), close: number('Cierre', 1, 24) })
-    if (hours.close <= hours.open) throw new Error('El cierre debe ser posterior a la apertura.')
-  }
-  for (const rule of location.rules) validateValue(rule, text('Regla'))
-  for (const image of location.images) validateValue(image, photo)
-  if (location.images.length !== location.photoCaptions.length) throw new Error('Cada foto necesita una descripción.')
-  for (const caption of location.photoCaptions) validateValue(caption, text('Descripción de la foto'))
-  const ids = new Set(entries.flatMap((entry) => [entry.id, ...entry.spaces.map(({ id }) => id)]))
-  ids.add(location.id)
-  for (const space of location.spaces) {
-    if (!SPACE_TYPES.includes(space.type)) throw new Error('Tipo reservable desconocido.')
-    if (!space.id || ids.has(space.id)) throw new Error('Identificador de espacio duplicado.')
-    ids.add(space.id)
-    validateFields(space, spaceFields)
-    validateFields(space.type === 'meeting_room' ? { ...space, ...space.capacity } : space, spaceSpecific[space.type])
-    if (space.type === 'coworking' && space.capacity !== 1) throw new Error('Cada escritorio se reserva para una persona.')
-    if (space.type === 'meeting_room' && space.capacity.max < space.capacity.min) throw new Error('La capacidad máxima debe ser mayor o igual a la mínima.')
-    if (!Object.values(location.openingHours).some((hours) => hours && hours.close - hours.open >= space.minHours)) throw new Error('El mínimo de reserva no cabe en ningún horario de apertura.')
-  }
-}
-
 // Lock only while committing. Recheck the original bytes to avoid lost updates.
 // Temp file and destination share a directory/filesystem; rename commits atomically.
 export function saveLocation(file, original, location, categories = CATEGORIES) {
@@ -175,7 +67,7 @@ export function saveLocation(file, original, location, categories = CATEGORIES) 
     const entries = JSON.parse(original)
     validateLocation(location, entries, categories)
     tempFd = openSync(temporary, 'wx')
-    writeFileSync(tempFd, JSON.stringify([...entries, location], null, 2) + '\n')
+    writeFileSync(tempFd, JSON.stringify([...entries, serializeLocation(normalizeLocation(location))], null, 2) + '\n')
     fsyncSync(tempFd)
     closeSync(tempFd)
     tempFd = undefined
@@ -198,10 +90,10 @@ export async function runWizard({ ask, output = console.log, file = DATA_FILE, c
   output('\nAgregar una ubicación — escribe :cancelar o presiona Ctrl+C para salir sin guardar.\n')
   const field = (definition) => askField(ask, output, definition)
   const fields = async (definitions) => {
-    const values = {}
+    let values = {}
     for (const [key, definition] of Object.entries(definitions)) {
       const value = await field(definition)
-      if (value !== undefined) values[key] = value
+      if (value !== undefined) values = setFieldValue(values, key, value)
     }
     return values
   }
@@ -250,15 +142,11 @@ export async function runWizard({ ask, output = console.log, file = DATA_FILE, c
       output('El mínimo de reserva debe caber en al menos un día abierto.')
       space.minHours = await field(spaceFields.minHours)
     }
-    const specific = await fields(spaceSpecific[type])
-    if (type === 'meeting_room') {
-      while (specific.max < specific.min) {
-        output('La capacidad máxima debe ser mayor o igual a la mínima.')
-        specific.max = await field(spaceSpecific.meeting_room.max)
-      }
-      space.capacity = { min: specific.min, max: specific.max }
-      space.equipment = specific.equipment ?? []
-    } else Object.assign(space, specific, type === 'coworking' ? { capacity: 1 } : {})
+    Object.assign(space, structuredClone(SPACE_DEFINITIONS[type].defaults), await fields(SPACE_DEFINITIONS[type].fields))
+    while (getCapacityRange(space).max < getCapacityRange(space).min) {
+      output('La capacidad máxima debe ser mayor o igual a la mínima.')
+      Object.assign(space, setFieldValue(space, 'capacity.max', await field(SPACE_DEFINITIONS[type].fields['capacity.max'])))
+    }
     location.spaces.push(space)
   }
   validateLocation(location, entries, categories)

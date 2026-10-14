@@ -1,6 +1,7 @@
 import type { LucideIcon } from 'lucide-react'
 import {
   Bike,
+  Check,
   Coffee,
   Lock,
   PawPrint,
@@ -13,7 +14,7 @@ import {
 import { AMENITY_LABELS } from '../data/amenities.ts'
 import type { AmenityId } from '../types/index.ts'
 
-const AMENITY_ICONS: Record<AmenityId, LucideIcon> = {
+const AMENITY_ICONS: Partial<Record<AmenityId, LucideIcon>> = {
   wifi: Wifi,
   coffee: Coffee,
   'phone-booth': Phone,
@@ -31,7 +32,7 @@ interface AmenityBadgeProps {
 }
 
 function AmenityBadge({ amenityId, compact = false }: AmenityBadgeProps) {
-  const Icon = AMENITY_ICONS[amenityId]
+  const Icon = AMENITY_ICONS[amenityId] ?? Check
   const label = AMENITY_LABELS[amenityId]
 
   if (compact) {

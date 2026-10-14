@@ -10,6 +10,7 @@ import { runWizard, saveLocation, validateLocation, parseAnswer, Cancelled, DATA
 import { CATEGORIES } from '../src/data/categories.ts'
 import { LOCATIONS, COWORKS } from '../src/data/coworks.ts'
 import { filterCoworks, EMPTY_FILTERS, parseFilters } from '../src/lib/coworkFilters.ts'
+import { normalizeLocation } from '../src/lib/location.ts'
 
 const original = readFileSync(DATA_FILE, 'utf8')
 const minimal = (name = 'Prueba temporal') => [
@@ -64,7 +65,7 @@ test('complete wizard persists a location, contact, photos, all reservable types
   const result = await runWizard({ file, categories: [category], ask: input(answers), output: (message) => messages.push(message) })
   const persisted = JSON.parse(readFileSync(file, 'utf8'))
   assert.deepEqual(persisted.slice(0, -1), LOCATIONS)
-  assert.deepEqual(persisted.at(-1), result)
+  assert.deepEqual(normalizeLocation(persisted.at(-1)), result)
   assert.deepEqual(result.attributes, { instruments: ['piano'], area: 42.5, accessible: true, notes: 'Nota' })
   assert.equal(result.contact.email, 'contacto@ejemplo.cl')
   assert.deepEqual(result.spaces.map(({ capacity }) => capacity), [1, { min: 2, max: 6 }, 4])
@@ -136,7 +137,7 @@ test('existing data validates, retaining filters and reservations after migratio
 
 function cliFixture(t) {
   const { dir } = fixture(t)
-  for (const relative of ['scripts/spaces-add.mjs', 'src/data/categories.ts', 'src/data/amenities.ts', 'src/data/locations.json', 'src/types/index.ts', 'src/lib/spaces.ts', 'package.json']) {
+  for (const relative of ['scripts/spaces-add.mjs', 'src/data/categories.ts', 'src/data/amenities.ts', 'src/data/spaceTypes.ts', 'src/data/locations.json', 'src/types/index.ts', 'src/admin/model.ts', 'src/lib/spaces.ts', 'src/lib/fields.ts', 'src/lib/location.ts', 'src/lib/locationSchema.ts', 'package.json']) {
     const target = join(dir, relative)
     mkdirSync(dirname(target), { recursive: true })
     copyFileSync(new URL(`../${relative}`, import.meta.url), target)
@@ -177,12 +178,51 @@ test('real terminal entrypoint handles piped input, EOF and confirmation', (t) =
   assert.equal(JSON.parse(readFileSync(file, 'utf8')).at(-1).name, 'Prueba temporal')
 })
 
-test('interrupting the real process before confirmation preserves source bytes', async (t) => {
+test('an amenity added only to the catalog is offered and validated without changing old records', (t) => {
+  const { dir, file, script } = cliFixture(t)
+  const registry = join(dir, 'src/data/amenities.ts')
+  writeFileSync(registry, readFileSync(registry, 'utf8').replace('] as const', "  { id: 'test-shower', label: 'Ducha de prueba' },\n] as const"))
+  const answers = minimal()
+  answers[10] = '10'
+  const child = spawnSync(process.execPath, [script], { cwd: dir, input: [...answers, 'sí'].join('\n') + '\n', encoding: 'utf8', timeout: 10000 })
+  assert.equal(child.status, 0, child.stderr)
+  const persisted = JSON.parse(readFileSync(file, 'utf8'))
+  assert.deepEqual(persisted.at(-1).amenityIds, ['test-shower'])
+  assert.deepEqual(persisted.slice(0, -1), JSON.parse(original))
+  assert.match(child.stdout, /Ducha de prueba/)
+})
+
+test('a unit type registered in one file automatically supplies wizard fields, defaults and capacity', (t) => {
+  const { dir, file, script } = cliFixture(t)
+  const registry = join(dir, 'src/data/spaceTypes.ts')
+  const definition = `test_unit: {
+    label: 'Unidad de prueba', plural: 'Unidades de prueba', icon: 'room', takenPercent: 0,
+    defaults: { capacity: 4 }, fields: { capacity: number('Capacidad de prueba', 1, 10) },
+    getCapacity: (space: { capacity: number }) => ({ min: 1, max: space.capacity }),
+  },`
+  writeFileSync(registry, readFileSync(registry, 'utf8').replace('export const SPACE_DEFINITIONS = {', `export const SPACE_DEFINITIONS = {\n${definition}`))
+  const answers = minimal()
+  answers[answers.length - 1] = 'sí'
+  // The fixture inserts its type first; all subsequent prompts use the registry.
+  answers.push('1', 'Unidad', 'Descripción', '1000', '1', '4', 'no', 'sí')
+  const child = spawnSync(process.execPath, [script], { cwd: dir, input: answers.join('\n') + '\n', encoding: 'utf8', timeout: 10000 })
+  assert.equal(child.status, 0, child.stderr)
+  const persisted = JSON.parse(readFileSync(file, 'utf8'))
+  assert.equal(persisted.at(-1).spaces[0].type, 'test_unit')
+  assert.equal(persisted.at(-1).spaces[0].capacity, 4)
+  assert.deepEqual(persisted.slice(0, -1), JSON.parse(original))
+  const model = pathToFileURL(join(dir, 'src/admin/model.ts')).href
+  const inspect = spawnSync(process.execPath, ['--input-type=module', '-e', `import { newSpace } from ${JSON.stringify(model)}; console.log(JSON.stringify(newSpace('test_unit')))`], { encoding: 'utf8', timeout: 10000 })
+  assert.equal(inspect.status, 0, inspect.stderr)
+  assert.equal(JSON.parse(inspect.stdout).capacity, 4)
+})
+
+test('interrupting the real process before confirmation preserves source bytes', { timeout: 10000 }, async (t) => {
   const { dir, file, script } = cliFixture(t)
   const child = spawn(process.execPath, [script], { cwd: dir, stdio: ['pipe', 'pipe', 'pipe'] })
   t.after(() => child.kill())
   const exit = once(child, 'exit')
-  await once(child.stdout, 'data')
+  await Promise.race([once(child.stdout, 'data'), exit.then(() => { throw new Error('El asistente terminó antes de mostrar preguntas.') })])
   child.kill('SIGINT')
   await exit
   assert.equal(readFileSync(file, 'utf8'), original)

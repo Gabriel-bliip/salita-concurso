@@ -1,16 +1,22 @@
 import { createHash, randomUUID } from 'node:crypto'
 import { readFileSync, openSync, writeFileSync, fsyncSync, closeSync, renameSync, unlinkSync, mkdirSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
-import { validateLocation } from './spaces-add.mjs'
+import { validateLocation, validateLocationShape } from '../src/lib/locationSchema.ts'
+import { normalizeLocation, withLocation, serializeLocation } from '../src/lib/location.ts'
 
 const revision = (raw) => createHash('sha256').update(raw).digest('hex')
 const local = (host) => ['localhost', '127.0.0.1', '[::1]'].includes(host)
 const managed = /^\/images\/admin\/[a-f0-9-]+\.(png|jpg|webp)$/
 function fail(message, status = 400) { throw Object.assign(new Error(message), { status }) }
 
-export function snapshot(file) {
+function readSnapshot(file) {
   const raw = readFileSync(file, 'utf8')
   return { locations: JSON.parse(raw), revision: revision(raw) }
+}
+
+export function snapshot(file) {
+  const current = readSnapshot(file)
+  return { ...current, locations: current.locations.map(withLocation) }
 }
 
 // Shares the CLI lock. The JSON rename is the transaction commit point.
@@ -25,7 +31,7 @@ export function mutate(file, publicDir, request) {
       if (error.code === 'EEXIST') fail('Otro proceso está guardando. Intenta nuevamente.', 409)
       throw error
     }
-    const current = snapshot(file)
+    const current = readSnapshot(file)
     if (request.revision !== current.revision) fail('Los datos cambiaron. Recarga el listado antes de guardar.', 409)
     const entries = current.locations
     const index = entries.findIndex(({ id }) => id === request.id)
@@ -34,12 +40,11 @@ export function mutate(file, publicDir, request) {
     if (request.action === 'delete') next = entries.filter(({ id }) => id !== request.id)
     else {
       if (!['create', 'update'].includes(request.action)) fail('Acción inválida.')
-      const value = structuredClone(request.location)
-      if (!value || typeof value !== 'object') fail('Ubicación inválida.')
+      const rawValue = structuredClone(request.location)
+      if (!rawValue || typeof rawValue !== 'object') fail('Ubicación inválida.')
+      validateLocationShape(rawValue)
+      const value = normalizeLocation(rawValue)
       if (request.action === 'update' && value.id !== request.id) fail('No se puede cambiar el ID.')
-      for (const key of ['images', 'photoCaptions', 'spaces', 'rules', 'amenityIds']) {
-        if (!Array.isArray(value[key])) fail(`Campo inválido: ${key}`)
-      }
       const uploads = []
       value.images = value.images.map((src) => {
         if (typeof src !== 'string') fail('Imagen inválida.')
@@ -55,16 +60,15 @@ export function mutate(file, publicDir, request) {
         uploads.push({ url, bytes })
         return url
       })
-      // Existing records have captions for empty placeholder slots; preserve those bytes.
-      const checked = { ...value, photoCaptions: value.photoCaptions.slice(0, value.images.length) }
-      validateLocation(checked, entries.filter((_, i) => request.action === 'create' || i !== index))
+      validateLocation(value, entries.filter((_, i) => request.action === 'create' || i !== index))
       for (const { url, bytes } of uploads) {
         const path = join(publicDir, url.slice(1))
         mkdirSync(join(publicDir, 'images/admin'), { recursive: true })
         writeFileSync(path, bytes, { flag: 'wx' })
         created.push(path)
       }
-      next = request.action === 'create' ? [...entries, value] : entries.map((entry, i) => i === index ? value : entry)
+      const stored = serializeLocation(value, request.action === 'update' ? entries[index] : undefined)
+      next = request.action === 'create' ? [...entries, stored] : entries.map((entry, i) => i === index ? stored : entry)
     }
     tempFd = openSync(temporary, 'wx')
     writeFileSync(tempFd, JSON.stringify(next, null, 2) + '\n')
@@ -74,8 +78,8 @@ export function mutate(file, publicDir, request) {
     renameSync(temporary, file)
     created.length = 0
     // Only delete our own uploads, and only after their final reference is removed.
-    const used = new Set(next.flatMap(({ images }) => images))
-    for (const url of new Set(entries.flatMap(({ images }) => images))) {
+    const used = new Set(next.flatMap(({ images }) => images ?? []))
+    for (const url of new Set(entries.flatMap(({ images }) => images ?? []))) {
       if (managed.test(url) && !used.has(url)) {
         try { unlinkSync(join(publicDir, url.slice(1))) } catch { /* Missing photos do not undo a committed save. */ }
       }

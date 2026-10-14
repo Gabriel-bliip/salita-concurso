@@ -89,6 +89,35 @@ test('images persist only on valid saves and are removed after their final refer
   assert.deepEqual(readdirSync(join(f.publicDir, 'images/admin')), [])
 })
 
+test('sparse legacy records round-trip through admin without materializing defaults or losing extras', (t) => {
+  const f = fixture(t)
+  const legacy = { ...sample(), custom: { retained: false } }
+  for (const key of ['categoryId', 'amenityIds', 'rules', 'images', 'photoCaptions', 'spaces', 'openingHours']) delete legacy[key]
+  writeFileSync(f.file, JSON.stringify([legacy, ...JSON.parse(original)]))
+  const value = snapshot(f.file).locations[0]
+  assert.deepEqual(value.images, [])
+  assert.equal(value.categoryId, 'cowork')
+  save(f, 'update', { ...value, description: 'Descripción modificada' }, value.id)
+  const stored = JSON.parse(readFileSync(f.file, 'utf8'))
+  assert.deepEqual(stored[0], { ...legacy, description: 'Descripción modificada' })
+  assert.deepEqual(stored.slice(1), JSON.parse(original))
+  save(f, 'delete', undefined, value.id)
+  assert.deepEqual(JSON.parse(readFileSync(f.file, 'utf8')), JSON.parse(original))
+})
+
+test('admin creates compact optional data and validates malformed values before normalization', (t) => {
+  const f = fixture(t)
+  const value = { ...sample(), spaces: [], openingHours: {}, contact: {}, attributes: {} }
+  save(f, 'create', value)
+  const stored = JSON.parse(readFileSync(f.file, 'utf8')).at(-1)
+  for (const key of ['images', 'photoCaptions', 'rules', 'spaces', 'amenityIds', 'openingHours', 'contact', 'attributes']) assert.ok(!Object.hasOwn(stored, key), key)
+  const before = readFileSync(f.file, 'utf8')
+  for (const patch of [{ images: null }, { amenityIds: false }, { openingHours: null }, { rules: 'text' }]) {
+    assert.throws(() => save(f, 'update', { ...value, ...patch }, value.id))
+    assert.equal(readFileSync(f.file, 'utf8'), before)
+  }
+})
+
 test('search combines category, comuna, service and reservable unit filters', () => {
   const a = { ...sample(), name: 'Árbol', amenityIds: ['wifi'], categoryId: 'cowork' }
   const b = { ...sample(), name: 'Arbol segundo', categoryId: 'taller-arte' }

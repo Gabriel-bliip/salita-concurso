@@ -1,15 +1,15 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { spawn } from 'node:child_process'
-import { cpSync, mkdtempSync, readFileSync, rmSync, symlinkSync, existsSync } from 'node:fs'
+import { cpSync, mkdtempSync, mkdirSync, readFileSync, writeFileSync, rmSync, symlinkSync, existsSync } from 'node:fs'
 import { rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
+import { pathToFileURL } from 'node:url'
 import { setTimeout as delay } from 'node:timers/promises'
 import { createServer } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
-import { adminPlugin } from '../scripts/admin-plugin.mjs'
 
 // Optional real-browser smoke test; no automation dependency or real-data writes.
 test('admin browser: forms, filters, image preview, CRUD and mobile layout', { skip: !process.env.SALITA_BROWSER, timeout: 120000 }, async () => {
@@ -20,8 +20,18 @@ test('admin browser: forms, filters, image preview, CRUD and mobile layout', { s
   let browser, server, socket, closeBrowser
   try {
     cpSync(resolve('src'), join(root, 'src'), { recursive: true })
+    const registry = join(root, 'src/data/categories.ts')
+    const category = { id: 'test-category', name: 'Categoría temporal', filters: { comuna: true }, attributes: [
+      { id: 'area', label: 'Superficie temporal', type: 'number', min: 1, required: true },
+      { id: 'quiet', label: 'Aislamiento temporal', type: 'boolean' },
+      { id: 'equipment', label: 'Equipo temporal', type: 'select', filter: true, required: true, options: [{ value: 'piano', label: 'Piano temporal' }] },
+    ] }
+    writeFileSync(registry, readFileSync(registry, 'utf8').replace('const definitions = [', `const definitions = [${JSON.stringify(category)},`))
     cpSync(resolve('index.html'), join(root, 'index.html'))
     symlinkSync(resolve('node_modules'), join(root, 'node_modules'), 'junction')
+    mkdirSync(join(root, 'scripts'))
+    cpSync(resolve('scripts/admin-plugin.mjs'), join(root, 'scripts/admin-plugin.mjs'))
+    const { adminPlugin } = await import(pathToFileURL(join(root, 'scripts/admin-plugin.mjs')).href)
     server = await createServer({ configFile: false, root, cacheDir: join(root, '.vite'), optimizeDeps: { noDiscovery: true, entries: [], include: ['react', 'react-dom/client', 'react/jsx-runtime', 'react/jsx-dev-runtime'] }, plugins: [react(), tailwindcss(), adminPlugin()], server: { host: '127.0.0.1', port: 0 }, logLevel: 'silent' })
     await server.listen()
     const origin = `http://127.0.0.1:${server.httpServer.address().port}`
@@ -75,6 +85,10 @@ test('admin browser: forms, filters, image preview, CRUD and mobile layout', { s
       await evaluate(`(() => { const e = Array.from(document.querySelectorAll('label')).find(l => l.querySelector('span')?.textContent === ${JSON.stringify(label)}).querySelector('input,textarea'); Object.getOwnPropertyDescriptor(e instanceof HTMLTextAreaElement ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype, 'value').set.call(e, ${JSON.stringify(value)}); e.dispatchEvent(new Event('input', { bubbles: true })); })()`)
       await delay(100)
     }
+    async function select(label, value) {
+      await evaluate(`(() => { const e = Array.from(document.querySelectorAll('label')).find(l => l.querySelector('span')?.textContent === ${JSON.stringify(label)}).querySelector('select'); e.value = ${JSON.stringify(value)}; e.dispatchEvent(new Event('change', { bubbles: true })); })()`)
+      await delay(100)
+    }
     await call('Runtime.enable'); await call('Network.enable'); await call('Page.enable')
     await call('Page.navigate', { url: `${origin}/admin` })
     await until("document.querySelectorAll('article').length > 0")
@@ -88,15 +102,28 @@ test('admin browser: forms, filters, image preview, CRUD and mobile layout', { s
     await input('Nombre', 'Prueba navegador')
     await input('Dirección', 'Calle temporal 123')
     await input('Descripción', 'Descripción temporal')
+    await select('Categoría', category.id)
+    await input('Superficie temporal', '40')
+    await select('Equipo temporal', 'piano')
+    await until("Array.from(document.querySelectorAll('label')).some(l => l.textContent.includes('Aislamiento temporal') && l.querySelector('input[type=checkbox]'))")
+    await click('Añadir sala de reuniones')
+    await input('Nombre del espacio reservable', 'Sala temporal')
+    await input('Descripción del espacio reservable', 'Unidad temporal')
+    await input('Precio por hora (CLP)', '5000')
+    await input('Capacidad mínima', '2')
+    await input('Capacidad máxima', '6')
     await evaluate(`(() => { const file = new File([Uint8Array.from(atob('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aF9sAAAAASUVORK5CYII='), c => c.charCodeAt(0))], 'prueba.png', { type: 'image/png' }); const dt = new DataTransfer(); dt.items.add(file); const e = document.querySelector('input[type=file]'); e.files = dt.files; e.dispatchEvent(new Event('change', { bubbles: true })); })()`)
     await until("document.querySelector('.admin-photo')?.src.startsWith('data:')")
     await click('Guardar cambios')
     await until("document.querySelectorAll('article').length > 0")
     let stored = JSON.parse(readFileSync(join(root, 'src/data/locations.json'), 'utf8'))
     assert.equal(stored.at(-1).name, 'Prueba navegador')
+    assert.deepEqual(stored.at(-1).attributes, { area: 40, equipment: 'piano' })
+    assert.deepEqual(stored.at(-1).spaces[0].capacity, { min: 2, max: 6 })
     assert.ok(existsSync(join(root, 'public', stored.at(-1).images[0])))
     await input('Buscar por nombre', 'Prueba navegador')
     await click('Editar')
+    assert.equal(await evaluate("Array.from(document.querySelectorAll('label')).find(l => l.querySelector('span')?.textContent === 'Superficie temporal').querySelector('input').value"), '40')
     await input('Nombre', 'Prueba navegador editada')
     await click('Quitar imagen')
     await until("!document.querySelector('.admin-photo')")

@@ -27,8 +27,7 @@ const definitions = [
 export type CategoryId = typeof definitions[number]['id']
 export type Category = Omit<CategoryDefinition, 'id'> & { id: CategoryId }
 
-export const CATEGORIES: readonly Category[] = definitions.map((definition): Category => {
-  const category: Category = definition
+export function defineCategory<T extends CategoryDefinition>(category: T): T {
   const attributes = category.attributes ?? []
   return {
     ...category,
@@ -42,7 +41,8 @@ export const CATEGORIES: readonly Category[] = definitions.map((definition): Cat
       ],
     },
   }
-})
+}
+export const CATEGORIES: readonly Category[] = definitions.map(defineCategory)
 export const COWORK_CATEGORY: Category = CATEGORIES.find(({ id }) => id === 'cowork')!
 
 export function getCategory(id: string) {

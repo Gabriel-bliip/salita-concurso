@@ -1,6 +1,7 @@
 import type { SpaceLocation } from '../types/index.ts'
 import type { Space, SpaceType } from '../types/space.ts'
 import { hasAmenity } from '../data/amenities.ts'
+import { SPACE_DEFINITIONS } from '../data/spaceTypes.ts'
 
 export const normalize = (value: string) => value.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase()
 export function filterLocations(entries: SpaceLocation[], filters: { name: string; category: string; comuna: string; amenity: string; type: string }) {
@@ -10,10 +11,7 @@ export function filterLocations(entries: SpaceLocation[], filters: { name: strin
     (!filters.type || entry.spaces.some(({ type }) => type === filters.type)))
 }
 export function newSpace(type: SpaceType): Space {
-  const base = { id: crypto.randomUUID(), type, name: '', description: '', pricePerHour: 0, minHours: 1 }
-  if (type === 'coworking') return { ...base, type, capacity: 1, deskCount: 1 }
-  if (type === 'meeting_room') return { ...base, type, capacity: { min: 1, max: 2 }, equipment: [] }
-  return { ...base, type, capacity: 2 }
+  return { id: crypto.randomUUID(), type, name: '', description: '', pricePerHour: 0, minHours: 1, ...structuredClone(SPACE_DEFINITIONS[type].defaults) } as Space
 }
 export function newLocation(): SpaceLocation {
   return { id: crypto.randomUUID(), slug: '', name: '', categoryId: 'cowork', description: '', address: '', comuna: 'Providencia', location: { latitude: -33.42, longitude: -70.6 }, amenityIds: [], openingHours: { 0: null, 1: { open: 9, close: 18 }, 2: { open: 9, close: 18 }, 3: { open: 9, close: 18 }, 4: { open: 9, close: 18 }, 5: { open: 9, close: 18 }, 6: null }, rules: [], images: [], photoCaptions: [], spaces: [] }

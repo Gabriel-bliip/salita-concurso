@@ -2,16 +2,17 @@ import type { LucideIcon } from 'lucide-react'
 import { DoorClosed, Laptop, Monitor, Presentation, Projector, Users, Video } from 'lucide-react'
 import { formatClp, formatHours } from '../lib/format.ts'
 import { EQUIPMENT_LABELS, formatCapacity } from '../lib/spaces.ts'
-import type { Equipment, Space, SpaceType } from '../types/space.ts'
+import type { Equipment, Space } from '../types/space.ts'
+import { SPACE_DEFINITIONS } from '../data/spaceTypes.ts'
 import Button from './Button.tsx'
 
-const SPACE_TYPE_ICONS: Record<SpaceType, LucideIcon> = {
-  coworking: Laptop,
-  meeting_room: Users,
-  office_box: DoorClosed,
+const SPACE_TYPE_ICONS: Record<string, LucideIcon> = {
+  desk: Laptop,
+  room: Users,
+  office: DoorClosed,
 }
 
-const EQUIPMENT_ICONS: Record<Equipment, LucideIcon> = {
+const EQUIPMENT_ICONS: Partial<Record<Equipment, LucideIcon>> = {
   screen: Monitor,
   whiteboard: Presentation,
   video_call: Video,
@@ -33,7 +34,7 @@ function SpaceDetails({ space }: { space: Space }) {
           <p className="text-sm text-ink-muted">{formatCapacity(space)}</p>
           <ul className="flex flex-wrap gap-2" aria-label="Equipamiento">
             {space.equipment.map((item) => {
-              const Icon = EQUIPMENT_ICONS[item]
+              const Icon = EQUIPMENT_ICONS[item] ?? Monitor
               return (
                 <li
                   key={item}
@@ -53,6 +54,8 @@ function SpaceDetails({ space }: { space: Space }) {
           {formatCapacity(space)} · Oficina cerrada, solo para tu equipo
         </p>
       )
+    default:
+      return <p className="text-sm text-ink-muted">{formatCapacity(space)}</p>
   }
 }
 
@@ -64,7 +67,7 @@ interface SpaceCardProps {
 }
 
 function SpaceCard({ space, bookingUrl, actionLabel = 'Reservar', selected = false }: SpaceCardProps) {
-  const Icon = SPACE_TYPE_ICONS[space.type]
+  const Icon = SPACE_TYPE_ICONS[SPACE_DEFINITIONS[space.type].icon] ?? Users
 
   return (
     <article
