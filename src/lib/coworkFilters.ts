@@ -1,4 +1,4 @@
-import { AMENITIES } from '../data/amenities.ts'
+import { AMENITIES, hasAmenity } from '../data/amenities.ts'
 import { LOCATIONS } from '../data/coworks.ts'
 import { COWORK_CATEGORY } from '../data/categories.ts'
 import type { Category } from '../data/categories.ts'
@@ -80,7 +80,7 @@ export function filterCoworks(coworks: Cowork[], input: CoworkFilterState, categ
       (cowork) =>
         cowork.categoryId === category.id &&
         (filters.comuna === null || cowork.comuna === filters.comuna) &&
-        filters.amenityIds.every((amenityId) => cowork.amenityIds.includes(amenityId)) &&
+        filters.amenityIds.every((amenityId) => hasAmenity(cowork, amenityId)) &&
         Object.entries(filters.attributes ?? {}).every(([id, values]) => {
           const attribute = cowork.attributes?.[id]
           const available = attribute == null ? [] : Array.isArray(attribute) ? attribute : [String(attribute)]

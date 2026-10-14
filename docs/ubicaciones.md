@@ -1,70 +1,28 @@
-# Ubicaciones de los coworks
+# Ubicaciones y mapa
 
 ## Dónde se editan
 
-Cada lugar se configura una sola vez en `coworkEntries`, dentro de
-[`src/data/coworks.ts`](../src/data/coworks.ts). El listado, las fichas y la pestaña
-**Mapa** usan los mismos registros normalizados (`LOCATIONS`), filtrados por categoría.
-
-| Campo | Qué completar | Dónde se usa |
-| --- | --- | --- |
-| `id` | Identificador único y estable | Identidad del registro |
-| `slug` | Identificador único para URL, sin espacios | `/coworks/:slug` y `/mapa?cowork=:slug` |
-| `address` | Calle, número, comuna y ciudad; piso si corresponde | Texto de dirección en ficha, listado del mapa y ventana del marcador |
-| `comuna` | Una comuna del tipo `Comuna` | Filtros del listado y del mapa |
-| `location.latitude` | Latitud numérica en grados decimales WGS84 | Posición norte/sur del marcador |
-| `location.longitude` | Longitud numérica en grados decimales WGS84 | Posición este/oeste del marcador |
-| `images` | Rutas públicas o URL de imágenes | La primera imagen es la portada circular del mapa |
-
-**La dirección escrita no se geocodifica automáticamente.** Al cambiar una dirección,
-actualiza también sus coordenadas y comuna. Obtén las coordenadas de un mapa o de
-un geocodificador y comprueba que correspondan a la entrada del lugar.
-En Santiago, ambas coordenadas suelen ser negativas. No intercambies latitud y longitud.
+Los lugares se guardan en **`src/data/locations.json`**, la única fuente estática.
+`src/data/coworks.ts` carga y normaliza esos registros como `LOCATIONS` para
+el listado, las fichas y el mapa. `COWORKS` conserva la selección Cowork del inicio.
 
 ## Cómo agregar un lugar
 
-Agrega un objeto a `coworkEntries`, antes del cierre del arreglo. Este ejemplo usa
-la dirección predeterminada; reemplaza sus datos por los del cowork real:
+Desde la raíz ejecuta:
 
-```ts
-{
-  id: 'cw-10', // Debe ser único.
-  categoryId: 'cowork', // ID del registro central src/data/categories.ts.
-  slug: 'nuevo-cowork', // Debe ser único y mantenerse estable.
-  name: 'Nuevo cowork',
-  // UBICACIÓN: editar estos tres campos juntos.
-  comuna: 'Providencia',
-  address: 'Suecia 810, Providencia, Santiago de Chile',
-  location: { latitude: -33.421795865179, longitude: -70.607290416391 },
-  description: 'Descripción del nuevo espacio.',
-  amenityIds: ['wifi', 'coffee'],
-  openingHours: schedule(9, 18), // Lun–Vie 9:00–18:00; sábado opcional: schedule(9, 18, [10, 14]).
-  rules: [...BASE_RULES],
-  images: ['/images/nuevo-cowork.jpg'], // Archivo en public/images/nuevo-cowork.jpg.
-  photoCaptions: ['Zona de escritorios'], // Una descripción por foto (texto alternativo).
-  spaces: [
-    {
-      id: 'cw-10-desk',
-      type: 'coworking', // También 'meeting_room' u 'office_box'; ver src/types/space.ts.
-      name: 'Escritorio compartido',
-      description: 'Escritorio en zona abierta.',
-      pricePerHour: 4000, // CLP por hora.
-      minHours: 1,
-      capacity: 1,
-      deskCount: 20,
-    },
-  ],
-},
+```sh
+npm run spaces:add
 ```
 
-El nuevo lugar aparecerá automáticamente en el listado y el mapa sin crear un marcador
-a mano. Los filtros activos pueden ocultarlo. Las comunas disponibles se calculan a
-partir de los registros. Para incorporar una comuna que todavía no admite el código,
-agrégala al tipo `Comuna` en `src/types/index.ts`.
+El asistente pide los datos y guarda después de mostrar un resumen y recibir tu
+confirmación. Consulta [la guía práctica](../AGREGAR-ESPACIOS.md) para completar
+una ubicación, crear categorías y configurar atributos sin duplicar formularios.
 
-Si todavía no hay una foto, usa `images: []`. El mapa mostrará
-`public/cowork-placeholder.svg`; también lo usa si la imagen de portada falla al cargar.
-Las imágenes reales se recortan en forma circular sin modificar el archivo original.
+La dirección no se geocodifica automáticamente: indica las coordenadas reales y
+comprueba su posición en el mapa. En Santiago, ambas suelen ser negativas.
+Las fotos usan rutas públicas como `/images/sala.jpg` o URLs; la primera es la
+portada del marcador. Sin fotos, o si falla la portada, se usa
+`public/cowork-placeholder.svg`.
 
 ## Qué pasa si falta ubicación
 
@@ -116,12 +74,12 @@ No se agregan iconos de comercios ni puntos de interés ajenos a los coworks.
 
 Para incorporar una nueva capa cartográfica, agrega una entrada a `mapStyle.layers`,
 indica su `source-layer`, `filter`, `minzoom` y colores en `paint`.
-Para incorporar un nuevo cowork, basta con agregar su registro a `coworkEntries`:
+Para incorporar un nuevo lugar, ejecuta `npm run spaces:add`:
 el marcador, su portada, el agrupamiento, los filtros y los enlaces se generan solos.
 
 ## Cómo funciona el mapa
 
-1. `coworkEntries.map(withLocation)` produce `LOCATIONS`; `COWORKS` conserva solo Cowork.
+1. `src/data/coworks.ts` normaliza `locations.json` con `withLocation` y produce `LOCATIONS`; `COWORKS` conserva solo Cowork.
 2. `useCategoryExploration` filtra por categoría y sus filtros configurados desde la URL.
 3. `CoworkMap.tsx` crea los marcadores de Leaflet usando `location` y `images[0]`.
 4. Seleccionar un lugar actualiza `?cowork=slug`, centra el mapa y abre su información.

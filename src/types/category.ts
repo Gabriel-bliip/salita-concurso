@@ -8,6 +8,18 @@ export interface AttributeFilter {
   options: readonly { value: string; label: string }[]
 }
 
+export type CategoryAttribute = {
+  id: string
+  label: string
+  required?: boolean
+  example?: string
+} & (
+  | { type: 'text' }
+  | { type: 'number'; min?: number; max?: number; integer?: boolean }
+  | { type: 'boolean' }
+  | { type: 'select' | 'multiselect'; options: AttributeFilter['options']; filter?: boolean }
+)
+
 export interface CategoryFilters {
   spaceTypes?: readonly SpaceType[]
   people?: readonly number[]
@@ -22,5 +34,6 @@ export interface CategoryDefinition {
   name: string
   cover?: { src: string; alt?: string }
   icon?: LucideIcon
+  attributes?: readonly CategoryAttribute[]
   filters: CategoryFilters
 }

@@ -1,15 +1,9 @@
 import type { DateKey, SlotUnavailableReason, TimeSlot } from '../types/booking.ts'
 import type { Cowork } from '../types/index.ts'
-import type { Space, SpaceType } from '../types/space.ts'
+import type { Space } from '../types/space.ts'
+import { SPACE_DEFINITIONS } from '../data/spaceTypes.ts'
 import { getWeekday, toDateKey } from './dates.ts'
 import { hash } from './hash.ts'
-
-// Share of mock slots that show up as already booked, per space type.
-const TAKEN_PERCENT: Record<SpaceType, number> = {
-  coworking: 15,
-  meeting_room: 30,
-  office_box: 25,
-}
 
 // Mock availability: 1-hour slots within opening hours. Deterministic for a given
 // space and date; only the "past" marking depends on `now`. Closed days return [].
@@ -23,7 +17,7 @@ export function getTimeSlots(cowork: Cowork, space: Space, date: DateKey, now = 
     let reason: SlotUnavailableReason | undefined
     if (date < today || (date === today && hour <= now.getHours())) {
       reason = 'past'
-    } else if (hash(`${space.id}|${date}|${hour}`) % 100 < TAKEN_PERCENT[space.type]) {
+    } else if (hash(`${space.id}|${date}|${hour}`) % 100 < SPACE_DEFINITIONS[space.type].takenPercent) {
       reason = 'taken'
     }
     slots.push(reason ? { start: hour, end: hour + 1, available: false, reason } : { start: hour, end: hour + 1, available: true })

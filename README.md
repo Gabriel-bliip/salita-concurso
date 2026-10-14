@@ -7,7 +7,9 @@ consulta [la guía de espacios](docs/espacios.md).
 
 Para agregar lugares, cambiar sus direcciones o conectar una futura fuente de datos,
 consulta [la guía de ubicaciones](docs/ubicaciones.md).
-Los registros se editan en `src/data/coworks.ts`, donde están marcados los campos de ubicación.
+Para agregar un lugar desde la raíz, ejecuta `npm run spaces:add` (Node 22.18+ o 24+).
+El asistente valida y guarda en `src/data/locations.json` después de confirmar.
+Consulta [la guía práctica](AGREGAR-ESPACIOS.md).
 
 ## React + TypeScript + Vite
 
@@ -84,3 +86,30 @@ export default defineConfig([
 ])
 
 ```
+
+## Administración local
+
+Con `npm run dev`, abre `http://localhost:3000/admin`. El panel permite buscar y
+filtrar ubicaciones, crear, editar, duplicar y eliminar mediante formularios.
+Las categorías y los atributos provienen de `src/data/categories.ts`.
+
+Los cambios se confirman con **Guardar cambios** y escriben directamente en
+`src/data/locations.json`, usando las validaciones del asistente, bloqueo compartido,
+comprobación de versión y reemplazo atómico. Si otro proceso modificó los datos,
+cancela el formulario y recarga el listado antes de repetir el cambio.
+Los IDs existentes y las descripciones de fotos de marcadores vacíos se conservan.
+
+Las imágenes PNG/JPEG/WebP (hasta 5 MB por archivo, 35 MB por solicitud) se
+previsualizan en memoria y se guardan en `public/images/admin/` al confirmar.
+Quitar una imagen o ubicación elimina únicamente archivos creados por el panel
+que ya no estén referenciados; las imágenes externas no se borran del disco.
+Revisa y versiona el JSON y las nuevas imágenes con Git.
+
+El panel y su API solo funcionan en Vite de desarrollo desde localhost y el
+mismo origen. No se incluyen en la compilación de producción ni en `vite preview`.
+`npm test` verifica CRUD, filtros, imágenes, conflictos y restricciones HTTP con
+copias temporales, sin escribir sobre los datos reales; `npm run build` y
+`npm run lint` verifican la integración.
+Para ejecutar también la prueba visual con un navegador Chromium instalado,
+define `SALITA_BROWSER` con la ruta de su ejecutable y ejecuta
+`node --test tests/admin.browser.test.mjs`. Usa un perfil y catálogo temporales.

@@ -16,10 +16,10 @@ Una categoría sin ubicaciones muestra un estado vacío en lista y mapa.
 
 ## 2. Agregar una ubicación
 
-Agrega un registro a `coworkEntries` en `src/data/coworks.ts`, indicando su
-`categoryId`. Sigue el modelo `SpaceLocation` en `src/types/index.ts` y el ejemplo
-de [ubicaciones](ubicaciones.md). Mantén `id` y `slug` únicos entre **todas** las
-categorías; completa dirección, coordenadas, comuna y demás campos con datos reales.
+Ejecuta `npm run spaces:add` desde la raíz. El asistente solicita categoría,
+datos, contacto, horarios, fotos y espacios reservables; valida y guarda en
+`src/data/locations.json` únicamente después de confirmar. Consulta
+[la guía práctica](../AGREGAR-ESPACIOS.md) para el recorrido completo.
 
 `LOCATIONS` es la fuente común para exploración, fichas y reservas. `COWORKS` mantiene
 solo la selección Cowork del inicio. `withLocation` admite registros antiguos sin
@@ -44,12 +44,15 @@ En `filters` de cada categoría se pueden habilitar:
 - `amenityIds`: servicios disponibles del registro `src/data/amenities.ts`.
 - `attributes`: filtros adicionales con `id`, `label` y `options: [{ value, label }]`.
 
-Para un filtro específico, guarda el valor verificado en `location.attributes[id]`:
-una cadena, número, booleano o arreglo de cadenas. Declara sus opciones en la
-categoría; `value` es una cadena (números y booleanos se comparan como texto).
-Por ejemplo, **solo cuando existan datos reales**, `attributes.equipment: ['piano']`
-corresponde al filtro con `id: 'equipment'` y opción `{ value: 'piano', label: 'Piano' }`.
-El componente compartido dibuja los chips y aplica la selección sin cambios adicionales.
+Define los atributos nuevos en `attributes` de la categoría, con `id`, `label`
+y `type`. Los tipos son `text`, `number`, `boolean`, `select` y `multiselect`.
+Los de selección incluyen `options: [{ value, label }]`; con `filter: true` generan
+también los filtros web. `required: true` exige una respuesta en las altas nuevas.
+Consulta [los ejemplos](../AGREGAR-ESPACIOS.md#agregar-atributos-específicos).
+
+El asistente guarda las respuestas en `location.attributes[id]`. Las definiciones
+anteriores en `filters.attributes` conservan sus filtros y generan preguntas
+opcionales de selección múltiple. No repitas una definición en ambos lugares.
 
 Las selecciones múltiples requieren todos los valores elegidos. Los atributos ausentes
 no coinciden con un filtro activo. La URL usa parámetros repetidos

@@ -1,6 +1,5 @@
-export type SpaceType = 'coworking' | 'meeting_room' | 'office_box'
-
-export type Equipment = 'screen' | 'whiteboard' | 'video_call' | 'projector'
+import type { SPACE_DEFINITIONS, SpaceType } from '../data/spaceTypes.ts'
+export type { SpaceType, Equipment } from '../data/spaceTypes.ts'
 
 interface BaseSpace {
   id: string
@@ -10,22 +9,7 @@ interface BaseSpace {
   minHours: number
 }
 
-// A shared desk: each booking is one desk for one person.
-export interface CoworkingSpace extends BaseSpace {
-  type: 'coworking'
-  capacity: 1
-  deskCount: number
-}
-
-export interface MeetingRoom extends BaseSpace {
-  type: 'meeting_room'
-  capacity: { min: number; max: number }
-  equipment: Equipment[]
-}
-
-export interface OfficeBox extends BaseSpace {
-  type: 'office_box'
-  capacity: 2 | 3 | 4 | 5 | 6
-}
-
-export type Space = CoworkingSpace | MeetingRoom | OfficeBox
+export type Space = { [K in SpaceType]: BaseSpace & { type: K } & typeof SPACE_DEFINITIONS[K]['defaults'] }[SpaceType]
+export type CoworkingSpace = Extract<Space, { type: 'coworking' }>
+export type MeetingRoom = Extract<Space, { type: 'meeting_room' }>
+export type OfficeBox = Extract<Space, { type: 'office_box' }>
