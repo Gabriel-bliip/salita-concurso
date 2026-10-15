@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { CATEGORIES, COWORK_CATEGORY, getCategory } from '../src/data/categories.ts'
-import { COWORKS, LOCATIONS } from '../src/data/coworks.ts'
+import { COMUNAS, COWORKS, LOCATIONS } from '../src/data/coworks.ts'
 import { EMPTY_FILTERS, filterCoworks, filtersToParams, getCategoryComunas, parseFilters } from '../src/lib/coworkFilters.ts'
 import { withLocation } from '../src/lib/location.ts'
 
@@ -83,4 +83,28 @@ test('unknown URL values are ignored and arbitrary positive legacy people counts
   const valid = parseFilters(new URLSearchParams('type=meeting_room&people=3&comuna=Providencia&amenities=wifi,parking'))
   assert.equal(valid.people, 3)
   assert.deepEqual(parseFilters(filtersToParams(valid)), valid)
+})
+
+test('new commune listings produce unique category options without changing the catalog', () => {
+  const category = getCategory('taller-musica')
+  const source = [
+    { ...COWORKS[0], id: 'cowork-buin', comuna: 'Buin' },
+    { ...COWORKS[0], id: 'music-buin', categoryId: category.id, comuna: 'Buin', spaces: [] },
+    { ...COWORKS[0], id: 'music-buin-2', categoryId: category.id, comuna: 'Buin', spaces: [] },
+    { ...COWORKS[0], id: 'music-paine', categoryId: category.id, comuna: 'Paine', spaces: [] },
+  ]
+  const original = structuredClone(source)
+  assert.deepEqual(getCategoryComunas(COWORK_CATEGORY, source), ['Buin'])
+  assert.deepEqual(getCategoryComunas(category, source), ['Buin', 'Paine'])
+  assert.deepEqual(getCategoryComunas(category, []), [])
+  const filters = parseFilters(new URLSearchParams('comuna=Buin'), category, source)
+  assert.equal(filters.comuna, 'Buin')
+  assert.deepEqual(parseFilters(filtersToParams(filters), category, source), filters)
+  assert.deepEqual(filterCoworks(source, filters, category).map(({ cowork }) => cowork.id), ['music-buin', 'music-buin-2'])
+  assert.equal(parseFilters(new URLSearchParams('comuna=Paine'), COWORK_CATEGORY, source).comuna, null)
+  const noCommuneFilter = { ...category, filters: {} }
+  assert.equal(parseFilters(new URLSearchParams('comuna=Buin'), noCommuneFilter, source).comuna, null)
+  assert.deepEqual(COMUNAS, getCategoryComunas(COWORK_CATEGORY))
+  assert.equal(new Set(COMUNAS).size, COMUNAS.length)
+  assert.deepEqual(source, original)
 })

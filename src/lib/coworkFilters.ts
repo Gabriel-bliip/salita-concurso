@@ -1,5 +1,6 @@
 import { AMENITIES, hasAmenity } from '../data/amenities.ts'
 import { LOCATIONS } from '../data/coworks.ts'
+import { getLocationComunas } from '../data/comunas.ts'
 import { COWORK_CATEGORY } from '../data/categories.ts'
 import type { Category } from '../data/categories.ts'
 import type { AmenityId, Comuna, Cowork } from '../types/index.ts'
@@ -22,7 +23,7 @@ export const EMPTY_FILTERS: CoworkFilterState = {
 }
 
 export function getCategoryComunas(category: Category, locations = LOCATIONS): Comuna[] {
-  return [...new Set(locations.filter(({ categoryId }) => categoryId === category.id).map(({ comuna }) => comuna))]
+  return getLocationComunas(locations.filter(({ categoryId }) => categoryId === category.id))
 }
 
 // URL params: ?type=meeting_room&people=4&comuna=Providencia&amenities=wifi,parking

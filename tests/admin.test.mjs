@@ -10,6 +10,9 @@ import { fileURLToPath } from 'node:url'
 import { CATEGORIES } from '../src/data/categories.ts'
 import { validateLocation } from '../src/lib/locationSchema.ts'
 import { newLocation, newSpace, duplicateLocation, filterLocations } from '../src/admin/model.ts'
+import { COMUNAS_RM } from '../src/data/comunasRM.ts'
+import { COMUNA_OPTIONS, getLocationComunas } from '../src/data/comunas.ts'
+import { IMAGE_UPLOAD_TYPES, MAX_IMAGE_UPLOAD_BYTES, isAllowedImageUpload } from '../src/data/imageUploads.ts'
 
 const DATA_FILE = fileURLToPath(new URL('../src/data/locations.json', import.meta.url))
 const original = readFileSync(DATA_FILE, 'utf8')
@@ -37,6 +40,50 @@ test('existing locations retain compatibility with shared validation', () => {
   for (const record of records) {
     assert.doesNotThrow(() => validateLocation(record, records.filter(({ id }) => id !== record.id), categories))
   }
+})
+
+test('admin uses the full RM catalog and saves communes without existing listings', (t) => {
+  assert.strictEqual(COMUNA_OPTIONS, COMUNAS_RM)
+  assert.equal(new Set(COMUNA_OPTIONS).size, COMUNA_OPTIONS.length)
+  assert.ok(COMUNA_OPTIONS.includes(newLocation().comuna))
+  for (const comuna of COMUNAS_RM) assert.doesNotThrow(() => validateLocation({ ...sample(), comuna }, []))
+  assert.throws(() => validateLocation({ ...sample(), comuna: 'Unknown commune' }, []), /Comuna/)
+  const f = fixture(t)
+  const value = { ...sample(), comuna: 'Buin' }
+  save(f, 'create', value)
+  save(f, 'update', { ...value, description: 'Editada' }, value.id)
+  assert.equal(JSON.parse(readFileSync(f.file, 'utf8')).at(-1).comuna, 'Buin')
+  const filters = { name: '', category: '', comuna: 'Buin', amenity: '', type: '' }
+  assert.deepEqual(filterLocations([value], filters), [value])
+  assert.deepEqual(getLocationComunas([value, value]), ['Buin'])
+  save(f, 'delete', undefined, value.id)
+  assert.deepEqual(JSON.parse(readFileSync(f.file, 'utf8')), JSON.parse(original))
+})
+
+test('upload policy agrees with the server for registered formats and size boundaries', (t) => {
+  const f = fixture(t)
+  const signatures = {
+    'image/png': Buffer.from('89504e470d0a1a0a', 'hex'),
+    'image/jpeg': Buffer.from('ffd8ff', 'hex'),
+    'image/webp': Buffer.from('RIFF0000WEBP', 'ascii'),
+  }
+  for (const [mime, extension] of Object.entries(IMAGE_UPLOAD_TYPES)) {
+    const bytes = Buffer.alloc(MAX_IMAGE_UPLOAD_BYTES)
+    signatures[mime].copy(bytes)
+    assert.equal(isAllowedImageUpload(mime, bytes.length), true)
+    const value = { ...sample(), images: [`data:${mime};base64,${bytes.toString('base64')}`] }
+    const created = save(f, 'create', value)
+    assert.ok(created.locations.at(-1).images[0].endsWith(`.${extension}`))
+    save(f, 'delete', undefined, value.id)
+    assert.equal(isAllowedImageUpload(mime, bytes.length + 1), false)
+    const oversized = Buffer.concat([bytes, Buffer.alloc(1)])
+    assert.throws(() => save(f, 'create', { ...value, images: [`data:${mime};base64,${oversized.toString('base64')}`] }), /5 MB/)
+  }
+  for (const mime of ['image/gif', 'image/svg+xml', 'toString']) {
+    assert.equal(isAllowedImageUpload(mime, 12), false)
+    assert.throws(() => save(f, 'create', { ...sample(), images: [`data:${mime};base64,AAAA`] }), /PNG, JPEG o WebP/)
+  }
+  assert.throws(() => save(f, 'create', { ...sample(), images: ['data:image/png;base64,AAAA'] }), /Imagen inválida/)
 })
 
 test('admin CRUD preserves existing records, IDs, captions and unknown properties', (t) => {
