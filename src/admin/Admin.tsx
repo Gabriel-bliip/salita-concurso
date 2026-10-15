@@ -89,7 +89,6 @@ export default function Admin() {
   const category = draft && getCategory(draft.categoryId)
   const attributes = category ? attributeFields(category) : {}
   const filterCategory = getCategory(filters.category)
-  const availableTypes = category?.filters.spaceTypes ?? SPACE_TYPES
   return <main className="admin">
     <header className="admin-bar"><div><a href="/">Salita</a><h1>Administrar ubicaciones</h1><p>Panel local · cambios guardados en el proyecto</p></div>{!draft && <button disabled={!data} onClick={() => open(newLocation(), false)}>Crear espacio</button>}</header>
     {error && <p className="admin-error" role="alert">{error}</p>}

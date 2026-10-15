@@ -1,5 +1,5 @@
 // The 52 communes of the Región Metropolitana de Santiago, alphabetical.
-// Independent from the `Comuna` type used by locations (which says 'Santiago Centro').
+// Independent from the `Comuna` type used by locations (which lists only the communes with locations).
 export const COMUNAS_RM = [
   'Alhué',
   'Buin',

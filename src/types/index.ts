@@ -4,7 +4,7 @@ import type { AmenityId } from '../data/amenities.ts'
 export type { AmenityId } from '../data/amenities.ts'
 
 export const COMUNA_OPTIONS = [
-  'Santiago Centro', 'Providencia', 'Las Condes', 'Ñuñoa', 'Vitacura', 'Lo Barnechea',
+  'Santiago', 'Providencia', 'Las Condes', 'Ñuñoa', 'Vitacura', 'Lo Barnechea',
 ] as const
 export type Comuna = typeof COMUNA_OPTIONS[number]
 

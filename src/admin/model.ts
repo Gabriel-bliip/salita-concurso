@@ -14,7 +14,6 @@ export function filterLocations(entries: SpaceLocation[], filters: { name: strin
       return (Array.isArray(attribute) ? attribute : attribute === undefined ? [] : [String(attribute)]).includes(value)
     }))))
 }
-}
 export function newSpace(type: SpaceType): Space {
   return { id: crypto.randomUUID(), type, name: '', description: '', pricePerHour: 0, minHours: 1, ...structuredClone(SPACE_DEFINITIONS[type].defaults) } as Space
 }
