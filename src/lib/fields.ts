@@ -83,6 +83,8 @@ export function validateImageReference(value: string) {
     let decoded: string
     try { decoded = decodeURIComponent(value) } catch { throw new Error('Ruta de imagen inválida.') }
     if (!/^\/images\/[^\s?#\\]+\.(png|jpe?g|webp|gif|avif|svg)$/i.test(decoded) ||
+        // Control characters are matched on purpose: they must never appear in an image path.
+        // eslint-disable-next-line no-control-regex
         /[%?#\\\u0000-\u001f]/.test(decoded) || /%2f|%5c/i.test(value) ||
         decoded.split('/').slice(1).some((part) => !part || part === '.' || part === '..')) {
       throw new Error('Usa una ruta de imagen válida dentro de /images/, sin .. ni parámetros.')
