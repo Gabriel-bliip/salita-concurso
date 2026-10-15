@@ -180,7 +180,7 @@ Usa un ID único y estable, en minúsculas y con guiones. El catálogo, las ruta
 y el tipo `CategoryId` se derivan del mismo registro; no necesitas crear páginas.
 Puedes añadir `cover: { src: '/images/danza.jpg', alt: 'Sala de danza' }`.
 Recarga el panel para usar la nueva configuración.
-Las comunas admitidas se definen en `COMUNA_OPTIONS`, en `src/types/index.ts`;
+Las comunas admitidas se definen en `COMUNA_OPTIONS`, en `src/data/comunas.ts`;
 los filtros web muestran las comunas con datos.
 
 ### Agregar amenities

@@ -1,12 +1,10 @@
 import type { Space } from './space.ts'
 import type { CategoryId } from '../data/categories.ts'
 import type { AmenityId } from '../data/amenities.ts'
+import type { Comuna } from '../data/comunas.ts'
 export type { AmenityId } from '../data/amenities.ts'
 
-export const COMUNA_OPTIONS = [
-  'Santiago', 'Providencia', 'Las Condes', 'Ñuñoa', 'Vitacura', 'Lo Barnechea',
-] as const
-export type Comuna = typeof COMUNA_OPTIONS[number]
+export type { Comuna } from '../data/comunas.ts'
 
 // 0 = Sunday … 6 = Saturday, matching Date.getDay().
 export type Weekday = 0 | 1 | 2 | 3 | 4 | 5 | 6

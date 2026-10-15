@@ -1,7 +1,7 @@
 import { CATEGORIES } from '../data/categories.ts'
 import { AMENITIES } from '../data/amenities.ts'
 import { SPACE_DEFINITIONS, SPACE_TYPES, spaceFields } from '../data/spaceTypes.ts'
-import { COMUNA_OPTIONS } from '../types/index.ts'
+import { COMUNA_OPTIONS } from '../data/comunas.ts'
 import type { CategoryDefinition } from '../types/category.ts'
 import { normalizeLocation } from './location.ts'
 import { getCapacityRange } from './spaces.ts'
