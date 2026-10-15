@@ -21,7 +21,9 @@ export const contactFields = {
 export const coordinateFields = { latitude: number('Latitud', -90, 90, false), longitude: number('Longitud', -180, 180, false) }
 export const amenities = choice('Servicios disponibles', AMENITIES.map(({ id, label }) => option(id, label)), false, true)
 export const photo = text('Ruta pública o URL de la foto', true, { format: 'image', example: '/images/sala.jpg o https://ejemplo.cl/sala.jpg' })
-export const normalizeName = (value: string) => value.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()
+// Lowercase and without accents, for accent-insensitive comparisons and search.
+export const normalizeText = (value: string) => value.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase()
+export const normalizeName = (value: string) => normalizeText(value).replace(/[^a-z0-9]+/g, ' ').trim()
 
 export function validateLocationShape(input: LocationInput) {
   for (const key of ['amenityIds', 'images', 'photoCaptions', 'rules', 'spaces'] as const) {
