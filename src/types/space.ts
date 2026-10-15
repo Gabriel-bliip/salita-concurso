@@ -10,6 +10,3 @@ interface BaseSpace {
 }
 
 export type Space = { [K in SpaceType]: BaseSpace & { type: K } & typeof SPACE_DEFINITIONS[K]['defaults'] }[SpaceType]
-export type CoworkingSpace = Extract<Space, { type: 'coworking' }>
-export type MeetingRoom = Extract<Space, { type: 'meeting_room' }>
-export type OfficeBox = Extract<Space, { type: 'office_box' }>

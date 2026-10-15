@@ -19,7 +19,7 @@ Una categoría sin ubicaciones muestra un estado vacío en lista y mapa.
 Ejecuta `npm run dev` desde la raíz y abre `/admin`. El panel permite completar categoría,
 datos, contacto, horarios, fotos y espacios reservables; valida y guarda en
 `src/data/locations.json` únicamente después de confirmar. Consulta
-[la guía práctica](../AGREGAR-ESPACIOS.md) para el recorrido completo.
+[la guía práctica](agregar-espacios.md) para el recorrido completo.
 
 `LOCATIONS` es la fuente común para exploración, fichas y reservas. `COWORKS` mantiene
 solo la selección Cowork del inicio. `withLocation` admite registros antiguos sin
@@ -48,7 +48,7 @@ Define los atributos nuevos en `attributes` de la categoría, con `id`, `label`
 y `type`. Los tipos son `text`, `number`, `boolean`, `select` y `multiselect`.
 Los de selección incluyen `options: [{ value, label }]`; con `filter: true` generan
 también los filtros web. `required: true` exige una respuesta en las altas nuevas.
-Consulta [los ejemplos](../AGREGAR-ESPACIOS.md#agregar-atributos-específicos).
+Consulta [los ejemplos](agregar-espacios.md#agregar-atributos-y-filtros-por-categoría).
 
 El administrador guarda los valores en `location.attributes[id]`. Las definiciones
 anteriores en `filters.attributes` conservan sus filtros y generan campos

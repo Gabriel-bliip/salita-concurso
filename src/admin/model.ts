@@ -2,8 +2,9 @@ import type { SpaceLocation } from '../types/index.ts'
 import type { Space, SpaceType } from '../types/space.ts'
 import { hasAmenity } from '../data/amenities.ts'
 import { SPACE_DEFINITIONS } from '../data/spaceTypes.ts'
+import { normalizeText } from '../lib/locationSchema.ts'
 
-export const normalize = (value: string) => value.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase()
+export const normalize = normalizeText
 export function filterLocations(entries: SpaceLocation[], filters: { name: string; category: string; comuna: string; amenity: string; type: string; attributes?: Record<string, string[]> }) {
   return entries.filter((entry) => normalize(entry.name).includes(normalize(filters.name)) &&
     (!filters.category || entry.categoryId === filters.category) && (!filters.comuna || entry.comuna === filters.comuna) &&

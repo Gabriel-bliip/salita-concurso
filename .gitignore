@@ -17,11 +17,20 @@ dist-ssr
 .env.*
 !.env.example
 
+# Local admin save artifacts (lock and temp files next to locations.json)
+src/data/*.lock
+src/data/*.tmp
+
+# Personal Claude Code settings (team settings live in .claude/settings.json)
+.claude/settings.local.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
 .idea
 .DS_Store
+desktop.ini
+Thumbs.db
 *.suo
 *.ntvs*
 *.njsproj
