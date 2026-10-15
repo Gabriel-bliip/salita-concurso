@@ -103,6 +103,7 @@ test('admin browser: forms, filters, image preview, CRUD and mobile layout', { s
     assert.equal(await evaluate("document.querySelectorAll('article').length"), count)
     await click('Crear espacio')
     await input('Nombre', 'Borrador cancelado')
+    assert.deepEqual(await evaluate("(() => { const e = Array.from(document.querySelectorAll('label')).find(l => l.querySelector('span')?.textContent === 'Comuna').querySelector('select'); return [e.value, e.options.length, new Set(Array.from(e.options, o => o.value)).size]; })()"), ['Providencia', 52, 52])
     await evaluate(`(() => { const dt = new DataTransfer(); dt.items.add(new File(['preview'], 'cancelada.png', { type: 'image/png' })); const e = document.querySelector('input[type=file]'); e.files = dt.files; e.dispatchEvent(new Event('change', { bubbles: true })); })()`)
     await until("document.querySelector('.admin-photo')?.src.startsWith('data:')")
     for (const reference of ['https://example.com/foto.jpg', '/images/local.png']) {
@@ -122,6 +123,7 @@ test('admin browser: forms, filters, image preview, CRUD and mobile layout', { s
     assert.equal(readFileSync(join(root, 'src/data/locations.json'), 'utf8'), original)
     await click('Crear espacio')
     await input('Nombre', 'Prueba navegador')
+    await select('Comuna', 'Buin')
     await input('Dirección', 'Calle temporal 123')
     await input('Descripción', 'Descripción temporal')
     await select('Categoría', category.id)
@@ -149,6 +151,7 @@ test('admin browser: forms, filters, image preview, CRUD and mobile layout', { s
     await until("document.querySelectorAll('article').length > 0")
     let stored = JSON.parse(readFileSync(join(root, 'src/data/locations.json'), 'utf8'))
     assert.equal(stored.at(-1).name, 'Prueba navegador')
+    assert.equal(stored.at(-1).comuna, 'Buin')
     assert.deepEqual(stored.at(-1).attributes, { area: 40, equipment: 'piano' })
     assert.deepEqual(stored.at(-1).spaces[0].capacity, { min: 2, max: 6 })
     assert.ok(existsSync(join(root, 'public', stored.at(-1).images[0])))

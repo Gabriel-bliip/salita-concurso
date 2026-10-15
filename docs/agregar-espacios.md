@@ -180,8 +180,10 @@ Usa un ID único y estable, en minúsculas y con guiones. El catálogo, las ruta
 y el tipo `CategoryId` se derivan del mismo registro; no necesitas crear páginas.
 Puedes añadir `cover: { src: '/images/danza.jpg', alt: 'Sala de danza' }`.
 Recarga el panel para usar la nueva configuración.
-Las comunas admitidas se definen en `COMUNA_OPTIONS`, en `src/data/comunas.ts`;
-los filtros web muestran las comunas con datos.
+Las comunas admitidas tienen una única fuente: `COMUNAS_RM`, en
+`src/data/comunasRM.ts`. `COMUNA_OPTIONS`, en `src/data/comunas.ts`, reutiliza
+ese catálogo completo para el panel. Los filtros web muestran solo las comunas
+con ubicaciones de la categoría seleccionada, sin repetir opciones.
 
 ### Agregar amenities
 

@@ -4,6 +4,7 @@ import { join, relative, isAbsolute } from 'node:path'
 import { validateImageReference } from '../src/lib/fields.ts'
 import { validateLocation, validateLocationShape } from '../src/lib/locationSchema.ts'
 import { normalizeLocation, withLocation, serializeLocation } from '../src/lib/location.ts'
+import { imageUploadExtension, isAllowedImageUpload } from '../src/data/imageUploads.ts'
 
 const revision = (raw) => createHash('sha256').update(raw).digest('hex')
 const local = (host) => ['localhost', '127.0.0.1', '[::1]'].includes(host)
@@ -60,14 +61,14 @@ export function mutate(file, publicDir, request) {
           }
           return src
         }
-        const match = /^data:image\/(png|jpeg|webp);base64,([A-Za-z0-9+/]+={0,2})$/.exec(src)
-        if (!match) fail('Usa imágenes PNG, JPEG o WebP.')
+        const match = /^data:(image\/[a-z0-9.+-]+);base64,([A-Za-z0-9+/]+={0,2})$/.exec(src)
+        if (!match || !imageUploadExtension(match[1])) fail('Usa imágenes PNG, JPEG o WebP.')
         const bytes = Buffer.from(match[2], 'base64')
-        const valid = match[1] === 'png' ? bytes.subarray(0, 8).equals(Buffer.from('89504e470d0a1a0a', 'hex'))
-          : match[1] === 'jpeg' ? bytes.subarray(0, 3).equals(Buffer.from('ffd8ff', 'hex'))
+        const valid = match[1] === 'image/png' ? bytes.subarray(0, 8).equals(Buffer.from('89504e470d0a1a0a', 'hex'))
+          : match[1] === 'image/jpeg' ? bytes.subarray(0, 3).equals(Buffer.from('ffd8ff', 'hex'))
           : bytes.toString('ascii', 0, 4) === 'RIFF' && bytes.toString('ascii', 8, 12) === 'WEBP'
-        if (!valid || bytes.length > 5 * 1024 * 1024) fail('Imagen inválida o mayor de 5 MB.')
-        const url = `/images/admin/${randomUUID()}.${match[1] === 'jpeg' ? 'jpg' : match[1]}`
+        if (!valid || !isAllowedImageUpload(match[1], bytes.length)) fail('Imagen inválida o mayor de 5 MB.')
+        const url = `/images/admin/${randomUUID()}.${imageUploadExtension(match[1])}`
         uploads.push({ url, bytes })
         return url
       })
