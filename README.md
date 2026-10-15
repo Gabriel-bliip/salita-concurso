@@ -8,7 +8,7 @@ consulta [la guía de espacios](docs/espacios.md).
 Para agregar lugares, cambiar sus direcciones o conectar una futura fuente de datos,
 consulta [la guía de ubicaciones](docs/ubicaciones.md).
 Para administrar ubicaciones, ejecuta `npm run dev` y abre `http://localhost:3000/admin`. El panel valida y guarda en `src/data/locations.json` al pulsar **Guardar**.
-Consulta [la guía práctica](AGREGAR-ESPACIOS.md).
+Consulta [la guía práctica](docs/agregar-espacios.md).
 
 ## Administración local
 

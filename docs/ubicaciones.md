@@ -15,7 +15,7 @@ npm run dev
 ```
 
 Abre `/admin`, completa el formulario y pulsa **Guardar** para confirmar los datos.
-Consulta [la guía práctica](../AGREGAR-ESPACIOS.md) para completar
+Consulta [la guía práctica](agregar-espacios.md) para completar
 una ubicación, crear categorías y configurar atributos sin duplicar formularios.
 
 La dirección no se geocodifica automáticamente: indica las coordenadas reales y
