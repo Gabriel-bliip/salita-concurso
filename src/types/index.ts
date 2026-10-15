@@ -8,11 +8,6 @@ export const COMUNA_OPTIONS = [
 ] as const
 export type Comuna = typeof COMUNA_OPTIONS[number]
 
-export interface Amenity {
-  id: AmenityId
-  label: string
-}
-
 // 0 = Sunday … 6 = Saturday, matching Date.getDay().
 export type Weekday = 0 | 1 | 2 | 3 | 4 | 5 | 6
 

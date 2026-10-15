@@ -21,8 +21,6 @@ export const EMPTY_FILTERS: CoworkFilterState = {
   amenityIds: [],
 }
 
-export const PEOPLE_OPTIONS = COWORK_CATEGORY.filters.people ?? []
-
 export function getCategoryComunas(category: Category, locations = LOCATIONS): Comuna[] {
   return [...new Set(locations.filter(({ categoryId }) => categoryId === category.id).map(({ comuna }) => comuna))]
 }
