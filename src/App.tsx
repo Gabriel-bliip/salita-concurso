@@ -8,6 +8,8 @@ import HomePage from './pages/HomePage.tsx'
 import JoinPage from './pages/JoinPage.tsx'
 import NotFoundPage from './pages/NotFoundPage.tsx'
 import SpacesPage from './pages/SpacesPage.tsx'
+import CompanyDashboard from './corporate/CompanyDashboard.tsx'
+import EmployeeDashboard from './corporate/EmployeeDashboard.tsx'
 
 // Keep bookmarks, query filters and selected markers from the former URLs.
 function LegacyExplorationRedirect({ map = false }: { map?: boolean }) {
@@ -20,6 +22,8 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       { path: '/', element: <HomePage /> },
+      { path: '/empresa', element: <CompanyDashboard /> },
+      { path: '/empleado', element: <EmployeeDashboard /> },
       { path: '/espacios', element: <SpacesPage /> },
       { path: '/espacios/:categoryId', element: <CoworksPage /> },
       { path: '/espacios/:categoryId/mapa', lazy: async () => ({ Component: (await import('./pages/MapPage.tsx')).default }) },

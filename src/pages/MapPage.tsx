@@ -2,12 +2,14 @@ import { useCallback } from 'react'
 import { Link } from 'react-router'
 import { MapPin } from 'lucide-react'
 import CategoryBackLink from '../components/CategoryBackLink.tsx'
+import CategoryNavigation from '../components/CategoryNavigation.tsx'
 import ExplorationEmptyState from '../components/ExplorationEmptyState.tsx'
 import CoworkMap from '../components/CoworkMap.tsx'
 import CoworkFilters from '../components/CoworkFilters.tsx'
 import { EMPTY_FILTERS } from '../lib/coworkFilters.ts'
 import { useCategoryExploration } from '../lib/useCategoryExploration.ts'
 import { MAP_CONFIG } from '../lib/mapConfig.ts'
+import { MARKETPLACE_CATEGORIES } from '../data/marketplaceCategories.ts'
 import NotFoundPage from './NotFoundPage.tsx'
 
 function MapPage() {
@@ -28,11 +30,14 @@ function MapPage() {
       <CategoryBackLink />
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="mb-2 text-sm font-semibold text-primary">{category.name}</p>
+          <p className="mb-2 text-sm font-semibold text-primary">{MARKETPLACE_CATEGORIES.find(({ id }) => id === category.id)?.name ?? category.name}</p>
           <h1 className="text-3xl font-bold tracking-tight text-ink sm:text-4xl">Encuentra tu espacio en el mapa</h1>
           <p className="mt-3 text-ink-muted">Explora Santiago y toca una burbuja para conocer el espacio.</p>
         </div>
         <Link to={`/espacios/${category.id}?${filterKey}`} className="text-sm font-semibold text-primary hover:underline">Ver listado de ubicaciones →</Link>
+      </div>
+      <div className="mt-8">
+        <CategoryNavigation map />
       </div>
       <div className="mt-8 grid gap-6 lg:grid-cols-[18rem_1fr]">
         <aside>

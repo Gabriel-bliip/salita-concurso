@@ -1,4 +1,4 @@
-import { Link, NavLink, useMatch } from 'react-router'
+import { Link, NavLink } from 'react-router'
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   `text-sm font-medium transition-colors ${
@@ -6,8 +6,6 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   }`
 
 function Header() {
-  const categoryMatch = useMatch('/espacios/:categoryId/*')
-  const mapUrl = `/espacios/${categoryMatch?.params.categoryId ?? 'cowork'}/mapa`
   return (
     <header className="sticky top-0 z-10 border-b border-line bg-canvas/90 backdrop-blur">
       <div className="mx-auto flex min-h-16 max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
@@ -19,8 +17,11 @@ function Header() {
           <NavLink to="/espacios" className={navLinkClass}>
             Espacios
           </NavLink>
-          <NavLink to={mapUrl} className={navLinkClass}>
-            Mapa
+          <NavLink to="/empresa" className={navLinkClass}>
+            Para empresas
+          </NavLink>
+          <NavLink to="/empleado" className={navLinkClass}>
+            Portal empleado
           </NavLink>
           <Link to="/#como-funciona" className={navLinkClass({ isActive: false })}>
             Cómo funciona

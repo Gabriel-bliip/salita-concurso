@@ -1,9 +1,11 @@
 import CategoryBackLink from '../components/CategoryBackLink.tsx'
+import CategoryNavigation from '../components/CategoryNavigation.tsx'
 import ExplorationEmptyState from '../components/ExplorationEmptyState.tsx'
 import Button from '../components/Button.tsx'
 import CoworkCard from '../components/CoworkCard.tsx'
 import CoworkFilters from '../components/CoworkFilters.tsx'
 import { EMPTY_FILTERS } from '../lib/coworkFilters.ts'
+import { MARKETPLACE_CATEGORIES } from '../data/marketplaceCategories.ts'
 import { useCategoryExploration } from '../lib/useCategoryExploration.ts'
 import NotFoundPage from './NotFoundPage.tsx'
 
@@ -15,7 +17,7 @@ function CoworksPage() {
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
       <CategoryBackLink />
       <h1 className="text-3xl font-bold tracking-tight text-ink sm:text-4xl">
-        {category.id === 'cowork' ? 'Coworks en Santiago' : category.name}
+        {category.id === 'cowork' ? 'Coworks en Santiago' : MARKETPLACE_CATEGORIES.find(({ id }) => id === category.id)?.name ?? category.name}
       </h1>
       <p className="mt-2 text-ink-muted">
         Reserva por hora, sin planes ni suscripciones. Explora las ubicaciones de esta categoría.
@@ -23,6 +25,10 @@ function CoworksPage() {
       <Button to={`/espacios/${category.id}/mapa?${filterKey}`} variant="secondary" className="mt-5">
         Ver ubicaciones en el mapa
       </Button>
+
+      <div className="mt-8">
+        <CategoryNavigation />
+      </div>
 
       <div className="mt-10 grid gap-8 lg:grid-cols-[18rem_1fr]">
         <aside className="lg:sticky lg:top-24 lg:self-start">
