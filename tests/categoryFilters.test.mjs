@@ -4,6 +4,25 @@ import { CATEGORIES, COWORK_CATEGORY, getCategory } from '../src/data/categories
 import { COMUNAS, COWORKS, LOCATIONS } from '../src/data/coworks.ts'
 import { EMPTY_FILTERS, filterCoworks, filtersToParams, getCategoryComunas, parseFilters } from '../src/lib/coworkFilters.ts'
 import { withLocation } from '../src/lib/location.ts'
+import { MARKETPLACE_CATEGORIES } from '../src/data/marketplaceCategories.ts'
+
+test('demo categories expose only coworks and meeting rooms without changing registry definitions', () => {
+  assert.deepEqual(MARKETPLACE_CATEGORIES.map(({ id }) => id), ['cowork', 'sala-reuniones'])
+  assert.deepEqual(MARKETPLACE_CATEGORIES.map(({ name }) => name), ['Coworks', 'Salas de reuniones'])
+  for (const category of MARKETPLACE_CATEGORIES) {
+    const original = getCategory(category.id)
+    assert.equal(category.filters, original.filters)
+    assert.deepEqual(
+      filterCoworks(LOCATIONS, EMPTY_FILTERS, category),
+      filterCoworks(LOCATIONS, EMPTY_FILTERS, original),
+    )
+  }
+  const hiddenCategory = getCategory('taller-musica')
+  assert.ok(hiddenCategory)
+  assert.equal(MARKETPLACE_CATEGORIES.some(({ id }) => id === hiddenCategory.id), false)
+  const fixture = { ...COWORKS[0], id: 'test-hidden', categoryId: hiddenCategory.id }
+  assert.deepEqual(filterCoworks([fixture], EMPTY_FILTERS, hiddenCategory).map(({ cowork }) => cowork.id), ['test-hidden'])
+})
 
 test('locations retain valid categories and each category exposes only its own records', () => {
   assert.equal(new Set(CATEGORIES.map(({ id }) => id)).size, CATEGORIES.length)

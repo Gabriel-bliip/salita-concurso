@@ -6,16 +6,17 @@ import { BOOKING_STEP_LABELS, BOOKING_STEPS } from '../../lib/booking.ts'
 interface BookingStepsProps {
   current: BookingStep
   linkFor: (step: BookingStep) => string
+  corporate?: boolean
 }
 
 // Progress indicator. Steps before the current one are links so the user can go back and edit.
-function BookingSteps({ current, linkFor }: BookingStepsProps) {
+function BookingSteps({ current, linkFor, corporate = false }: BookingStepsProps) {
   const currentIndex = BOOKING_STEPS.indexOf(current)
 
   return (
     <nav aria-label="Pasos de la reserva">
       <ol className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
-        {BOOKING_STEPS.map((step, index) => {
+        {BOOKING_STEPS.filter((step) => !corporate || step !== 'payment').map((step, index) => {
           const done = index < currentIndex
           const isCurrent = index === currentIndex
           const label = (

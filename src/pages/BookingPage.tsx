@@ -1,5 +1,5 @@
 import { ArrowLeft, CreditCard } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router'
 import Button from '../components/Button.tsx'
 import BookingDetails from '../components/booking/BookingDetails.tsx'
@@ -30,6 +30,11 @@ import { calculateBookingPrice } from '../lib/pricing.ts'
 import { getCapacityRange, SPACE_TYPE_PLURAL_LABELS, SPACE_TYPES } from '../lib/spaces.ts'
 import type { Hour } from '../types/booking.ts'
 import NotFoundPage from './NotFoundPage.tsx'
+import { createRequest } from '../corporate/logic.ts'
+import { COMPANY_NAME, CURRENT_EMPLOYEE_ID } from '../corporate/mockData.ts'
+import { BookingRequestModal } from '../components/avalanche-demo/BookingRequestModal.tsx'
+import { runAction, setBookingEmployee, useDemoState } from '../corporate/store.ts'
+import { Feedback } from '../corporate/ui.tsx'
 
 function StepHeading({ step, title }: { step: BookingStep; title: string }) {
   return (
@@ -43,6 +48,21 @@ function BookingPage() {
   const { slug } = useParams()
   const [searchParams, setSearchParams] = useSearchParams()
   const navigate = useNavigate()
+  const demo = useDemoState()
+  const [requestError, setRequestError] = useState<string | null>(null)
+  const [requestOpen, setRequestOpen] = useState(false)
+  const modalVisible = requestOpen && !!demo.bookingEmployeeId && ['summary', 'payment'].includes(searchParams.get('step') ?? '')
+  useEffect(() => {
+    if (!modalVisible) return
+    const previousFocus = document.activeElement as HTMLElement | null
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    document.querySelector<HTMLElement>('[role="dialog"]')?.focus()
+    return () => {
+      document.body.style.overflow = previousOverflow
+      previousFocus?.focus()
+    }
+  }, [modalVisible])
   // Fixed for the whole visit so "past" slots don't shift while the user is choosing.
   const [now] = useState(() => new Date())
 
@@ -50,6 +70,10 @@ function BookingPage() {
   if (!cowork) {
     return <NotFoundPage message="Este cowork no existe o ya no forma parte de la red." />
   }
+  const supportsCorporate = cowork.categoryId === 'cowork' || cowork.categoryId === 'sala-reuniones'
+  const corporateEmployee = supportsCorporate
+    ? demo.employees.find(({ id }) => id === demo.bookingEmployeeId)
+    : undefined
 
   const { step: requestedStep, selection } = parseBookingParams(searchParams)
   const space = cowork.spaces.find((item) => item.id === selection.spaceId) ?? null
@@ -89,10 +113,11 @@ function BookingPage() {
   }
   // A hand-edited URL can't skip ahead: show the first step that still needs input.
   const firstIncomplete = BOOKING_STEPS.find((item) => !completed[item]) ?? 'payment'
-  const step =
+  const validatedStep =
     BOOKING_STEPS.indexOf(requestedStep) > BOOKING_STEPS.indexOf(firstIncomplete)
       ? firstIncomplete
       : requestedStep
+  const step = corporateEmployee && validatedStep === 'payment' ? 'summary' : validatedStep
 
   const urlFor = (target: BookingStep, changes: Partial<BookingSelection> = {}) =>
     `?${toBookingParams({ ...selection, ...changes }, target)}`
@@ -108,6 +133,27 @@ function BookingPage() {
     const params = toBookingParams(selection, 'payment')
     params.delete('step')
     navigate(`/reservar/${cowork.slug}/confirmacion?${params}`)
+  }
+
+  const submitCorporateRequest = () => {
+    if (!corporateEmployee || !booking || !space || !price || !hasValidDate || !hasValidTime || !hasValidPeople) return
+    const result = runAction((current) => createRequest(current, {
+      employeeId: corporateEmployee.id,
+      spaceId: space.id,
+      spaceName: `${cowork.name} · ${space.name}`,
+      locationSlug: cowork.slug,
+      date: booking.date,
+      startHour: booking.startHour,
+      hours: booking.hours,
+      people: booking.people,
+      pricePerHour: booking.pricePerHour,
+      amount: price.total,
+    }))
+    if (result.ok) {
+      setRequestOpen(false)
+      navigate('/empleado')
+    }
+    else setRequestError(result.error)
   }
 
   // First tap picks the start block; a later tap extends the range to that block.
@@ -136,8 +182,21 @@ function BookingPage() {
       <h1 className="mt-4 text-3xl font-bold tracking-tight text-ink sm:text-4xl">
         Reservar en {cowork.name}
       </h1>
+      {supportsCorporate && (
+        <div className="mt-5 rounded-card border border-line bg-surface p-4">
+          <p className="text-sm font-semibold">{corporateEmployee ? `Reserva corporativa de demo · ${corporateEmployee.name}` : 'Reserva individual'}</p>
+          <p className="mt-2 text-sm text-ink-muted">{corporateEmployee ? 'Envía una solicitud a tu empresa. Su aprobación no realiza pagos ni confirma una reserva con el proveedor.' : 'Reserva por tu cuenta o prueba una solicitud corporativa con un colaborador ficticio.'}</p>
+          <Button variant="secondary" className="mt-3" onClick={() => {
+            setRequestError(null)
+            setRequestOpen(false)
+            setBookingEmployee(corporateEmployee ? undefined : CURRENT_EMPLOYEE_ID)
+          }}>
+            {corporateEmployee ? 'Reservar por mi cuenta' : 'Usar demo de empresa'}
+          </Button>
+        </div>
+      )}
       <div className="mt-6">
-        <BookingSteps current={step} linkFor={(target) => urlFor(target)} />
+        <BookingSteps current={step} linkFor={(target) => urlFor(target)} corporate={!!corporateEmployee} />
       </div>
 
       <div className={`mt-8 grid gap-8 ${showSidebar ? 'lg:grid-cols-[1fr_20rem]' : 'max-w-3xl'}`}>
@@ -276,11 +335,15 @@ function BookingPage() {
                   Pagas solo por las horas reservadas. Sin planes ni suscripciones.
                 </p>
               </div>
+              {corporateEmployee && <p className="rounded-card bg-primary-soft p-4 text-sm text-primary">Solicitud de demo: el monto mostrado se enviará a tu empresa para revisión. No se cobrará ni reservará el espacio.</p>}
+              <Feedback message={requestError ? { ok: false, text: requestError } : null} />
               <div className="flex justify-between gap-4">
                 <Button to={urlFor('people')} variant="secondary">
                   Atrás
                 </Button>
-                <Button onClick={() => goTo('payment')}>Ir al pago</Button>
+                {corporateEmployee
+                  ? <Button onClick={() => { setRequestError(null); setRequestOpen(true) }}>Solicitar a mi empresa</Button>
+                  : <Button onClick={() => goTo('payment')}>Ir al pago</Button>}
               </div>
             </section>
           )}
@@ -329,6 +392,22 @@ function BookingPage() {
           </aside>
         )}
       </div>
+      {corporateEmployee && booking && space && price && step === 'summary' && (
+        <BookingRequestModal
+          open={modalVisible}
+          spaceName={`${cowork.name} · ${space.name}`}
+          date={booking.date}
+          startHour={booking.startHour}
+          hours={booking.hours}
+          total={price.total}
+          employeeName={corporateEmployee.name}
+          companyName={COMPANY_NAME}
+          allowance={corporateEmployee.allowance === null ? null : { limit: corporateEmployee.allowance, spent: corporateEmployee.spent }}
+          error={requestError}
+          onSubmit={submitCorporateRequest}
+          onCancel={() => setRequestOpen(false)}
+        />
+      )}
     </div>
   )
 }
